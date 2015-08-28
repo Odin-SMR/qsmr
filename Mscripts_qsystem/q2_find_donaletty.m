@@ -1,3 +1,8 @@
+% q2_find_donaletty
+% This function finds the temperature of the given orbit and scan from the
+% donaletty files. Input is the pressure grid, orbit number, and scan
+% number.
+
 function [Tint,Zint,T,Z,PTZ]=q2_find_donaletty(pgrid,orbit,scan)
 
 %(O.P_GRID,L1B.ORBIT,L1B.SCAN);
