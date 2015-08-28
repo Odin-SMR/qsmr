@@ -22,7 +22,7 @@ switch whoami
   %
   Q.ARTS_VERSION       = 'arts-2.3.286';
   Q.ATMLAB_VERSION     = 'atmlab-2.3.105';
-  Q.WORK_AREA          = '/home/patrick/WORKAREA';  
+  Q.WORK_AREA          = '/home/joonask/WORKAREA';  
 
  otherwise
   error( 'Unknown user.' );

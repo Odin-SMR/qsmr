@@ -52,6 +52,10 @@ else
                     'Altitude', 'z_field' );
     G = atmdata_regrid( M, { O.P_GRID, lat, lon, mjd } );
     ATM.Z = G.DATA;
+    
+    
+   case 'DONALETTY'
+     [ATM.T,ATM.Z]=q2_find_donaletty(O.P_GRID,L1B.ORBIT,L1B.SCAN);          
       
    otherwise
     error( '%s is an unknown option for O.T_SOURCE.', O.T_SOURCE );
