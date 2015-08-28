@@ -1,3 +1,13 @@
+2015-08-26  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Added some documentation. Pre-calculations and simulation of
+	spectra (by q2_arts_y) now seem to work.
+
+2015-08-25  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* A re-start after the summer. Quite some reorganisation, such as
+	now storing precaluclted data outside the Qsmr folder structure.
+
 2015-08-14  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* First look at this after vacation. Just typo fixes in headers
