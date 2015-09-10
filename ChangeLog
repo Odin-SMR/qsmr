@@ -1,3 +1,9 @@
+2015-09-10  Joakim Möller <joakim.moller@molflow.com>
+    * Added start scripts to start the official matlab image and
+    the web_api server with test database. To start the services:
+        $ docker-compose up
+        $ ./matlab
+
 2015-08-26  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Added some documentation. Pre-calculations and simulation of

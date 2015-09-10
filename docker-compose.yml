@@ -1,0 +1,18 @@
+postgresql:
+  image: docker.molflow.com/odin_db:latest
+  ports:
+    - 5432:5432
+  hostname: postgres
+
+webapi:
+  image: docker.molflow.com/odin_redo/odin_api:latest
+  ports: 
+    - 5000:5000
+  links:
+    - postgresql
+
+matlab:
+  image: docker.molflow.com/odin_redo/odin_matlab:latest
+  links:
+    - webapi
+  command: /bin/true
