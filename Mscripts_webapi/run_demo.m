@@ -13,8 +13,9 @@ function [y,z,s] = run_demo()
 % Get info of available FreqModes for a given date
 
 date = '2015-01-04';
-webapi_url = get_webapi_url();
-url = [ webapi_url,'/viewscan/',date];
+webapi_url = get_webapi_url(); %connect to test database
+%webapi_url = 'http://malachite.rss.chalmers.se'; %connect to the live database
+url = [ webapi_url,'/rest_api/v1/freqmode_info/',date];
 y = get_date_info(url)
 
 
