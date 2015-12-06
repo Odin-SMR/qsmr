@@ -1,0 +1,48 @@
+Line positions are taken from JPL (downloaded 2015-12-06). Maximum difference
+to HITRAN was 213 kHz (488.5 GHz line).
+
+A summary around the 556 GHz line (see email from 2008-10-14), with HITRAN2012
+added later:
+---
+New articles:
+* Seta et al., JQSRT, 2008
+* Hoshina et al., JQSRT, 2008
+* Golubiatnikov et al., JQSRT, 2008
+
+ga = P_dry*ga_air*(300/T)^x_air + P_H2O*ga_self*(300/T)^x_self
+
+Source  ga_air[MHz/hPa] x_air[-] ga_self[MHz/hPa] x_self[-]
+
+MPM87           3.00 0.60 14.40 1.10
+MPM89           3.21 0.69 13.20 1.00
+MPM93           3.21 0.69 13.20 1.00
+PWR98           3.21 0.69 13.20 1.00
+HITRAN00        3.06 0.64     0    -
+HITRAN04        3.11 0.78 13.83    -
+HITRAN12        3.14 0.75 14.40 0.75
+Seta            2.98    -     -    -
+Hoshina         2.98    -     -    -
+Golubiatnikov   3.10    - 14.06    -
+
+The MPM89/93 and PWR98 values are not independent and should be taken as a
+single "vote". I assume that the HITRAN04 values are theoretical. Seta+Hoshina
+give the lowest ga_dry (most important variable). Golubiatnikov is in the
+middle. Note that all data are not at the same reference temperature, that can
+explain differences up to 1%.
+---
+
+For 547, 552 and 557 GHz lines, pressure broadening parameters are taken form
+Golubiatnikov et al., JQSRT, 2008. Note that article data are for 299 K. These
+data were scaled to 296K by multiplication with (299/296)^0.75. All this
+resulted in these values:
+
+Line    HITRAN2012   Used
+---
+547GHz     31362     31096
+552GHz     31362     31768
+556GHz     31362     31260
+
+
+
+H2O continuum absorption is taken from Podobedov et al., JQSRT, 2008 (Table 3, 
+# experiment b). 

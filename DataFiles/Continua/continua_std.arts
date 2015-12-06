@@ -7,10 +7,6 @@ Arts2 {
 abs_cont_descriptionInit
 
 # ----- H2O continuum ------------------------------------
-#
-# the conversion factor from dB/km/GHz²/hPa² to arts units
-# of 1/m/Hz²/Pa² is 2.30259 * 10¯26.
-# Note the parameters are deduced using a Van Vleck-Weisskopf
 
 # Present values are taken from Podobedov et al., JQSRT, 2008 (Table 3, 
 # experiment b).
@@ -27,15 +23,6 @@ abs_cont_descriptionAppend( abs_cont_names, abs_cont_models, abs_cont_parameters
   [ 5.32e-35, 1.80 ]
 )
 
-
-# ----- O2 continuum models ------------------------------
-
-# Rosenkranz O2 absorption model (only continuum):
-abs_cont_descriptionAppend( abs_cont_names, abs_cont_models, abs_cont_parameters,
-  "O2-PWR98",
-  "RosenkranzContinuum",
-  [ ]
-)
 
 
 # ----- N2 continuum -------------------------------------
