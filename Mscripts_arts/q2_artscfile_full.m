@@ -230,7 +230,7 @@ function cfile_abscalc_basics( fid, C, workfolder )
            C.HITRAN_PATH, C.HITRAN_FMIN, C.HITRAN_FMAX );
   fprintf( fid, 'abs_lines_per_speciesCreateFromLines\n' );
   fprintf( fid, [ 'abs_lineshapeDefine( shape="Voigt_Kuntz6", ' ...
-                  'forefactor="VVH", cutoff=750e9 )\n' ] );
+                  'forefactor="VVW", cutoff=-1 )\n' ] );
   %
   fprintf( fid, 'isotopologue_ratiosInitFromBuiltin\n' );
   fprintf( fid, 'INCLUDE "%s"\n', C.CONTINUA_FILE );  
