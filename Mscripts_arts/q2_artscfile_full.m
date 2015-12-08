@@ -104,7 +104,7 @@ function cfile_start( fid )
   fprintf( fid, '  Ignore( f_grid )\n' );
   fprintf( fid, '  NumericSet( refr_index_air, 1.0 )\n' );
   fprintf( fid, '  NumericSet( refr_index_air_group, 1.0 )\n' );
-  fprintf( fid, '  refr_index_airThayer\n' );
+  fprintf( fid, '  refr_index_airMicrowavesEarth\n' );
   fprintf( fid, '}\n' );
   fprintf( fid, 'AgendaSet( surface_rtprop_agenda ){\n' );
   fprintf( fid, '  Ignore( rtp_los )\n' );

@@ -5,11 +5,14 @@
 % IN    O       An array of O structures
 %       P       A P structure
 %       R       A R structure
-%       precs   A vector of precision limits. 
+%       precs   A vector of precision limits.
+% OPT   do_cubic Flag to use f_grid assuming cubic interpolation. Default is false.
 
 % 2015-05-25   Created by Patrick Eriksson.
 
-function q2_precalc_abslookup(O,P,R,precs)
+function q2_precalc_abslookup(O,P,R,precs,varargin)
+%
+[do_cubic] = optargs( varargin, { false } );
 
 
 %- Loop all fbands
@@ -18,13 +21,19 @@ for i = 1 : length( O )
 
   for j = 1 : length( precs )
   
-    outfolder = fullfile( O.FOLDER_ABSLOOKUP, sprintf( '%dmK', precs(j)*1e3) );
+    outfolder = fullfile( O(i).FOLDER_ABSLOOKUP, sprintf( '%dmK', precs(j)*1e3) );
+
+    if do_cubic
+      outfolder = [ outfolder, '_cubic' ];
+    else
+      outfolder = [ outfolder, '_linear' ];
+    end
 
     if ~exist( outfolder, 'dir' )
       error( 'The following folder does not exist: %s', outfolder );
     end
 
-    A = do_1fband( O(i), P, R, precs(j) );
+    A = do_1fband( O(i), P, R, precs(j), do_cubic );
 
     outfile = fullfile( outfolder, sprintf( 'abslookup_fband%d.xml', ...
                                                                O(i).FBAND ) );
@@ -42,7 +51,7 @@ return
 %--------------------------------------------------------------------------
 
 
-function A = do_1fband( O, P, R, prec )
+function A = do_1fband( O, P, R, prec, do_cubic )
 
   % Table is calculated for atmospheric state behind first reference spectrum
   L1B.MJD = P.REFSPECTRA_MJD(1);
@@ -56,7 +65,13 @@ function A = do_1fband( O, P, R, prec )
   C.HITRAN_FMAX     = P.HITRAN_FMAX;
   C.SPECIES         = arts_tgs_cnvrt( O.ABS_SPECIES );
 
-  fgridfile = fullfile( O.FOLDER_FGRID, sprintf( '%dmK', prec*1e3), ...
+  if do_cubic
+    lorc = 'cubic';
+  else
+    lorc = 'linear';
+  end
+  %    
+  fgridfile = fullfile( O.FOLDER_FGRID, sprintf( '%dmK_%s', prec*1e3, lorc ), ...
                         sprintf( 'fgrid_fband%d.xml', O.FBAND ) );
   f_grid    = xmlLoad( fgridfile );
   %
