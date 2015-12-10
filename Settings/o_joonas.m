@@ -14,7 +14,7 @@ end
 %---------------------------------------------------------------------------
 
 topfolder            = q2_topfolder;
-precalcdir           = '/home/patrick/Outdata2/Qsmr2';
+precalcdir           = '/home/joonask/Lookup/Qsmr2';
   
 O.FBAND              = fband;  
 
@@ -26,7 +26,10 @@ O.FOLDER_FGRID       = fullfile( precalcdir, 'Fgrid' );
 
 O.T_SOURCE           = 'DONALETTY';
 
-O.ABSLOOKUP_OPTION   = '100mK';
+O.ABSLOOKUP_OPTION   = '200mK';
+%O.ABS_P_INTERP_ORDER = 3;  % 5 is recommended value
+%O.ABS_T_INTERP_ORDER = 3;  % 7 is recommended value
+
 O.ABS_P_INTERP_ORDER = 3;  % 5 is recommended value
 O.ABS_T_INTERP_ORDER = 3;  % 7 is recommended value
 

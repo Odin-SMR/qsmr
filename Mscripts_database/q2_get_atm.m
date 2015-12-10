@@ -55,7 +55,11 @@ else
     
     
    case 'DONALETTY'
-     [ATM.T,ATM.Z]=q2_find_donaletty(O.P_GRID,L1B.ORBIT,L1B.SCAN);          
+     [ATM.T,ATM.Z]=q2_find_donaletty(O.P_GRID,L1B.ORBIT,L1B.SCAN);  
+     
+   case 'ERA'
+       ATM=find_ERA(O.P_GRID,L1B)
+     
       
    otherwise
     error( '%s is an unknown option for O.T_SOURCE.', O.T_SOURCE );
