@@ -30,25 +30,35 @@
 %
 % FORMAT   q2_precalc_fgrid(O,P,R,precs)
 %        
-% IN    O       An array of O structures
-%       P       A P structure
-%       R       A R structure
-%       precs   Vector of precision limits [K]. 
+% IN    O        An array of O structures
+%       P        A P structure
+%       R        A R structure
+%       precs    Vector of precision limits [K]. 
+% OPT   do_cubic Flag to active cubic interpolation. Default is false.
 
 % 2015-05-25   Created by Patrick Eriksson.
 
-function q2_precalc_fgrid(O,P,R,precs)
+function q2_precalc_fgrid(O,P,R,precs,varargin)
+%
+[do_cubic] = optargs( varargin, { false } );
 
 
 %- Loop all fbands
 %
 for i = 1 : length( O )
 
-  f_opt = do_1fband( O(i), P, R, precs );
+  f_opt = do_1fband( O(i), P, R, precs, do_cubic );
 
   for j = 1 : length( precs )
 
-    outfolder = fullfile( O(i).FOLDER_FGRID, sprintf( '%dmK', precs(j)*1e3) );
+    if do_cubic
+      lorc = 'cubic';
+    else
+      lorc = 'linear';
+    end
+    
+    outfolder = fullfile( O(i).FOLDER_FGRID, ...
+                          sprintf( '%dmK_%s', precs(j)*1e3, lorc ) );
 
     outfile = fullfile( outfolder, ...
                         sprintf( 'fgrid_fband%d.xml', O(i).FBAND ) );
@@ -70,7 +80,7 @@ return
 
 
 
-function f_opt = do_1fband( O, P, R, precs );
+function f_opt = do_1fband( O, P, R, precs, do_cubic );
   %
   for j = 1 : length( precs )
     f_opt{j} = [];
@@ -84,13 +94,13 @@ function f_opt = do_1fband( O, P, R, precs );
     % Part of main band
     frange = O.F_BACKEND_NOMINAL( [ bp(i)+1 bp(i+1) ] ) + ...
              P.FGRID_EDGE_MARGIN * [-1 1];
-    fpart  = do_1range( O, P, R, frange, precs );
+    fpart  = do_1range( O, P, R, frange, precs, do_cubic );
     for j = 1 : length( precs )
       f_opt{j} = [ f_opt{j}; fpart{j} ];
     end
     % Corresponding part in side band
     frange = sort( 2*O.F_LO_NOMINAL - frange );
-    fpart  = do_1range( O, P, R, frange, 20*precs );
+    fpart  = do_1range( O, P, R, frange, 20*precs, do_cubic );
     for j = 1 : length( precs )
       f_opt{j} = [ f_opt{j}; fpart{j} ];
     end
@@ -105,7 +115,7 @@ return
 
 
 
-function f_opt = do_1range( O, P, R, frange, precs );
+function f_opt = do_1range( O, P, R, frange, precs, do_cubic );
 
   % Local settings:
   %
@@ -165,7 +175,7 @@ function f_opt = do_1range( O, P, R, frange, precs );
   end
 
   for j = 1 : length( precs )
-    [f_opt{j},maxdev] = f_opt_1band( f_fine, Y, precs(j) );
+    [f_opt{j},maxdev] = f_opt_1band( f_fine, Y, precs(j), do_cubic );
   end
   
   %j=2;
@@ -178,60 +188,39 @@ return
 
 
 
-function [f_opt,maxdev] = f_opt_1band( f_fine, Y, tb_lim )
+function [f_opt,maxdev] = f_opt_1band( f_fine, Y, tb_lim, do_cubic )
 
-  in_or_out      = isnan( f_fine );
-  in_or_out(1)   = true;
-  in_or_out(end) = true;
+  nf    = length( f_fine );
+  f_opt = zeros( nf+1, 1 ); 
   
-  maxdev = Inf;
-  
-  while maxdev >= tb_lim
-    Y_opt = interp1( f_fine, Y, f_fine(in_or_out) );
-    Yt    = interp1( f_fine(in_or_out), Y_opt, f_fine );
+  for t = 1:100
+     in_or_out      = isnan( f_fine );
+     in_or_out(1)   = true;
+     in_or_out(end) = true;
+     
+     in_or_out( ceil(length(f_fine)*rand(2)) ) = true;
+     
+     maxdev = Inf;
 
-    [maxdev,ihit]   = max( max( abs( Yt - Y ), [], 2 ) );
-    
-    in_or_out(ihit) = true;
-  end 
-  f_opt = f_fine( in_or_out );
+     while maxdev >= tb_lim
+       %Y_opt = interp1( f_fine, Y, f_fine(in_or_out) );
+       if do_cubic
+         Yt = interp1( f_fine(in_or_out), Y(in_or_out,:,:), f_fine, 'pchip' );
+       else
+         Yt = interp1( f_fine(in_or_out), Y(in_or_out,:,:), f_fine );
+       end
+       
+       [maxdev,ihit]   = max( max( abs( Yt - Y ), [], 2 ) );
+       
+       in_or_out(ihit) = true;
+     end 
+  
+    if sum(in_or_out) < length(f_opt)
+      f_opt = f_fine( in_or_out );
+    end
+  end
+  
 return
 
 
 
-
-%----------------------------------------------------------------------------
-% Old code from test of simulated annealing
-%----------------------------------------------------------------------------
-  
-
-  CostFun = @(x) q2_precalc_f_grid_costfun( f_fine, Y, x );
-
-  f_start = f_opt( 2 : end-1 );
-  
-  opts = saoptimset( @simulannealbnd );
-
-  opts = saoptimset( opts, 'TolFun', 1e-4 );
-  opts = saoptimset( opts, 'InitialTemperature', 1e6 );
-  %opts = saoptimset( opts, 'TemperatureFcn', @temperaturefast );
-  opts = saoptimset( opts, 'MaxFunEvals', length(f_start)*2e3 );
-
-  fprintf( 'Starting simulated annealing\n' );
-  [f_opt,maxdev,exitflag,outinfo] = simulannealbnd( CostFun, f_start, ...
-                                             O.F_BACKEND_NOMINAL(1)  +1e3, ...
-                                             O.F_BACKEND_NOMINAL(end)-1e3, ...
-                                                  opts );
-
-  
-  
-function maxdev = q2_precalc_f_grid_costfun( f_fine, Y, f_test )
-  
-fc = [ f_fine(1); sort(f_test); f_fine(end) ];
-
-Yc = interp1( f_fine, Y, fc );
-
-Yt = interp1( fc, Yc, f_fine );
-
-maxdev = max( max( abs( Yt - Y ) ) );
-
-  

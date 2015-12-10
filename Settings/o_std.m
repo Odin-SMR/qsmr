@@ -26,9 +26,9 @@ O.FOLDER_FGRID       = fullfile( precalcdir, 'Fgrid' );
 
 O.T_SOURCE           = 'MSIS90';
 
-O.ABSLOOKUP_OPTION   = '100mK';
+O.ABSLOOKUP_OPTION   = '100mK_linear';
 O.ABS_P_INTERP_ORDER = 3;  % 5 is recommended value
-O.ABS_T_INTERP_ORDER = 3;  % 7 is recommended value
+O.ABS_T_INTERP_ORDER = 5;  % 7 is recommended value
 
 O.PPATH_LMAX         = 25e3;
 O.PPATH_LRAYTRACE    = 6e3;
@@ -41,6 +41,8 @@ O.CONTINUA_FILE      = fullfile( topfolder, 'DataFiles', 'Continua', ...
 
 O.DZA_MAX_IN_CORE    = 0.01;
 O.DZA_GRID_EDGES     = [ O.DZA_MAX_IN_CORE*[1:3 5 8 12 21] ];
+
+O.SIDEBAND_LEAKAGE   = 0.01;
 
 %---------------------------------------------------------------------------
 %--- Band specific

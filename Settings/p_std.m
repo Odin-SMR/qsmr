@@ -71,10 +71,10 @@ P.FGRID_EDGE_MARGIN = 10e6;
 % Settings determining the set of transitions considered
 P.HITRAN_PATH       = '/home/patrick/Data/HITRAN_2012/HITRAN2012.par';
 P.HITRAN_FMIN       = 150e9;
-P.HITRAN_FMAX       = 1000e9;
+P.HITRAN_FMAX       = 1300e9;
 
 % The set of temperature perturbations
-P.ABS_T_PERT        = symgrid( [0 15 30 45 60 75 100] )';
+P.ABS_T_PERT        = symgrid( [0:10:100 120 150] )';
 
 
 

@@ -9,7 +9,7 @@
 %   Note that if this function is called with *online* set to false, Matlab
 %   must be re-started to switch to "online". While switching from "online"
 %   to "offline" can be done at a later stage, by calling this function with
-%   *online* set to true followed by a new call of q2_init_R. 
+%   *online* set to true followed by a new call of q2_init_r. 
 %
 % FORMAT   r = q2_init( [online] )
 %        
