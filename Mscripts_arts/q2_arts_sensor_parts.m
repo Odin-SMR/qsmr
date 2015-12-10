@@ -139,15 +139,19 @@ if any( strcmp( part, { 'mixer', 'all' } ) )  |  do_total
                                                           'Matrix', 'binary' );
   end
   %
-  % Sideband response. So far just 99/1 
+  % Sideband response. So far just a flat function 
   G.name      = 'Sideband response function';
   G.gridnames = { 'Frequency' };
   G.grids     = { [f_grid(1)-C.LO -1e9 1e9 f_grid(end)-C.LO] };
   G.dataname  = 'Response';
+  %
+  rs = O.SIDEBAND_LEAKAGE;
+  rm = 1 - rs;
+  %
   if O.F_BACKEND_NOMINAL(1) > C.LO
-    G.data      = [0.01 0.01 0.99 0.99];
+    G.data      = [ rs rs rm rm ];
   else
-    G.data      = [0.99 0.99 0.01 0.01];
+    G.data      = [ rm rm rs rs ];
   end
   C.SIDEBAND_FILE = fullfile( R.WORK_FOLDER, 'sideband_response.xml' );
   xmlStore( C.SIDEBAND_FILE, G, 'GriddedField1' );
