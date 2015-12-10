@@ -1,13 +1,25 @@
 function O = o_joonas(fband)
 % 
-if length(fband) > 1
-  for i = 1 : length(fband)
-    O(i) = o_joonas( fband(i) );
-  end
-  return
-end
-%----------------------------------------------------------------------------
 
+O = o_std( fband );
+
+
+topfolder            = q2_topfolder;
+precalcdir           = '/home/joonask/Lookup/Qsmr2';
+  
+O.FBAND              = fband;  
+
+O.FOLDER_ABSLOOKUP   = fullfile( precalcdir, 'AbsLookup' );  
+O.FOLDER_ANTENNA     = fullfile( precalcdir, 'Antenna' );  
+O.FOLDER_BACKEND     = fullfile( precalcdir, 'Backend' );  
+O.FOLDER_BDX         = fullfile( precalcdir, 'SpeciesApriori', 'Bdx' );  
+O.FOLDER_FGRID       = fullfile( precalcdir, 'Fgrid' );  
+
+O.T_SOURCE           = 'DONALETTY';
+
+O.ABSLOOKUP_OPTION   = '200mK';
+
+return
 
 %---------------------------------------------------------------------------
 %--- General settings
