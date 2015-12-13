@@ -12,7 +12,7 @@
 function y = get_scan_data(url)
 
 
-y = webread(url, weboptions('ContentType','json','Timeout',60));
+y = webread(url, weboptions('ContentType','json','Timeout',1000));
 
 % change output format 
 yfields = fields(y);

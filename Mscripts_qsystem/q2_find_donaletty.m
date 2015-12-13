@@ -56,5 +56,7 @@ if length(list)>0
     Z=PTZ(:,3,L1B.SCAN)*1000;
     Tint=interpp(P,T,O.P_GRID);
     Zint=interpp(P,Z,O.P_GRID);
-    
+    if Zint(1)==Zint(2);
+        Zint(2)=Zint(2)+0.1;
+    end
 end    
