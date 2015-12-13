@@ -10,13 +10,15 @@
 % IN    O           O structure.
 %       R           R structure.
 %       L1B         ???
-% OPT   do_sensor   Flag to include sensor or not. Default is true.
+% OPT   ATM         Structure of ATM-type. Default is [], which means
+%                   that ATM is obtained by *q2_get_atm*. 
+%       do_sensor   Flag to include sensor or not. Default is true.
 
 % 2015-05-29   Created by Patrick Eriksson.
 
-function [f,Y] = q2_arts_y(O,R,L1B,do_sensor)
+function [f,Y] = q2_arts_y(O,R,L1B,varargin)
 %
-if nargin < 4, do_sensor = true; end
+[ATM,do_sensor] = optargs( varargin, { [], true } );
   
 
 %
@@ -43,7 +45,9 @@ C.SPECIES            = arts_tgs_cnvrt( O.ABS_SPECIES );
 %
 % Extract and save atmosphere
 %
-ATM =  q2_get_atm( R, O, L1B );
+if isempty(ATM)
+  ATM =  q2_get_atm( R, O, L1B );
+end
 %
 xmlStore( fullfile( R.WORK_FOLDER, 't_field.xml' ), ATM.T, ...
                                                         'Tensor3', 'binary' );

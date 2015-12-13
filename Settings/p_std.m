@@ -73,6 +73,13 @@ P.HITRAN_PATH       = '/home/patrick/Data/HITRAN_2012/HITRAN2012.par';
 P.HITRAN_FMIN       = 150e9;
 P.HITRAN_FMAX       = 1300e9;
 
+% Folder with hand-picked spectroscopy data
+P.SPECTRO_FOLDER    =  fullfile( q2_topfolder, 'DataFiles', 'Spectroscopy' );
+
+% Also allowed to define a second folder. These data will overwrite
+% data from the first folder. The leter folder can be left undefined.
+%P.SPECTRO_FOLDER2   =  fullfile( q2_topfolder, 'DataFiles', 'Spectroscopy' );
+
 % The set of temperature perturbations
 P.ABS_T_PERT        = symgrid( [0:10:100 120 150] )';
 

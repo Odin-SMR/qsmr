@@ -33,10 +33,14 @@ for i = 1 : length( O )
       error( 'The following folder does not exist: %s', outfolder );
     end
 
-    A = do_1fband( O(i), P, R, precs(j), do_cubic );
-
     outfile = fullfile( outfolder, sprintf( 'abslookup_fband%d.xml', ...
                                                                O(i).FBAND ) );
+    if exist( outfile )
+      error( 'The following file does already exist: %s', outfile );
+    end
+    
+    A = do_1fband( O(i), P, R, precs(j), do_cubic );
+
     xmlStore( outfile, A, 'GasAbsLookup', 'binary' );
 
     %- Create a simple README
@@ -63,6 +67,10 @@ function A = do_1fband( O, P, R, prec, do_cubic )
   C.HITRAN_PATH     = P.HITRAN_PATH;
   C.HITRAN_FMIN     = P.HITRAN_FMIN;
   C.HITRAN_FMAX     = P.HITRAN_FMAX;
+  C.SPECTRO_FOLDER  = P.SPECTRO_FOLDER;
+  if isfield( P, 'SPECTRO_FOLDER2' )
+    C.SPECTRO_FOLDER2  = P.SPECTRO_FOLDER2;
+  end
   C.SPECIES         = arts_tgs_cnvrt( O.ABS_SPECIES );
 
   if do_cubic

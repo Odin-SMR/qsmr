@@ -1,3 +1,17 @@
+2015-12-13  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_arts/q2_arts_y.m: The function can now take ATM as
+	input argument.
+
+	* Mscripts_arts/q2_artscfile_full.m (cfile_abscalc_basics):
+	Added handling of C.SPECTRO_FOLDER and C.SPECTRO_FOLDER2
+
+	* Mscripts_precalc/q2_precalc_abslookup.m: Added handling of
+	P.SPECTRO_FOLDER and P.SPECTRO_FOLDER2. Now also checks that an
+	exist file is not overwritten.
+
+	* Settings/p_std.m: Added SPECTRO_FOLDER and SPECTRO_FOLDER2.
+
 2015-09-10  Joakim Möller <joakim.moller@molflow.com>
     * Added start scripts to start the official matlab image and
     the web_api server with test database. To start the services:

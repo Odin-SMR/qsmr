@@ -1,0 +1,9 @@
+544.9 GHz:
+
+JPL (used) and HITRAN2012 v0 differ with 316 kHz
+
+Air broadening in HITRAN2012 is
+24942.0224124352 0.76
+Replaced with values used in Qsmr (also for self-broadening)
+23332.68 0.88
+

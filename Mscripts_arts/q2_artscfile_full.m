@@ -229,8 +229,29 @@ function cfile_abscalc_basics( fid, C, workfolder )
   fprintf( fid, 'abs_linesReadFromHitran( abs_lines, "%s", %.5e, %.5e )\n', ...
            C.HITRAN_PATH, C.HITRAN_FMIN, C.HITRAN_FMAX );
   fprintf( fid, 'abs_lines_per_speciesCreateFromLines\n' );
+  fprintf( fid, 'abs_linesArtscat5FromArtscat34\n' );
   fprintf( fid, [ 'abs_lineshapeDefine( shape="Voigt_Kuntz6", ' ...
                   'forefactor="VVW", cutoff=-1 )\n' ] );
+  %
+  for z = 1:2
+    if z == 1
+      spectrofiles = whichfiles( '*.xml', C.SPECTRO_FOLDER );
+    else
+      if isfield( C, 'SPECTRO_FOLDER2' )
+        spectrofiles = whichfiles( '*.xml', C.SPECTRO_FOLDER2 );
+      else
+        spectrofiles = [];
+      end
+    end
+    if ~isempty(spectrofiles)
+      fprintf( fid, 'ArrayOfLineRecordCreate(handpicked)\n' );
+      for i = 1 : length(spectrofiles)
+        fprintf( fid, 'ReadXML( handpicked, "%s" )\n', spectrofiles{i} );
+        fprintf( fid, ...
+                'abs_linesReplaceWithLines(replacement_lines=handpicked)\n' );
+      end
+    end
+  end
   %
   fprintf( fid, 'isotopologue_ratiosInitFromBuiltin\n' );
   fprintf( fid, 'INCLUDE "%s"\n', C.CONTINUA_FILE );  
