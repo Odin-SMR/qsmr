@@ -122,8 +122,9 @@ clear Hpart t_int
 %
 if any( strcmp( part, { 'mixer', 'all' } ) )  |  do_total
 
-  C.PART = 'mixer';
-  C.LO   = O.F_LO_NOMINAL;
+  C.PART         = 'mixer';
+  C.LO           = O.F_LO_NOMINAL;
+  C.F_GRID_NFILL = O.F_GRID_NFILL;
 
   % Get f_grid from absorption lookup table
   abs_lookup = xmlLoad( fullfile( O.FOLDER_ABSLOOKUP, ...

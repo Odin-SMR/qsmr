@@ -1,3 +1,18 @@
+2015-12-15  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_arts/q2_arts_sensor_parts.m (q2_arts_sensor_parts):
+	* Mscripts_arts/q2_artscfile_sensor.m (q2_artscfile_sensor): Added
+	handling of F_GRID_NFILL.
+
+	* .gitignore: Added.
+
+	* Settings/p_std.m (p_std): Made HITRAN frequency range a bit narrower.
+
+	* Settings/o_std.m: Added frequency limits to most ABS_SPECIES,
+	and some fine tuning of abs table variables. Added O.F_GRID_NFILL.
+
+	* Mscripts_qsystem/q2_pgrid.m: Changed to 400 m spacing for p_grid.
+
 2015-12-13  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_arts/q2_arts_y.m: The function can now take ATM as

@@ -70,8 +70,8 @@ P.FGRID_EDGE_MARGIN = 10e6;
 
 % Settings determining the set of transitions considered
 P.HITRAN_PATH       = '/home/patrick/Data/HITRAN_2012/HITRAN2012.par';
-P.HITRAN_FMIN       = 150e9;
-P.HITRAN_FMAX       = 1300e9;
+P.HITRAN_FMIN       = 180e9;
+P.HITRAN_FMAX       = 1000e9;
 
 % Folder with hand-picked spectroscopy data
 P.SPECTRO_FOLDER    =  fullfile( q2_topfolder, 'DataFiles', 'Spectroscopy' );

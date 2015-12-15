@@ -80,6 +80,9 @@ switch lower(C.PART)
     fprintf( fid, 'sensor_responseInit\n' );
     fprintf( fid, 'ReadXML( sideband_response, "%s" )\n', C.SIDEBAND_FILE );
     fprintf( fid, 'NumericSet( lo, %.7e )\n', C.LO );
+    if C.F_GRID_NFILL > 0
+      fprintf( fid, 'sensor_responseFillFgrid(nfill=%d)\n', C.F_GRID_NFILL );
+    end
     fprintf( fid, 'sensor_responseMixer\n' );
     fprintf( fid, 'WriteXML( in=sensor_response, filename="%s" )\n', ...
                        fullfile( workfolder, sprintf('sensor_response.xml' ) ) );

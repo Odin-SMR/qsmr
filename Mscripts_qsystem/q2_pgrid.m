@@ -5,7 +5,7 @@
 %    are handled. 
 %
 %    The defualt grid spans roughly 0 to 144 km. With is_pgrid = true, the
-%    spacing is in the order of 200 m , while for retrieval grids it is
+%    spacing is in the order of 400 m , while for retrieval grids it is
 %    about 1.6 km. 
 %
 % FORMAT   p_grid = qs2_pgrid([ zmin, zmax, is_pgrid ] )
@@ -44,7 +44,7 @@ logp2  = -4;    % About 144 km
 % such as 80 and 10, respectively.
 %
 if is_pgrid  
-  npd = 80;    % Value for p_grid, with npd=80 spacing is about 200 m
+  npd = 40;    % Value for p_grid, with npd=40 spacing is about 400 m
 else
   npd = 10;    % Value for retrieval grids, with npd=10 spacing is about 1.6 km
 end

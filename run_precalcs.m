@@ -8,12 +8,16 @@ R.WORK_FOLDER = create_tmpfolder;
 cu = onCleanup( @()delete_tmpfolder( R.WORK_FOLDER ) );
 
 precs = [ 200 100 50 25 ]*1e-3;
+
 fmode = 1;
+q2_precalc_abslookup( o_std(fmode), P, R, precs, true );
+
+fmode = 2;
+q2_precalc_abslookup( o_std(fmode), P, R, precs, true );
 
 %q2_precalc_fgrid( o_std(fmode), P, R, precs, true );
-q2_precalc_abslookup( o_std(fmode), P, R, precs, true );
+%q2_precalc_abslookup( o_std(fmode), P, R, precs, true );
 %q2_precalc_fgrid( o_std(fmode), P, R, precs, false );
-q2_precalc_abslookup( o_std(fmode), P, R, precs, false );
 
 return
 
