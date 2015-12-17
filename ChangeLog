@@ -1,3 +1,16 @@
+2015-12-17  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_database/l1b_crop.m: New.
+
+	* Mscripts_database/l1b_frequency.m: New.
+
+	* l1b_demo.m: A temporary script for testing.
+
+	* Mscripts_qsystem/q2_set_path.m:
+	* Mscripts_qsystem/q2_init.m: Adopted to removed folder.
+
+	* Mscripts_offline: Removed this empty folder.
+
 2015-12-15  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_arts/q2_arts_sensor_parts.m (q2_arts_sensor_parts):

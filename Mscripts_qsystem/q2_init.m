@@ -59,7 +59,6 @@ end
 if ~online
   topfolder = q2_topfolder;
   addpath( fullfile( topfolder, 'Mscripts_precalc' ) );
-  addpath( fullfile( topfolder, 'Mscripts_offline' ) );
 end
 
 

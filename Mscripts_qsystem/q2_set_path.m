@@ -22,5 +22,6 @@ addpath( fullfile( topfolder, 'Mscripts_arts' ) );
 addpath( fullfile( topfolder, 'Mscripts_database' ) );
 addpath( fullfile( topfolder, 'Mscripts_external' ) );
 addpath( fullfile( topfolder, 'Mscripts_qsystem' ) );
+addpath( fullfile( topfolder, 'Mscripts_webapi' ) );
 
 
