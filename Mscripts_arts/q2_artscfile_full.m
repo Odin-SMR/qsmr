@@ -172,7 +172,8 @@ function cfile_abs( fid, C, workfolder )
     %
     fprintf( fid, 'ReadXML( abs_lookup, "%s" )\n', C.ABS_LOOKUP_TABLE );
     fprintf( fid, 'f_gridFromGasAbsLookup\n' );
-    fprintf( fid, 'p_gridFromGasAbsLookup\n' );
+    fprintf( fid, 'ReadXML( p_grid, "%s" )\n', ...
+                                          fullfile( workfolder, 'p_grid.xml' ) );
     fprintf( fid, 'IndexSet( abs_p_interp_order, %d )\n', C.ABS_P_INTERP_ORDER );
     fprintf( fid, 'IndexSet( abs_t_interp_order, %d )\n', C.ABS_T_INTERP_ORDER );
     fprintf( fid, 'IndexSet( abs_nls_interp_order, 0 )\n' );

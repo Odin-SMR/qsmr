@@ -1,6 +1,10 @@
 Patrick:
 ---
 
+* Lat and lon of scan?
+
+* Setting of p_grid?
+
 
 
 
@@ -12,3 +16,5 @@ Joonas:
 
 * Complete header of q2_find_donaletty. See other functions for possible
   format.
+
+* For both functions above, update to use LOG structure.

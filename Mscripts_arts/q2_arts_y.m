@@ -16,9 +16,9 @@
 
 % 2015-05-29   Created by Patrick Eriksson.
 
-function [f,Y] = q2_arts_y(O,R,L1B,varargin)
+function Y = q2_arts_y(L1B,ATM,O,R,varargin)
 %
-[ATM,do_sensor] = optargs( varargin, { [], true } );
+[do_sensor] = optargs( varargin, { true } );
   
 
 %
@@ -43,12 +43,10 @@ C.SPECIES            = arts_tgs_cnvrt( O.ABS_SPECIES );
 
 
 %
-% Extract and save atmosphere
+% Set atmospheric data
 %
-if isempty(ATM)
-  ATM =  q2_get_atm( R, O, L1B );
-end
-%
+xmlStore( fullfile( R.WORK_FOLDER, 'p_grid.xml' ), ATM.P, ...
+                                                         'Vector', 'binary' );
 xmlStore( fullfile( R.WORK_FOLDER, 't_field.xml' ), ATM.T, ...
                                                         'Tensor3', 'binary' );
 xmlStore( fullfile( R.WORK_FOLDER, 'z_field.xml' ), ATM.Z, ...

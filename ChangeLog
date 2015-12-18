@@ -1,5 +1,10 @@
 2015-12-18  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
+	* Mscripts_database/q2_get_atm.m: Updated to use LOG, and now
+	handling WebApi.
+
+2015-12-18  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
 	* Updated and cleaned. This version works with arts-2-3-395, and
 	used the dummy L1B format. This to a have clean point for
 	switching to use real L1B etc.
