@@ -10,8 +10,7 @@ For operational "start-up" see test.m!
 
 For test "start-up" do:
 ---
-q2_init(0);
-R0 = q2_init_r;
+R = q2_init;
 R0.WORK_FOLDER = Q.WORK_AREA;  
 
 For automatic check of Q, do

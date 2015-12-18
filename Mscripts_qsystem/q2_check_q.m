@@ -6,23 +6,16 @@
 %        are included.
 %     2. That correct versions of Atmlab and ARTS are being used.
 %
-% FORMAT   r = q2_check_q(Q,R)
+% FORMAT   q2_check_q(Q,R)
 %        
-% OUT   r   A report string. Empty if all OK.
 % IN    Q   The Q structure to be used.
 %       R   The R structure (with R.FOLDER_SETTINGS set).
 
 % 2015-05-18   Patrick Eriksson.
 
-function r = q2_check_q(Q,R)
+function q2_check_q(Q,R)
 
   
-%- Init error reporting
-%
-r = [];
-mfile = upper( mfilename );
-
-
 %-----------------------------------------------------------------------------
 %--- Part 1
 %-----------------------------------------------------------------------------  
@@ -33,13 +26,7 @@ mfile = upper( mfilename );
                    fullfile( R.FOLDER_SETTINGS, 'q_fields.rst' ) ] );
 %
 if s > 0
-  r = 'Error while reading q_fields.rst.';
-  if nargout
-    r = sprintf( '%s: %s', mfile, r );
-    return;
-  else
-    error( r );
-  end
+  error( 'Error while reading q_fields.rst.' );
 end
   
 
@@ -52,13 +39,7 @@ i1 = strfind( res, startstring );
 i2 = strfind( res, endstring );
 %
 if length(i1) ~= length(i2)
-  r = 'Could not locate fields in q_fields.rst.';
-  if nargout
-    r = sprintf( '%s: %s', mfile, r );
-    return;
-  else
-    error( r );
-  end
+  error( 'Could not locate fields in q_fields.rst.' );
 end
 %
 for i = length(i1):-1:1
@@ -71,13 +52,7 @@ end
 %
 for i = 1 : length(F)
   if ~isfield( Q, F{i} )
-    r = sprintf( 'At least the field *%s* is missing in Q.', F{i} );
-    if nargout
-      r = sprintf( '%s: %s', mfile, r );
-      return;
-    else
-      error( r );
-    end
+    error( 'At least the field *%s* is missing in Q.', F{i} );
   end
 end
 
@@ -89,13 +64,7 @@ QF = fieldnames(Q);
 if length(F) ~= length(QF) 
   for i = 1 : length(QF)
     if ~any( strcmp(QF{i}, F ) )
-      r = sprintf( 'At least the field *%s* of Q is undefined.', QF{i} );
-      if nargout
-        r = sprintf( '%s: %s', mfile, r );
-        return;
-      else
-        error( r );
-      end 
+      error( 'At least the field *%s* of Q is undefined.', QF{i} );
     end
   end
 end
@@ -107,22 +76,10 @@ end
 %-----------------------------------------------------------------------------  
 
 if ~strcmp( atmlab_version, Q.ATMLAB_VERSION )
-  r = 'Atmlab version deviates from selected.';
-  if nargout
-    r = sprintf( '%s: %s', mfile, r );
-    return;
-  else
-    error( r );
-  end
+  error( 'Atmlab version deviates from selected.' );
 end
 
 if ~strcmp( arts_version, Q.ARTS_VERSION )
-  r = 'ARTS version deviates from selected.';
-  if nargout
-    r = sprintf( '%s: %s', mfile, r );
-    return;
-  else
-    error( r );
-  end
+  error( 'ARTS version deviates from selected.' );
 end
 

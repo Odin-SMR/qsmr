@@ -1,7 +1,6 @@
 % Q2_SET_PATH   Adds the Qsmr mscript and setting folders to the search path.
 %
-%    This function should be called at startup. It does not return a
-%    reporting string.
+%    This function should be called at startup. 
 %
 % FORMAT   q2_set_path
 
@@ -22,6 +21,7 @@ addpath( fullfile( topfolder, 'Mscripts_arts' ) );
 addpath( fullfile( topfolder, 'Mscripts_database' ) );
 addpath( fullfile( topfolder, 'Mscripts_external' ) );
 addpath( fullfile( topfolder, 'Mscripts_qsystem' ) );
+addpath( fullfile( topfolder, 'Mscripts_precalc' ) );
 addpath( fullfile( topfolder, 'Mscripts_webapi' ) );
 
 

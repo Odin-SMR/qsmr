@@ -14,8 +14,8 @@ switch whoami
   
  case 'patrick'
   %
-  Q.ARTS_VERSION       = 'arts-2.3.380';
-  Q.ATMLAB_VERSION     = 'atmlab-2.3.133';
+  Q.ARTS_VERSION       = 'arts-2.3.394';
+  Q.ATMLAB_VERSION     = 'atmlab-2.3.140';
   Q.WORK_AREA          = '/home/patrick/WORKAREA';  
   
  case 'joonask'

@@ -1,3 +1,15 @@
+2015-12-18  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_qsystem/q2_create_workfolder.m:
+	* Mscripts_qsystem/q2_init.m:
+	* Mscripts_qsystem/q2_check_q.m:
+	* Mscripts_qsystem/q2_set_path.m: Removed off-line option and
+	report string r.
+
+	* Mscripts_database/q2_find_donaletty.m: Moved to this folder.
+
+	* Mscripts_database/q2_get_atm.m: Just marked slots for WebApi.
+
 2015-12-17  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_database/l1b_crop.m: New.
