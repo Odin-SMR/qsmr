@@ -22,7 +22,7 @@ P.BDX_DATA_INFOLDER = '/home/patrick/Projects/SMR/Qsmr/Input/Climatologies/Bdx';
 %-------------------------------------------------------------------------------
 
 % What integration times to consider
-P.INTEGRATION_TIMES = [ 0.875 1.875 3.875 ];
+P.INTEGRATION_TIMES = [ 0.872 1.872 3.872 ];
 
 
 

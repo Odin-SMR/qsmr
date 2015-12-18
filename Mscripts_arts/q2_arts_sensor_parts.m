@@ -10,38 +10,35 @@
 %
 %   These fields are added to R (for the option 'all'):
 %    F_MIXER
-%    ZA_BORESI   
-%    ZA_PENCIL
 %    H_ANTEN
 %    H_BACKE
 %    H_MIXER
+%    R_EARTH
+%    ZA_BORESI   
+%    ZA_PENCIL
+%    Z_ODIN
 %
-%   Combined information in O and L1B are used:
+%   These fields of O are used
 %     O.ABSLOOKUP_OPTION
 %     O.DZA_GRID_EDGES
 %     O.DZA_MAX_IN_CORE
 %     O.FBAND
 %     O.F_BACKEND_NOMINAL
 %     O.F_LO_NOMINAL
-%     -
-%     L1B.HANNING
-%     L1B.T_INT
-%     L1B.Z_PLAT
-%     L1B.Z_TAN
 %
-% FORMAT R = q2_arts_sensor_parts(O,R,L1B[,part])
+% FORMAT R = q2_arts_sensor_parts(L1B,O,R[,part])
 %
 % OUT   R      Modified R structure.
-% IN    O      O structure.
+% IN    L1B    L1B structure.
+%       O      O structure.
 %       R      R structure.
-%       L1B    ????
 % OPT   part   What part(s) to calculate. Default is 'all'. This argument
 %              matches directly C.PART of q2_artscfile_sensor, and other
 %              options are: 'antenna', 'mixer', 'backend', 'all' and 'total'.
 
 % 2015-05-29   Created by Patrick Eriksson.
 
-function R = q2_arts_sensor_parts(O,R,L1B,part)
+function R = q2_arts_sensor_parts(L1B,O,R,part)
 %
 if nargin < 4, part = 'all'; end
 
@@ -65,9 +62,10 @@ if any( strcmp( part, { 'antenna', 'all' } ) )  |  do_total
   
   C.PART = 'antenna';
 
-  % Zenith angle grids:
-  R.ZA_BORESI = vec2col( geomztan2za( constants('EARTH_RADIUS'), L1B.Z_PLAT, ...
-                                                                 L1B.Z_TAN ) );
+  % Determine variables defining the viewing geometry
+  [R.R_EARTH,R.Z_ODIN,R.ZA_BORESI] = q2_calc_1dviewgeom( L1B );
+
+  % Pencil beam grid
   za_min      = min( R.ZA_BORESI );
   za_max      = max( R.ZA_BORESI );
   R.ZA_PENCIL = [ flip( za_min - O.DZA_GRID_EDGES ), ...
@@ -79,7 +77,7 @@ if any( strcmp( part, { 'antenna', 'all' } ) )  |  do_total
 
   %
   % Set of integration times
-  t_int  = unique( L1B.T_INT );
+  t_int  = unique( L1B.IntTime );
   %
   % Set size of H for antenna part
   if do_total
@@ -93,7 +91,7 @@ if any( strcmp( part, { 'antenna', 'all' } ) )  |  do_total
   % Loop integration times and call arts
   for i = 1 : length( t_int );
     % 
-    ind = find( L1B.T_INT == t_int(i) );
+    ind = find( L1B.IntTime == t_int(i) );
     %
     xmlStore( fullfile( R.WORK_FOLDER, 'antenna_dlos.xml' ), R.ZA_BORESI(ind), ...
                                                         'Matrix', 'binary' );

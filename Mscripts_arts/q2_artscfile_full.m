@@ -19,7 +19,11 @@
 %     HITRAN_FMAX            reading stops at this frequency
 %     PPATH_LMAX
 %     PPATH_LRAYTRACE
+%     R_EARTH                Planet radius to apply
 %     SPECIES                '"ClO',"O3"'
+%     SPECTRO_FOLDER         Folder holding hand-picked spectroscopic data
+%     SPECTRO_FOLDER2        Secondary folder holding hand-picked
+%                            spectroscopic data. Only used if defined.
 %
 %   The options for C.ABSORPTION are 'CalcTable', 'LoadTable' and 'OnTheFly'.
 %   Not all fields are used simultaneously. The required set depends on
@@ -131,8 +135,7 @@ function cfile_start( fid )
   fprintf( fid, '}\n' );
   fprintf( fid, '#\n' );
   fprintf( fid, 'NumericSet( molarmass_dry_air, 28.966 )\n' );
-  fprintf( fid, 'VectorSet( refellipsoid, [ %d, 0 ] )\n', ...
-                                                 constants('EARTH_RADIUS') );
+  fprintf( fid, 'VectorSet( refellipsoid, [ %d, 0 ] )\n', C.R_EARTH );
   fprintf( fid, 'MatrixSet( z_surface, [ 1e3 ] )\n' );
   fprintf( fid, '#\n' );
   fprintf( fid, 'AtmosphereSet1D\n' );

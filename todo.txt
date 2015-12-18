@@ -1,10 +1,9 @@
 Patrick:
 ---
 
-* Lat and lon of scan?
+* Switch to use ellipsoid curvature radius
 
-* Setting of p_grid?
-
+* Varying frequencies in sensor
 
 
 

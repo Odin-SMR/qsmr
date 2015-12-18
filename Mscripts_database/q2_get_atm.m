@@ -28,9 +28,7 @@ end
 
 % Set MJD, lat and lon (even if not used if all data are from WebApi)
 %
-mjd = LOG.MJD;
-lat = ( LOG.StartLat + LOG.EndLat ) / 2;
-lon = ( LOG.StartLon + LOG.EndLon ) / 2;
+[mjd,lat,lon] = q2_calc_scan_pos( LOG );
 
 
 % Pressure grid to use
