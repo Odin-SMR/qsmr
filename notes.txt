@@ -6,87 +6,23 @@ Q: Qsmr settings
 R: repository for internal variables
 
 
-For operational "start-up" see test.m!
 
-For test "start-up" do:
+To start up the system, do
 ---
 R = q2_init;
-R0.WORK_FOLDER = Q.WORK_AREA;  
+
+A work folder must be specified. First option below sets a fixed folder, and
+the second option creates a temporary folder. Use onCleanup to not risk leaving
+a high number of temporary folder behind you!
+---
+%
+R.WORK_FOLDER = Q.WORK_AREA;  
+%
+R  = q2_create_workfolder( Q, R );
+cu = onCleanup( @()delete_tmpfolder( R.WORK_FOLDER ) );
+
 
 For automatic check of Q, do
 ---
 Q = q_std;    
 q2_check_q( Q, R0 );
-
-
-
-
-
-Sensor / SEN
----
-Antenna diagram, for integration times part of scan
-Sideband response
-Channel backend response
-
-
-L1b / L1B
----
-Spectra
-Geometrical tangent altitudes
-Backend frequencies
-Integration times
-Hanning used, or not
-Sensor altitude
-...
-(quality checks?)
-
-
-Absorption / ABS
----
-absorption lookup table
-(gives p_grid and species)
-
-
-Atmosphere / ATM
----
-t field as function of p_grid
-z field
-vmr field (how to handle isotopologues?)
-
-
-HSE
----
-on/off
-pref
-zref
-
-
-Retrieval settings /RET
----
-species 
-  retrieval grid
-  covariance matrix
-  lin/log
-  min / max
-temperature
-  retrieval grid
-  covariance matrix
-Frequency off-set retrieval
-  on/off
-  std dev
-Pointing off-set retrieval
-  ...
-Baseline retrieval
-  ...
-Winds
-  ...
-Aux
-  optical thickness limit(s)
-
-
-OEM
----
-...
-
-
-

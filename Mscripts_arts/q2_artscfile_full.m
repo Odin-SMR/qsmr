@@ -119,9 +119,6 @@ function cfile_start( fid )
   fprintf( fid, '  Ignore( rtp_los )\n' );
   fprintf( fid, '  MatrixCBR( iy, stokes_dim, f_grid )\n' );
   fprintf( fid, '}\n' );
-  fprintf( fid, 'AgendaSet( blackbody_radiation_agenda ){\n' );
-  fprintf( fid, '  blackbody_radiationPlanck\n' );
-  fprintf( fid, '}\n' );
   fprintf( fid, 'AgendaSet( iy_main_agenda ){\n' );
   fprintf( fid, '  iyEmissionStandard\n' );
   fprintf( fid, '}\n' );

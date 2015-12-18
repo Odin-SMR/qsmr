@@ -3,7 +3,7 @@
 %   The function calculates spectra, with or without including sensor
 %   responses, based on a pre-calculated absorption lookup table.
 %
-% FORMAT [f,Y] = q2_arts_y(O,R,L1B,do_sensor)
+% FORMAT [f,Y] = q2_arts_y(O,R,L1B[,ATM,do_sensor])
 %
 % OUT   f           Frequency grid for spectra.
 %       Y           Spectra, as a matrix.
