@@ -77,7 +77,7 @@ P.HITRAN_FMAX       = 1000e9;
 P.SPECTRO_FOLDER    =  fullfile( q2_topfolder, 'DataFiles', 'Spectroscopy' );
 
 % Also allowed to define a second folder. These data will overwrite
-% data from the first folder. The leter folder can be left undefined.
+% data from the first folder. This folder can be left undefined.
 %P.SPECTRO_FOLDER2   =  fullfile( q2_topfolder, 'DataFiles', 'Spectroscopy' );
 
 % The set of temperature perturbations

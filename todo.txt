@@ -1,8 +1,6 @@
 Patrick:
 ---
 
-* Switch to use 01 instead 1 in name of precalc data
-
 * Switch to use ellipsoid curvature radius
 
 * Varying frequencies in sensor
@@ -11,6 +9,7 @@ Patrick:
 
 * Revise l1b_filter
 
+* Go back to narrow freq range for f opt.
 
 
 Joonas:

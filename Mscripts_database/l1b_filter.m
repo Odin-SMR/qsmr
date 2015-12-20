@@ -5,16 +5,19 @@
 %
 %   The quality variables (q_xxxx) are defined in the L1b ATBD.
 %
+%   This function requires that L1B.Frequency is of original type.
+%
 %   To apply the filtering, call *l1b_crop* with the output arguments of
 %   this function.
 %
-% FORMAT   [itan,issb] = l1b_filter([ztan_low,ztan_high,tint_maxdev,lag0_max,
+% FORMAT   [itan,issb] = l1b_filter( L1B,
+%                                   [ztan_low,ztan_high,tint_maxdev,lag0_max,
 %                                    q_tspill, q_trec, q_noise, q_scan, q_nspec,
 %                                    q_tb,     q_tint, q_ref1,  q_ref2, q_moon])
 %
-% OUT  itan  Index of tangent altitudes that are OK according to criteria.
-%      issb  Index of sub-bands that are OK according to criteria.
-%
+% OUT  itan          Index of tangent altitudes that are OK according to criteria.
+%      issb          Index of sub-bands that are OK according to criteria.
+% IN   L1B           L1B structure.
 % OPT  ztan_low      Minimum tangent altitude. 
 %                    Default is -Inf.
 %      ztan_high     Maximum tangent altitude. 

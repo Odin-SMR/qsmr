@@ -54,10 +54,10 @@ do_total  = strcmp( part, 'total' );
 fmode  = L1B.FreqMode(1);
 assert( fmode == O.FMODE );
 %
-% LO and backend frequencies set by internal function, at end of file:
+% Determine f_lo and f_backend for middel point of scan
+% Always used for mixer+sideband, while LO can vary for backend 
+% Set by internal function, at end of file.
 [f_lo,f_backend] = get_fmixerback( L1B, round(length(L1B.Altitude)/2) );
-
-
 
 
 % The different parts are calculated in smallest possible block:
@@ -200,6 +200,10 @@ end
 % Backend
 %
 if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
+
+  if do_total & ~O.F_BACKEND_COMMON
+    error( 'O.F_BACKEND_COMMON must be true for ''total'' option.' );
+  end   
   
   C.PART = 'backend';
   
@@ -214,13 +218,8 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
     xmlStore( fullfile( R.WORK_FOLDER, 'mblock_dlos_grid.xml' ), [0], ...
                                                          'Matrix', 'binary' );
   end
-  
-  % Set f_lo and f_backend
-  
-  % Channel positions, in IF
-  xmlStore( fullfile( R.WORK_FOLDER, 'f_backend.xml' ), abs( f_backend - f_lo ), ... 
-                                                         'Vector', 'binary' );
-  % Backend response
+
+  % Backend response file
   C.BACKEND_FILE = fullfile( O.FOLDER_BACKEND, ...
                               sprintf( 'backend_df%04.0fkHz', ...
                               floor(diff(f_backend([1 2]))/1e3) ) );
@@ -229,12 +228,32 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
   else
     C.BACKEND_FILE = sprintf( '%s_noHan.xml', C.BACKEND_FILE );
   end
-  %
-  if ~do_total
-    cfile    = q2_artscfile_sensor( C, R.WORK_FOLDER );
-    status   = arts( cfile );
-    R.H_BACKE = xmlLoad( fullfile( R.WORK_FOLDER, 'sensor_response.xml' ) );
+
+  % A common set of backend frequencies assumed
+  if O.F_BACKEND_COMMON
+    % Channel positions, in IF
+    xmlStore( fullfile( R.WORK_FOLDER, 'f_backend.xml' ), ...
+                              abs( f_backend - f_lo ), 'Vector', 'binary' );
+    if ~do_total
+      cfile    = q2_artscfile_sensor( C, R.WORK_FOLDER );
+      status   = arts( cfile );
+      R.H_BACKE = xmlLoad( fullfile( R.WORK_FOLDER, 'sensor_response.xml' ) );
+    end
+    
+  % Backend frequencies vary (or rather non-fixed LO)
+  else
+    for i = 1 : length(L1B.Altitude)
+      f_lo = get_fmixerback( L1B, i );
+      xmlStore( fullfile( R.WORK_FOLDER, 'f_backend.xml' ), ...
+                              abs( f_backend - f_lo ), 'Vector', 'binary' );
+      if i == 1
+        cfile        = q2_artscfile_sensor( C, R.WORK_FOLDER );
+      end
+      status       = arts( cfile );
+      R.H_BACKE{i} = xmlLoad( fullfile( R.WORK_FOLDER, 'sensor_response.xml' ) );
+    end
   end
+  
 end
 
 

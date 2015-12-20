@@ -236,14 +236,15 @@ function cfile_abscalc_basics( fid, C, workfolder )
   %
   for z = 1:2
     if z == 1
-      spectrofiles = whichfiles( '*.xml', C.SPECTRO_FOLDER );
+      fname = 'SPECTRO_FOLDER';
     else
-      if isfield( C, 'SPECTRO_FOLDER2' )
-        spectrofiles = whichfiles( '*.xml', C.SPECTRO_FOLDER2 );
-      else
-        spectrofiles = [];
-      end
+      fname = 'SPECTRO_FOLDER2';
     end
+    if isfield( C, fname )
+      spectrofiles = whichfiles( '*.xml', C.(fname) );
+    else
+      spectrofiles = [];
+    end        
     if ~isempty(spectrofiles)
       fprintf( fid, 'ArrayOfLineRecordCreate(handpicked)\n' );
       for i = 1 : length(spectrofiles)

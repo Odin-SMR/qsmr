@@ -60,15 +60,16 @@ return
 function A = do_1fmode( O, P, R, prec, do_cubic )
 
   % Table is calculated for atmospheric state behind first reference spectrum
-  L1B.MJD = P.REFSPECTRA_MJD(1);
-  L1B.LAT = P.REFSPECTRA_LAT(1);
-  L1B.LON = P.REFSPECTRA_LON(1);
+  [L1B,LOG] = homemade_l1b( O, 30e3, P.REFSPECTRA_LAT(1), ...
+                              P.REFSPECTRA_LON(1), P.REFSPECTRA_MJD(1) );
+  ATM =  q2_get_atm( LOG, O );
 
   C.ABSORPTION      = 'CalcTable';
   C.CONTINUA_FILE   = O.CONTINUA_FILE;
   C.HITRAN_PATH     = P.HITRAN_PATH;
   C.HITRAN_FMIN     = P.HITRAN_FMIN;
   C.HITRAN_FMAX     = P.HITRAN_FMAX;
+  C.R_EARTH         = constants( 'EARTH_RADIUS' );
   C.SPECTRO_FOLDER  = P.SPECTRO_FOLDER;
   if isfield( P, 'SPECTRO_FOLDER2' )
     C.SPECTRO_FOLDER2  = P.SPECTRO_FOLDER2;
@@ -89,8 +90,6 @@ function A = do_1fmode( O, P, R, prec, do_cubic )
                                                         'Vector', 'binary' );
   xmlStore( fullfile( R.WORK_FOLDER, 'p_grid.xml' ), O.P_GRID, ...
                                                         'Vector', 'binary' );
-  %
-  ATM =  q2_get_atm( R, O, L1B );
   %
   xmlStore( fullfile( R.WORK_FOLDER, 'abs_t.xml' ), ATM.T, ...
                                                          'Vector', 'binary' );

@@ -13,7 +13,9 @@
 % 
 %    For splitted modes, the procedure is applied on each part separately. The
 %    same procedure is applied for the image band, but with a weaker precision
-%    demand. The complete procedure is repeated 100 tim
+%    demand. The complete procedure is repeated 100 tim.
+%
+%    Hand-picked spectroscopy data are not considered.
 %
 %    Some critical settings here are
 %      O.ABS_SPECIES
@@ -148,17 +150,13 @@ function f_opt = do_1range( O, P, R, frange, precs, do_cubic );
   C.ABSORPTION      = 'OnTheFly';
   C.CONTINUA_FILE   = O.CONTINUA_FILE;
   C.HITRAN_PATH     = P.HITRAN_PATH;
-  C.HITRAN_FMIN     = P.HITRAN_FMIN;
-  C.HITRAN_FMAX     = P.HITRAN_FMAX;
+  C.HITRAN_FMIN     = min(frange) - L.F_EXTRA;
+  C.HITRAN_FMAX     = min(frange) + L.F_EXTRA;
   C.PPATH_LMAX      = O.PPATH_LMAX;
   C.PPATH_LRAYTRACE = O.PPATH_LRAYTRACE;
   C.R_EARTH         = constants( 'EARTH_RADIUS' );
   C.SENSOR_ON       = false;
   C.SPECIES         = arts_tgs_cnvrt( O.ABS_SPECIES );
-  C.SPECTRO_FOLDER  = P.SPECTRO_FOLDER;
-  if isfield( P, 'SPECTRO_FOLDER2' )
-    C.SPECTRO_FOLDER2  = P.SPECTRO_FOLDER2;
-  end
   %
   f_fine = [ frange(1) : P.FGRID_TEST_DF : frange(2)+P.FGRID_TEST_DF/2 ]';
   %
