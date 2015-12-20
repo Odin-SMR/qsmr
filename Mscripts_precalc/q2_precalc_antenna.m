@@ -1,7 +1,7 @@
 % Q2_PRECALC_ANTENNA   Pre-calculation of antenna responses
 %
 %    The function pre-calculates antenna response files for all combinations
-%    of frequency band and integration times.
+%    of frequency mode and integration times.
 %
 %    Used input files are hard-coded. The input files hold static 1D patterns
 %    at 490, 540 and 580 GHz (the same as in Qsmr1). A linear interpolation in
@@ -17,8 +17,8 @@
 %
 %    Final files are stored in O.FOLDER_ANTENNA
 %
-%    Call the function as with O set to o_std(q2_fbands) to perform
-%    pre-calculations for all frequency bands defined.
+%    Call the function as with O set to o_std(q2_fmodes) to perform
+%    pre-calculations for all frequency modes defined.
 %
 % FORMAT   q2_precalc_antenna(O,P)
 %        
@@ -66,7 +66,7 @@ dza_in = dza{1};
 clear filename fid data ldata dza
 
 
-%- Loop all combinations of fbands and integration times.
+%- Loop all combinations of fmodes and integration times.
 %
 for i = 1 : length( O )
 
@@ -79,8 +79,8 @@ for i = 1 : length( O )
     outfolder = O(i).FOLDER_ANTENNA;
     
     outfile = fullfile( outfolder, ...
-                        sprintf( 'antenna_fband%d_tint%04.0fms.xml', ...
-                        O(i).FBAND, P.INTEGRATION_TIMES(j)*1e3 ) );
+                        sprintf( 'antenna_fmode%02d_tint%04.0fms.xml', ...
+                        O(i).FMODE, P.INTEGRATION_TIMES(j)*1e3 ) );
 
     xmlStore( outfile, G, 'GriddedField4' );
   end

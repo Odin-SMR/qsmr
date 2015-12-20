@@ -22,15 +22,6 @@ r_odin = mean( sqrt( sum( L1B.GPSpos.^2, 1 ) ) );
 
 z_odin = r_odin - r_earth;
 
-za = geomztan2za( r_earth, z_odin, L1B.Altitude );
+za = vec2col( geomztan2za( r_earth, z_odin, L1B.Altitude ) );
 
   
-  
-  
-return
-
-% Set a mean lat and lon for the scan
-%
-i0  = round( length(L1B.Altitude)/2 );
-lat = L1B.Latitude(i0);
-lon = L1B.Longitude(i0);

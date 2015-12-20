@@ -15,32 +15,34 @@ function q2_precalc_abslookup(O,P,R,precs,varargin)
 [do_cubic] = optargs( varargin, { false } );
 
 
-%- Loop all fbands
+%- Check folder and file names
+%
+for i = 1 : length( O )
+  for j = 1 : length( precs )
+    
+    [outfolder,outfile] = create_folderfile( O(i), precs(j), do_cubic );
+    
+    if ~exist( outfolder, 'dir' )
+      error( 'The following folder does not exist: %s', outfolder );
+    end
+    if exist( outfile )
+      error( 'The following file does already exist: %s', outfile );
+    end
+    
+  end
+end
+
+
+%- Loop all fmodess
 %
 for i = 1 : length( O )
 
   for j = 1 : length( precs )
   
-    outfolder = fullfile( O(i).FOLDER_ABSLOOKUP, sprintf( '%dmK', precs(j)*1e3) );
+    A = do_1fmode( O(i), P, R, precs(j), do_cubic );
 
-    if do_cubic
-      outfolder = [ outfolder, '_cubic' ];
-    else
-      outfolder = [ outfolder, '_linear' ];
-    end
-
-    if ~exist( outfolder, 'dir' )
-      error( 'The following folder does not exist: %s', outfolder );
-    end
-
-    outfile = fullfile( outfolder, sprintf( 'abslookup_fband%d.xml', ...
-                                                               O(i).FBAND ) );
-    if exist( outfile )
-      error( 'The following file does already exist: %s', outfile );
-    end
+    [outfolder,outfile] = create_folderfile( O(i), precs(j), do_cubic );    
     
-    A = do_1fband( O(i), P, R, precs(j), do_cubic );
-
     xmlStore( outfile, A, 'GasAbsLookup', 'binary' );
 
     %- Create a simple README
@@ -55,7 +57,7 @@ return
 %--------------------------------------------------------------------------
 
 
-function A = do_1fband( O, P, R, prec, do_cubic )
+function A = do_1fmode( O, P, R, prec, do_cubic )
 
   % Table is calculated for atmospheric state behind first reference spectrum
   L1B.MJD = P.REFSPECTRA_MJD(1);
@@ -80,7 +82,7 @@ function A = do_1fband( O, P, R, prec, do_cubic )
   end
   %    
   fgridfile = fullfile( O.FOLDER_FGRID, sprintf( '%dmK_%s', prec*1e3, lorc ), ...
-                        sprintf( 'fgrid_fband%d.xml', O.FBAND ) );
+                        sprintf( 'fgrid_fmode%02d.xml', O.FMODE ) );
   f_grid    = xmlLoad( fgridfile );
   %
   xmlStore( fullfile( R.WORK_FOLDER, 'f_grid.xml' ), f_grid, ...
@@ -102,5 +104,22 @@ function A = do_1fband( O, P, R, prec, do_cubic )
   status = arts( cfile );
   A      = xmlLoad( fullfile( R.WORK_FOLDER, 'abs_lookup.xml' ) );
   
+return
+%--------------------------------------------------------------------------
+
+  
+  
+function [outfolder,outfile] = create_folderfile( O, precs, do_cubic );
+
+  outfolder = fullfile( O.FOLDER_ABSLOOKUP, sprintf( '%dmK', precs*1e3) );
+
+  if do_cubic
+    outfolder = [ outfolder, '_cubic' ];
+  else
+    outfolder = [ outfolder, '_linear' ];
+  end
+
+  outfile = fullfile( outfolder, sprintf( 'abslookup_fmode%02d.xml', ...
+                                                               O.FMODE ) );
 return
 %--------------------------------------------------------------------------

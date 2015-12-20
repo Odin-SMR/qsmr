@@ -1,9 +1,15 @@
 Patrick:
 ---
 
+* Switch to use 01 instead 1 in name of precalc data
+
 * Switch to use ellipsoid curvature radius
 
 * Varying frequencies in sensor
+
+* What are standard t_int?
+
+* Revise l1b_filter
 
 
 
@@ -17,3 +23,14 @@ Joonas:
   format.
 
 * For both functions above, update to use LOG structure.
+
+
+
+Bengt:
+
+* FM nominal frequencies
+* Name/ID
+
+* ECEF GPSpos?
+
+* LOG of l1b_demo: MJD limits not work. Crap around LOG(500)

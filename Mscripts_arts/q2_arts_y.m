@@ -21,12 +21,10 @@ function Y = q2_arts_y(L1B,ATM,O,R,varargin)
   
 
 %
-% Absorption lookup table
+% Frequency mode 
 %
-topfolder = q2_topfolder;
-%
-abslookupfile = fullfile( O.FOLDER_ABSLOOKUP, O.ABSLOOKUP_OPTION, ...
-                          sprintf( 'abslookup_fband%d.xml', O.FBAND ) );
+fmode  = L1B.FreqMode(1);
+assert( fmode == O.FMODE );
 
 
 %
@@ -62,7 +60,8 @@ xmlStore( fullfile( R.WORK_FOLDER, 'sensor_los.xml' ), za, 'Matrix', 'binary' );
 % Set structure defining cfile
 %
 C.ABSORPTION         = 'LoadTable';
-C.ABS_LOOKUP_TABLE   = abslookupfile;
+C.ABS_LOOKUP_TABLE   = fullfile( O.FOLDER_ABSLOOKUP, O.ABSLOOKUP_OPTION, ...
+                                 sprintf( 'abslookup_fmode%02d.xml', fmode ) );;
 C.ABS_P_INTERP_ORDER = O.ABS_P_INTERP_ORDER;
 C.ABS_T_INTERP_ORDER = O.ABS_T_INTERP_ORDER;
 C.PPATH_LMAX         = O.PPATH_LMAX;
@@ -80,11 +79,10 @@ status = arts( cfile );
 y      = xmlLoad( fullfile( R.WORK_FOLDER, 'y.xml' ) );
 %
 if do_sensor
-  f = O.F_BACKEND_NOMINAL;
   y = R.H_TOTAL * y;
-  Y = reshape( y, length(f), length(R.ZA_BORESI) );
+  Y = reshape( y, size(L1B.Frequency,1), length(L1B.Altitude) );
 else
-  A = xmlLoad( abslookupfile );
+  A = xmlLoad( C.ABSORPTION );
   f = A.f_grid;
   Y = reshape( y, length(f), length(za) );
 end

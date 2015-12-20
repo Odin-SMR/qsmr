@@ -23,7 +23,7 @@ L1B = get_scan_l1b_data( LOG.URL );
 
 % Temporary fix
 %
-L1B.HANNING = ones( 1, length( L1B.Altitude ) );
+L1B.Hanning = ones( 1, length( L1B.Altitude ) );
 
 
 % Basic checks

@@ -1,8 +1,8 @@
-function O = o_std(fband)
+function O = o_std(fmode)
 % 
-if length(fband) > 1
-  for i = 1 : length(fband)
-    O(i) = o_std( fband(i) );
+if length(fmode) > 1
+  for i = 1 : length(fmode)
+    O(i) = o_std( fmode(i) );
   end
   return
 end
@@ -16,7 +16,7 @@ end
 topfolder            = q2_topfolder;
 precalcdir           = '/home/patrick/Outdata2/Qsmr2';
   
-O.FBAND              = fband;  
+O.FMODE              = fmode;  
 
 O.FOLDER_ABSLOOKUP   = fullfile( precalcdir, 'AbsLookup' );  
 O.FOLDER_ANTENNA     = fullfile( precalcdir, 'Antenna' );  
@@ -53,7 +53,7 @@ O.SIDEBAND_LEAKAGE   = 0.01;
 %--- Band specific
 %---------------------------------------------------------------------------
 
-switch fband
+switch fmode
   
  case 1
   %
@@ -87,7 +87,8 @@ switch fband
   O.ABS_SPECIES(6).SOURCE   = 'Bdx';
   O.ABS_SPECIES(6).RETRIEVE = false;
   %
-  O.FBAND_NAME              = 'SM_AC2ab';
+  O.BACKEND_NR              = '2';
+  O.FRONTEND_NR             = '2';
   O.F_BACKEND_NOMINAL       = [ 501180:501580 502180:502380 ]*1e6;
   O.F_LO_NOMINAL            = 497.88e9;
   %-------------------------------------------------------------------------
@@ -121,14 +122,15 @@ switch fband
   O.ABS_SPECIES(5).SOURCE   = 'Bdx';
   O.ABS_SPECIES(5).RETRIEVE = false;
   %
-  O.FBAND_NAME              = 'SM_AC1e';
+  O.BACKEND_NR              = '1';
+  %O.FRONTEND_NR             = '1';
   O.F_BACKEND_NOMINAL       = [ 544120:544920 ]*1e6;
   O.F_LO_NOMINAL            = 548.500e9;
   %-------------------------------------------------------------------------
 
     
  otherwise
-  error( 'Frequency band %d is not yet handled (or not defined).', fband );
+  error( 'Frequency band %d is not yet handled (or not defined).', fmode );
 end
 
   

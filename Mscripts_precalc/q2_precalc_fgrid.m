@@ -1,16 +1,19 @@
 % Q2_PRECALC_FGRID   Frequency grid pre-calculation by a simple optimisation
 %
-%    The function pre-calculates frequency grids for all combinations
-%    of frequency bands and selected precision limits. This is done by a
-%    simple "optimisation" algorithm. Reference spectra are calculated on a
-%    fine grid for a number of atmospheric scenarios. The optimised grid is
-%    found by starting with the end points of the fine grid. A linear
-%    interpolation is performed back to the fine grid and the frequency grid
-%    point where the maximum deviation is found is added to the optimised
-%    grid. This procedure is repeated until the deviation is smaller than
-%    the precision limit. For splitted bands, the procedure is applied on
-%    each part separately. The same procedure is applied for the image band,
-%    but with a weaker precision demand.
+%    The function pre-calculates frequency grids for all combinations of
+%    frequency modes and selected precision limits. This is done by a simple
+%    "optimisation" algorithm. Reference spectra are calculated on a fine grid
+%    for a number of atmospheric scenarios. The optimised grid is found by
+%    starting with the end points plus two randomly selected points inside the
+%    range of the fine grid. A linear or cubic interpolation is performed back
+%    to the fine grid and the frequency grid point where the maximum deviation
+%    is found is added to the optimised grid. This procedure is repeated until
+%    the deviation is smaller than the precision limit. This is repeated 100
+%    times and the shortest grid is selected.
+% 
+%    For splitted modes, the procedure is applied on each part separately. The
+%    same procedure is applied for the image band, but with a weaker precision
+%    demand. The complete procedure is repeated 100 tim
 %
 %    Some critical settings here are
 %      O.ABS_SPECIES
@@ -20,11 +23,15 @@
 %      P.FGRID_TEST_DF
 %      P.FGRID_EDGE_MARGIN
 %
-%    The set of test simulations are hard-coded, see the structure L in the
-%    sub-function *do_1range*.
+%    Atmospheric data are hard-coded to be taken from the local version of the
+%    Bdx database (O.ABS_SPECIES.SOURCE = 'Bdx') and MSIS90 (O.T_SOURCE =
+%    'MSIS90').
 %
-%    Call the function as with O set to o_std(q2_fbands) to perform
-%    pre-calculations for all frequency bands defined.
+%    The set of test simulations are mainly defined by P. Some details, such
+%    as orbit altitude, are hard-coded.
+%
+%    Call the function as with O set to o_std(q2_fmodes) to perform
+%    pre-calculations for all frequency modes defined.
 %
 %    Final files are stored in a subfolder of O.FOLDER_FGRID
 %
@@ -43,26 +50,40 @@ function q2_precalc_fgrid(O,P,R,precs,varargin)
 [do_cubic] = optargs( varargin, { false } );
 
 
-%- Loop all fbands
+%- Hard-coded O settings
+% 
+O.T_SOURCE             = 'MSIS90';
+[O.ABS_SPECIES.SOURCE] = deal( 'Bdx' ); 
+
+
+%- Check folder and file names
+%
+for i = 1 : length( O )
+  for j = 1 : length( precs )
+    
+    [outfolder,outfile] = create_folderfile( O(i), precs(j), do_cubic );
+    
+    if ~exist( outfolder, 'dir' )
+      error( 'The following folder does not exist: %s', outfolder );
+    end
+    if exist( outfile )
+      error( 'The following file does already exist: %s', outfile );
+    end
+    
+  end
+end
+
+
+%- Loop all fmodes
 %
 for i = 1 : length( O )
 
-  f_opt = do_1fband( O(i), P, R, precs, do_cubic );
+  f_opt = do_1fmode( O(i), P, R, precs, do_cubic );
 
   for j = 1 : length( precs )
 
-    if do_cubic
-      lorc = 'cubic';
-    else
-      lorc = 'linear';
-    end
-    
-    outfolder = fullfile( O(i).FOLDER_FGRID, ...
-                          sprintf( '%dmK_%s', precs(j)*1e3, lorc ) );
+    [outfolder,outfile] = create_folderfile( O(i), precs(j), do_cubic );
 
-    outfile = fullfile( outfolder, ...
-                        sprintf( 'fgrid_fband%d.xml', O(i).FBAND ) );
-  
     xmlStore( outfile, f_opt{j}, 'Vector', 'binary' );
     
     %- Create a simple README
@@ -80,7 +101,7 @@ return
 
 
 
-function f_opt = do_1fband( O, P, R, precs, do_cubic );
+function f_opt = do_1fmode( O, P, R, precs, do_cubic );
   %
   for j = 1 : length( precs )
     f_opt{j} = [];
@@ -127,12 +148,17 @@ function f_opt = do_1range( O, P, R, frange, precs, do_cubic );
   C.ABSORPTION      = 'OnTheFly';
   C.CONTINUA_FILE   = O.CONTINUA_FILE;
   C.HITRAN_PATH     = P.HITRAN_PATH;
-  C.HITRAN_FMIN     = frange(1) - L.F_EXTRA;
-  C.HITRAN_FMAX     = frange(2) + L.F_EXTRA;
+  C.HITRAN_FMIN     = P.HITRAN_FMIN;
+  C.HITRAN_FMAX     = P.HITRAN_FMAX;
   C.PPATH_LMAX      = O.PPATH_LMAX;
   C.PPATH_LRAYTRACE = O.PPATH_LRAYTRACE;
+  C.R_EARTH         = constants( 'EARTH_RADIUS' );
   C.SENSOR_ON       = false;
   C.SPECIES         = arts_tgs_cnvrt( O.ABS_SPECIES );
+  C.SPECTRO_FOLDER  = P.SPECTRO_FOLDER;
+  if isfield( P, 'SPECTRO_FOLDER2' )
+    C.SPECTRO_FOLDER2  = P.SPECTRO_FOLDER2;
+  end
   %
   f_fine = [ frange(1) : P.FGRID_TEST_DF : frange(2)+P.FGRID_TEST_DF/2 ]';
   %
@@ -147,11 +173,10 @@ function f_opt = do_1range( O, P, R, frange, precs, do_cubic );
   %
   for i = 1 : length( P.REFSPECTRA_LAT )
     %
-    L1B.MJD = P.REFSPECTRA_MJD(i);
-    L1B.LAT = P.REFSPECTRA_LAT(i);
-    L1B.LON = P.REFSPECTRA_LON(i);
+    [L1B,LOG] = homemade_l1b( O, P.REFSPECTRA_ZTAN, P.REFSPECTRA_LAT(i), ...
+                              P.REFSPECTRA_LON(i), P.REFSPECTRA_MJD(i) );
     %
-    ATM =  q2_get_atm( R, O, L1B );
+    ATM =  q2_get_atm( LOG, O );
     %
     xmlStore( fullfile( R.WORK_FOLDER, 't_field.xml' ), ATM.T, ...
                                                         'Tensor3', 'binary' );
@@ -221,6 +246,19 @@ function [f_opt,maxdev] = f_opt_1band( f_fine, Y, tb_lim, do_cubic )
   end
   
 return
+%--------------------------------------------------------------------------
 
 
+function [outfolder,outfile] = create_folderfile( O, precs, do_cubic );
 
+  if do_cubic
+    lorc = 'cubic';
+  else
+    lorc = 'linear';
+  end
+    
+  outfolder = fullfile( O.FOLDER_FGRID, sprintf( '%dmK_%s', precs*1e3, lorc ) );
+
+  outfile = fullfile( outfolder, sprintf( 'fgrid_fmode%02d.xml', O.FMODE ) );
+return
+%--------------------------------------------------------------------------
