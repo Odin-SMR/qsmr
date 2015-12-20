@@ -28,6 +28,6 @@ L1B.Hanning = ones( 1, length( L1B.Altitude ) );
 
 % Basic checks
 %
-if unique( L1B.FreqMode ) > 1
+if length(unique( L1B.FreqMode )) > 1
   error( 'The L1B data can just contain a single frequency mode.' );
 end

@@ -2,26 +2,26 @@
 %
 %   The function returns absolute frequencies for the selected set of spectra.
 %
-% FORMAT   F = l1b_frequency( l1b [, itan] )
+% FORMAT   F = l1b_frequency( L1B [, itan] )
 %
 % OUT  F     Frequencies, one column per spectrum.
-% IN   l1b   L1b data
+% IN   L1B   L1B data
 % OPT  itan  Returns frequency for these tangent altitude index. Default is
 %            to include all.
 
 % 2015-12-16   Patrick Eriksson
 
-function F = l1b_frequency( l1b, itan )
+function F = l1b_frequency( L1B, itan )
 %
 if nargin < 2
-  itan = 1 : length(l1b.Frequency.LOFreq);
+  itan = 1 : length(L1B.Frequency.LOFreq);
 end
   
-nf = length( l1b.Frequency.IFreqGrid );
+nf = length( L1B.Frequency.IFreqGrid );
 nt = length( itan);
 
 F = zeros( nf, nt );
 
 for i = 1 : nt
-  F(:,i) = l1b.Frequency.LOFreq(itan(i)) + l1b.Frequency.IFreqGrid;
+  F(:,i) = L1B.Frequency.LOFreq(itan(i)) + L1B.Frequency.IFreqGrid;
 end

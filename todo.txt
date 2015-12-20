@@ -33,3 +33,5 @@ Bengt:
 * ECEF GPSpos?
 
 * LOG of l1b_demo: MJD limits not work. Crap around LOG(500)
+
+* Empty IFreqGrid for fmode 2 in l1b_demo.

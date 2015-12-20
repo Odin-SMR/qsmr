@@ -49,7 +49,7 @@ O.DZA_GRID_EDGES     = [ O.DZA_MAX_IN_CORE*[1:3 5 8 12 21] ];
 
 O.SIDEBAND_LEAKAGE   = 0.01;
 
-O.F_BACKEND_COMMON   = false;
+O.F_BACKEND_COMMON   = true;
 
 
 %---------------------------------------------------------------------------
@@ -126,7 +126,7 @@ switch fmode
   O.ABS_SPECIES(5).RETRIEVE = false;
   %
   O.BACKEND_NR              = '1';
-  %O.FRONTEND_NR             = '1';
+  O.FRONTEND_NR             = '4';
   O.F_BACKEND_NOMINAL       = [ 544120:544920 ]*1e6;
   O.F_LO_NOMINAL            = 548.500e9;
   %-------------------------------------------------------------------------
