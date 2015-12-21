@@ -1,8 +1,8 @@
 % Q2_PRECALC_ABSLOOKUP
 %
-% FORMAT   q2_precalc_abslookup(O,P,R,precs)
+% FORMAT   q2_precalc_abslookup(QQ,P,R,precs)
 %        
-% IN    O       An array of O structures
+% IN    QQ      An array of Q structures
 %       P       A P structure
 %       R       A R structure
 %       precs   A vector of precision limits.
@@ -10,17 +10,17 @@
 
 % 2015-05-25   Created by Patrick Eriksson.
 
-function q2_precalc_abslookup(O,P,R,precs,varargin)
+function q2_precalc_abslookup(QQ,P,R,precs,varargin)
 %
 [do_cubic] = optargs( varargin, { false } );
 
 
 %- Check folder and file names
 %
-for i = 1 : length( O )
+for i = 1 : length( QQ )
   for j = 1 : length( precs )
     
-    [outfolder,outfile] = create_folderfile( O(i), precs(j), do_cubic );
+    [outfolder,outfile] = create_folderfile( QQ(i), precs(j), do_cubic );
     
     if ~exist( outfolder, 'dir' )
       error( 'The following folder does not exist: %s', outfolder );
@@ -35,13 +35,13 @@ end
 
 %- Loop all fmodess
 %
-for i = 1 : length( O )
+for i = 1 : length( QQ )
 
   for j = 1 : length( precs )
   
-    A = do_1fmode( O(i), P, R, precs(j), do_cubic );
+    A = do_1fmode( QQ(i), P, R, precs(j), do_cubic );
 
-    [outfolder,outfile] = create_folderfile( O(i), precs(j), do_cubic );    
+    [outfolder,outfile] = create_folderfile( QQ(i), precs(j), do_cubic );    
     
     xmlStore( outfile, A, 'GasAbsLookup', 'binary' );
 
@@ -57,15 +57,15 @@ return
 %--------------------------------------------------------------------------
 
 
-function A = do_1fmode( O, P, R, prec, do_cubic )
+function A = do_1fmode( Q, P, R, prec, do_cubic )
 
   % Table is calculated for atmospheric state behind first reference spectrum
-  [L1B,LOG] = homemade_l1b( O, 30e3, P.REFSPECTRA_LAT(1), ...
+  [L1B,LOG] = homemade_l1b( Q, 30e3, P.REFSPECTRA_LAT(1), ...
                               P.REFSPECTRA_LON(1), P.REFSPECTRA_MJD(1) );
-  ATM =  q2_get_atm( LOG, O );
+  ATM =  q2_get_atm( LOG, Q );
 
   C.ABSORPTION      = 'CalcTable';
-  C.CONTINUA_FILE   = O.CONTINUA_FILE;
+  C.CONTINUA_FILE   = Q.CONTINUA_FILE;
   C.HITRAN_PATH     = P.HITRAN_PATH;
   C.HITRAN_FMIN     = P.HITRAN_FMIN;
   C.HITRAN_FMAX     = P.HITRAN_FMAX;
@@ -74,7 +74,7 @@ function A = do_1fmode( O, P, R, prec, do_cubic )
   if isfield( P, 'SPECTRO_FOLDER2' )
     C.SPECTRO_FOLDER2  = P.SPECTRO_FOLDER2;
   end
-  C.SPECIES         = arts_tgs_cnvrt( O.ABS_SPECIES );
+  C.SPECIES         = arts_tgs_cnvrt( Q.ABS_SPECIES );
 
   if do_cubic
     lorc = 'cubic';
@@ -82,13 +82,13 @@ function A = do_1fmode( O, P, R, prec, do_cubic )
     lorc = 'linear';
   end
   %    
-  fgridfile = fullfile( O.FOLDER_FGRID, sprintf( '%dmK_%s', prec*1e3, lorc ), ...
-                        sprintf( 'fgrid_fmode%02d.xml', O.FMODE ) );
+  fgridfile = fullfile( Q.FOLDER_FGRID, sprintf( '%dmK_%s', prec*1e3, lorc ), ...
+                        sprintf( 'fgrid_fmode%02d.xml', Q.FMODE ) );
   f_grid    = xmlLoad( fgridfile );
   %
   xmlStore( fullfile( R.WORK_FOLDER, 'f_grid.xml' ), f_grid, ...
                                                         'Vector', 'binary' );
-  xmlStore( fullfile( R.WORK_FOLDER, 'p_grid.xml' ), O.P_GRID, ...
+  xmlStore( fullfile( R.WORK_FOLDER, 'p_grid.xml' ), Q.P_GRID, ...
                                                         'Vector', 'binary' );
   %
   xmlStore( fullfile( R.WORK_FOLDER, 'abs_t.xml' ), ATM.T, ...
@@ -108,9 +108,9 @@ return
 
   
   
-function [outfolder,outfile] = create_folderfile( O, precs, do_cubic );
+function [outfolder,outfile] = create_folderfile( Q, precs, do_cubic );
 
-  outfolder = fullfile( O.FOLDER_ABSLOOKUP, sprintf( '%dmK', precs*1e3) );
+  outfolder = fullfile( Q.FOLDER_ABSLOOKUP, sprintf( '%dmK', precs*1e3) );
 
   if do_cubic
     outfolder = [ outfolder, '_cubic' ];
@@ -119,6 +119,6 @@ function [outfolder,outfile] = create_folderfile( O, precs, do_cubic );
   end
 
   outfile = fullfile( outfolder, sprintf( 'abslookup_fmode%02d.xml', ...
-                                                               O.FMODE ) );
+                                                               Q.FMODE ) );
 return
 %--------------------------------------------------------------------------

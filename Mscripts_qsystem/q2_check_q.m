@@ -1,29 +1,21 @@
 % Q2_CHECK_Q   Performs basic checks of the Q structure
 %
-%   The following checks are performed:
+%   The function tests if Q only contains recognised fields, and that all
+%   fields are included.
 %
-%     1. If Q only contains recognised fields, and that all fields 
-%        are included.
-%     2. That correct versions of Atmlab and ARTS are being used.
-%
-% FORMAT   q2_check_q(Q,R)
+% FORMAT   q2_check_q(Q)
 %        
-% IN    Q   The Q structure to be used.
-%       R   The R structure (with R.FOLDER_SETTINGS set).
+% IN    Q   The Q structure to be checked.
 
 % 2015-05-18   Patrick Eriksson.
 
-function q2_check_q(Q,R)
+function q2_check_q(Q)
 
   
-%-----------------------------------------------------------------------------
-%--- Part 1
-%-----------------------------------------------------------------------------  
-
 %- Read RST documentation 
 %
-[s,res] = system( ['rst2latex ', ...
-                   fullfile( R.FOLDER_SETTINGS, 'q_fields.rst' ) ] );
+[s,res] = system( ['rst2latex ', fullfile( q2_topfolder, ...
+                                           'Settings', 'q_fields.rst' ) ] );
 %
 if s > 0
   error( 'Error while reading q_fields.rst.' );
@@ -69,17 +61,4 @@ if length(F) ~= length(QF)
   end
 end
 
-
-
-%-----------------------------------------------------------------------------
-%--- Part 2
-%-----------------------------------------------------------------------------  
-
-if ~strcmp( atmlab_version, Q.ATMLAB_VERSION )
-  error( 'Atmlab version deviates from selected.' );
-end
-
-if ~strcmp( arts_version, Q.ARTS_VERSION )
-  error( 'ARTS version deviates from selected.' );
-end
 

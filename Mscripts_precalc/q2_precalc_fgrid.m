@@ -18,15 +18,15 @@
 %    Hand-picked spectroscopy data are not considered.
 %
 %    Some critical settings here are
-%      O.ABS_SPECIES
-%      O.P_GRID
-%      O.F_BACKEND_NOMINAL
-%      O.F_LO_NOMINAL
+%      Q.ABS_SPECIES
+%      Q.P_GRID
+%      Q.F_BACKEND_NOMINAL
+%      Q.F_LO_NOMINAL
 %      P.FGRID_TEST_DF
 %      P.FGRID_EDGE_MARGIN
 %
 %    Atmospheric data are hard-coded to be taken from the local version of the
-%    Bdx database (O.ABS_SPECIES.SOURCE = 'Bdx') and MSIS90 (O.T_SOURCE =
+%    Bdx database (Q.ABS_SPECIES.SOURCE = 'Bdx') and MSIS90 (Q.T_SOURCE =
 %    'MSIS90').
 %
 %    The set of test simulations are mainly defined by P. Some details, such
@@ -35,11 +35,11 @@
 %    Call the function as with O set to o_std(q2_fmodes) to perform
 %    pre-calculations for all frequency modes defined.
 %
-%    Final files are stored in a subfolder of O.FOLDER_FGRID
+%    Final files are stored in a subfolder of Q.FOLDER_FGRID
 %
-% FORMAT   q2_precalc_fgrid(O,P,R,precs)
+% FORMAT   q2_precalc_fgrid(QQ,P,R,precs)
 %        
-% IN    O        An array of O structures
+% IN    QQ       An array of Q structures
 %       P        A P structure
 %       R        A R structure
 %       precs    Vector of precision limits [K]. 
@@ -47,23 +47,18 @@
 
 % 2015-05-25   Created by Patrick Eriksson.
 
-function q2_precalc_fgrid(O,P,R,precs,varargin)
+function q2_precalc_fgrid(QQ,P,R,precs,varargin)
 %
 [do_cubic] = optargs( varargin, { false } );
 
 
-%- Hard-coded O settings
-% 
-O.T_SOURCE             = 'MSIS90';
-[O.ABS_SPECIES.SOURCE] = deal( 'Bdx' ); 
-
 
 %- Check folder and file names
 %
-for i = 1 : length( O )
+for i = 1 : length( QQ )
   for j = 1 : length( precs )
     
-    [outfolder,outfile] = create_folderfile( O(i), precs(j), do_cubic );
+    [outfolder,outfile] = create_folderfile( QQ(i), precs(j), do_cubic );
     
     if ~exist( outfolder, 'dir' )
       error( 'The following folder does not exist: %s', outfolder );
@@ -78,13 +73,13 @@ end
 
 %- Loop all fmodes
 %
-for i = 1 : length( O )
+for i = 1 : length( QQ )
 
-  f_opt = do_1fmode( O(i), P, R, precs, do_cubic );
+  f_opt = do_1fmode( QQ(i), P, R, precs, do_cubic );
 
   for j = 1 : length( precs )
 
-    [outfolder,outfile] = create_folderfile( O(i), precs(j), do_cubic );
+    [outfolder,outfile] = create_folderfile( QQ(i), precs(j), do_cubic );
 
     xmlStore( outfile, f_opt{j}, 'Vector', 'binary' );
     
@@ -103,27 +98,32 @@ return
 
 
 
-function f_opt = do_1fmode( O, P, R, precs, do_cubic );
-  %
+function f_opt = do_1fmode( Q, P, R, precs, do_cubic );
+
+  %- Hard-coded O settings
+  % 
+  Q.T_SOURCE             = 'MSIS90';
+  [Q.ABS_SPECIES.SOURCE] = deal( 'Bdx' ); 
+
   for j = 1 : length( precs )
     f_opt{j} = [];
   end
   %
   bp = [ 0;
-         find( diff(vec2row(O.F_BACKEND_NOMINAL)) > 2*P.FGRID_EDGE_MARGIN );
-         length(O.F_BACKEND_NOMINAL) ];
+         find( diff(vec2row(Q.F_BACKEND_NOMINAL)) > 2*P.FGRID_EDGE_MARGIN );
+         length(Q.F_BACKEND_NOMINAL) ];
   %
   for i = 1 : length(bp)-1
     % Part of main band
-    frange = O.F_BACKEND_NOMINAL( [ bp(i)+1 bp(i+1) ] ) + ...
+    frange = Q.F_BACKEND_NOMINAL( [ bp(i)+1 bp(i+1) ] ) + ...
              P.FGRID_EDGE_MARGIN * [-1 1];
-    fpart  = do_1range( O, P, R, frange, precs, do_cubic );
+    fpart  = do_1range( Q, P, R, frange, precs, do_cubic );
     for j = 1 : length( precs )
       f_opt{j} = [ f_opt{j}; fpart{j} ];
     end
     % Corresponding part in side band
-    frange = sort( 2*O.F_LO_NOMINAL - frange );
-    fpart  = do_1range( O, P, R, frange, 20*precs, do_cubic );
+    frange = sort( 2*Q.F_LO_NOMINAL - frange );
+    fpart  = do_1range( Q, P, R, frange, 20*precs, do_cubic );
     for j = 1 : length( precs )
       f_opt{j} = [ f_opt{j}; fpart{j} ];
     end
@@ -138,7 +138,7 @@ return
 
 
 
-function f_opt = do_1range( O, P, R, frange, precs, do_cubic );
+function f_opt = do_1range( Q, P, R, frange, precs, do_cubic );
 
   % Local settings:
   %
@@ -148,21 +148,21 @@ function f_opt = do_1range( O, P, R, frange, precs, do_cubic );
   % Create cfile and needed variables
   %
   C.ABSORPTION      = 'OnTheFly';
-  C.CONTINUA_FILE   = O.CONTINUA_FILE;
+  C.CONTINUA_FILE   = Q.CONTINUA_FILE;
   C.HITRAN_PATH     = P.HITRAN_PATH;
   C.HITRAN_FMIN     = min(frange) - L.F_EXTRA;
   C.HITRAN_FMAX     = min(frange) + L.F_EXTRA;
-  C.PPATH_LMAX      = O.PPATH_LMAX;
-  C.PPATH_LRAYTRACE = O.PPATH_LRAYTRACE;
+  C.PPATH_LMAX      = Q.PPATH_LMAX;
+  C.PPATH_LRAYTRACE = Q.PPATH_LRAYTRACE;
   C.R_EARTH         = constants( 'EARTH_RADIUS' );
   C.SENSOR_ON       = false;
-  C.SPECIES         = arts_tgs_cnvrt( O.ABS_SPECIES );
+  C.SPECIES         = arts_tgs_cnvrt( Q.ABS_SPECIES );
   %
   f_fine = [ frange(1) : P.FGRID_TEST_DF : frange(2)+P.FGRID_TEST_DF/2 ]';
   %
   xmlStore( fullfile( R.WORK_FOLDER, 'f_grid.xml' ), f_fine, ...
                                                         'Vector', 'binary' );
-  xmlStore( fullfile( R.WORK_FOLDER, 'p_grid.xml' ), O.P_GRID, ...
+  xmlStore( fullfile( R.WORK_FOLDER, 'p_grid.xml' ), Q.P_GRID, ...
                                                         'Vector', 'binary' );
   %
   cfile  = q2_artscfile_full( C, R.WORK_FOLDER );
@@ -255,8 +255,8 @@ function [outfolder,outfile] = create_folderfile( O, precs, do_cubic );
     lorc = 'linear';
   end
     
-  outfolder = fullfile( O.FOLDER_FGRID, sprintf( '%dmK_%s', precs*1e3, lorc ) );
+  outfolder = fullfile( Q.FOLDER_FGRID, sprintf( '%dmK_%s', precs*1e3, lorc ) );
 
-  outfile = fullfile( outfolder, sprintf( 'fgrid_fmode%02d.xml', O.FMODE ) );
+  outfile = fullfile( outfolder, sprintf( 'fgrid_fmode%02d.xml', Q.FMODE ) );
 return
 %--------------------------------------------------------------------------

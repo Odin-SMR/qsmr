@@ -1,22 +1,22 @@
 Rough meaning of structures used
 ---
-O: "off-line mode" settings 
 P: pre-calculation settings
 Q: Qsmr settings  
+S: system settings
 R: repository for internal variables
 
 
-
-To start up the system, do
+To check that Qsmr correctly configured
 ---
-R = q2_init;
+q2_init;
+
 
 A work folder must be specified. First option below sets a fixed folder, and
 the second option creates a temporary folder. Use onCleanup to not risk leaving
 a high number of temporary folder behind you!
 ---
 %
-R.WORK_FOLDER = Q.WORK_AREA;  
+R.WORK_FOLDER = '/home/patrick/WORKAREA';
 %
 R  = q2_create_workfolder( Q, R );
 cu = onCleanup( @()delete_tmpfolder( R.WORK_FOLDER ) );
@@ -24,5 +24,5 @@ cu = onCleanup( @()delete_tmpfolder( R.WORK_FOLDER ) );
 
 For automatic check of Q, do
 ---
-Q = q_std;    
-q2_check_q( Q, R0 );
+Q = q_std(1);    
+q2_check_q( Q );

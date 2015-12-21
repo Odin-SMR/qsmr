@@ -3,11 +3,11 @@
 %   The function calculates spectra, with or without including sensor
 %   responses, based on a pre-calculated absorption lookup table.
 %
-% FORMAT [f,Y] = q2_arts_y(O,R,L1B,ATM[,do_sensor])
+% FORMAT [f,Y] = q2_arts_y(Q,R,L1B,ATM[,do_sensor])
 %
 % OUT   f           Frequency grid for spectra.
 %       Y           Spectra, as a matrix.
-% IN    O           O structure.
+% IN    Q           Q structure.
 %       R           R structure.
 %       L1B         L1B structure.
 %       ATM         Structure of ATM-type, see *q2_get_atm*.
@@ -15,7 +15,7 @@
 
 % 2015-05-29   Created by Patrick Eriksson.
 
-function Y = q2_arts_y(L1B,ATM,O,R,varargin)
+function Y = q2_arts_y(L1B,ATM,Q,R,varargin)
 %
 [do_sensor] = optargs( varargin, { true } );
   
@@ -24,7 +24,7 @@ function Y = q2_arts_y(L1B,ATM,O,R,varargin)
 % Frequency mode 
 %
 fmode  = L1B.FreqMode(1);
-assert( fmode == O.FMODE );
+assert( fmode == Q.FMODE );
 
 
 %
@@ -44,7 +44,7 @@ xmlStore( fullfile( R.WORK_FOLDER, 'vmr_field.xml' ), ATM.VMR, ...
 % Sensor 
 %
 if do_sensor
-  R  = q2_arts_sensor_parts( L1B, O, R );
+  R  = q2_arts_sensor_parts( L1B, Q, R );
   R  = q2_arts_sensor( R );
   za = R.ZA_PENCIL;
 else
@@ -60,13 +60,13 @@ xmlStore( fullfile( R.WORK_FOLDER, 'sensor_los.xml' ), za, 'Matrix', 'binary' );
 % Set structure defining cfile
 %
 C.ABSORPTION         = 'LoadTable';
-C.ABS_LOOKUP_TABLE   = fullfile( O.FOLDER_ABSLOOKUP, O.ABSLOOKUP_OPTION, ...
+C.ABS_LOOKUP_TABLE   = fullfile( Q.FOLDER_ABSLOOKUP, Q.ABSLOOKUP_OPTION, ...
                                  sprintf( 'abslookup_fmode%02d.xml', fmode ) );;
-C.ABS_P_INTERP_ORDER = O.ABS_P_INTERP_ORDER;
-C.ABS_T_INTERP_ORDER = O.ABS_T_INTERP_ORDER;
-C.PPATH_LMAX         = O.PPATH_LMAX;
-C.PPATH_LRAYTRACE    = O.PPATH_LRAYTRACE;
-C.SPECIES            = arts_tgs_cnvrt( O.ABS_SPECIES );
+C.ABS_P_INTERP_ORDER = Q.ABS_P_INTERP_ORDER;
+C.ABS_T_INTERP_ORDER = Q.ABS_T_INTERP_ORDER;
+C.PPATH_LMAX         = Q.PPATH_LMAX;
+C.PPATH_LRAYTRACE    = Q.PPATH_LRAYTRACE;
+C.SPECIES            = arts_tgs_cnvrt( Q.ABS_SPECIES );
 C.R_EARTH            = R.R_EARTH;
 
 

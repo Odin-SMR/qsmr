@@ -9,26 +9,26 @@
 %    between 490 and 580 GHz are handled. 
 %  
 %    The antenna pattern is calculated for the mean of first and last value in
-%    O.F_BACKEND_NOMINAL.
+%    Q.F_BACKEND_NOMINAL.
 %
 %    The effect of vertical scanning is included. This calculation assumes a
 %    fixed satellite altitude of 600 km and a tangent altitude of 20 km. The
 %    set of integration times is taken from P.INTEGRATION_TIMES.
 %
-%    Final files are stored in O.FOLDER_ANTENNA
+%    Final files are stored in Q.FOLDER_ANTENNA
 %
 %    Call the function as with O set to o_std(q2_fmodes) to perform
 %    pre-calculations for all frequency modes defined.
 %
-% FORMAT   q2_precalc_antenna(O,P)
+% FORMAT   q2_precalc_antenna(QQ,P)
 %        
-% IN    O   An array of O structures
+% IN    QQ  An array of Q structures
 %       P   A P structure
 
 % 2015-05-19   Created by Patrick Eriksson.
 
 
-function q2_precalc_antenna(O,P)
+function q2_precalc_antenna(QQ,P)
   
 
 %- Set in and out folder
@@ -68,19 +68,19 @@ clear filename fid data ldata dza
 
 %- Loop all combinations of fmodes and integration times.
 %
-for i = 1 : length( O )
+for i = 1 : length( QQ )
 
-  f0 = mean( O(i).F_BACKEND_NOMINAL([1 end]) );
+  f0 = mean( QQ(i).F_BACKEND_NOMINAL([1 end]) );
   
   for j = 1 : length( P.INTEGRATION_TIMES )
 
     G = calc_in_subfun( flab, dza_in, D, f0, P.INTEGRATION_TIMES(j) );
 
-    outfolder = O(i).FOLDER_ANTENNA;
+    outfolder = QQ(i).FOLDER_ANTENNA;
     
     outfile = fullfile( outfolder, ...
                         sprintf( 'antenna_fmode%02d_tint%04.0fms.xml', ...
-                        O(i).FMODE, P.INTEGRATION_TIMES(j)*1e3 ) );
+                        QQ(i).FMODE, P.INTEGRATION_TIMES(j)*1e3 ) );
 
     xmlStore( outfile, G, 'GriddedField4' );
   end

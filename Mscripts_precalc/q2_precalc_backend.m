@@ -10,22 +10,22 @@
 %    no-Hanning option gives "side-lobes", a much wider frequency range
 %    becomes significant. 
 %
-%    Final files are stored in O.FOLDER_BACKEND
+%    Final files are stored in Q.FOLDER_BACKEND
 %
-% FORMAT   q2_precalc_backend(O,P)
+% FORMAT   q2_precalc_backend(Q,P)
 %
-% IN  O   O structure
+% IN  Q   Q structure
 %     P   P structure
 
 % 2015-05-19   Created by Patrick Eriksson.
 
 
-function q2_precalc_backend(O,P)
+function q2_precalc_backend(Q,P)
 
   
 %- Set out folder
 %
-outfolder = O.FOLDER_BACKEND;
+outfolder = Q.FOLDER_BACKEND;
 
 
 

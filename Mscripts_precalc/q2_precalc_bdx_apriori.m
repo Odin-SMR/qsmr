@@ -6,21 +6,21 @@
 %    The input data shall follow the format used in Qsmr1. The path to these
 %    data are taken from P.BDX_INFOLDER.
 %
-%    Final files are stored in O.FOLDER_BDX
+%    Final files are stored in Q.FOLDER_BDX
 %
-% FORMAT   q2_precalc_bdx_apriori(O,P)
+% FORMAT   q2_precalc_bdx_apriori(Q,P)
 %        
-% IN    O   O structure
+% IN    Q   Q structure
 %       P   P structure
 
 % 2015-05-20   Created by Patrick Eriksson.
 
-function q2_precalc_bdx_apriori(O,P)
+function q2_precalc_bdx_apriori(Q,P)
   
   
 %- Where to save files
 %
-outfolder = O.FOLDER_BDX;
+outfolder = Q.FOLDER_BDX;
 
 
 %- Data describing the input database

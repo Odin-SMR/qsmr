@@ -19,20 +19,20 @@
 %    Z_ODIN
 %
 %   These fields of O are used
-%     O.ABSLOOKUP_OPTION
-%     O.DZA_GRID_EDGES
-%     O.DZA_MAX_IN_CORE
-%     O.FOLDER_ANTENNA
-%     O.FOLDER_ABSLOOKUP
-%     O.SIDEBAND_LEAKAGE
-%     O.F_GRID_NFILL
-%     O.SIDEBAND_LEAKAGE
+%     Q.ABSLOOKUP_OPTION
+%     Q.DZA_GRID_EDGES
+%     Q.DZA_MAX_IN_CORE
+%     Q.FOLDER_ANTENNA
+%     Q.FOLDER_ABSLOOKUP
+%     Q.SIDEBAND_LEAKAGE
+%     Q.F_GRID_NFILL
+%     Q.SIDEBAND_LEAKAGE
 %
-% FORMAT R = q2_arts_sensor_parts(L1B,O,R[,part])
+% FORMAT R = q2_arts_sensor_parts(L1B,Q,R[,part])
 %
 % OUT   R      Modified R structure.
 % IN    L1B    L1B structure.
-%       O      O structure.
+%       Q      Q structure.
 %       R      R structure.
 % OPT   part   What part(s) to calculate. Default is 'all'. This argument
 %              matches directly C.PART of q2_artscfile_sensor, and other
@@ -40,7 +40,7 @@
 
 % 2015-05-29   Created by Patrick Eriksson.
 
-function R = q2_arts_sensor_parts(L1B,O,R,part)
+function R = q2_arts_sensor_parts(L1B,Q,R,part)
 %
 if nargin < 4, part = 'all'; end
 
@@ -52,7 +52,7 @@ topfolder = q2_topfolder;
 do_total  = strcmp( part, 'total' );
 %
 fmode  = L1B.FreqMode(1);
-assert( fmode == O.FMODE );
+assert( fmode == Q.FMODE );
 %
 % Determine f_lo and f_backend for middel point of scan
 % Always used for mixer+sideband, while LO can vary for backend 
@@ -80,16 +80,16 @@ if any( strcmp( part, { 'antenna', 'all' } ) )  |  do_total
   % Pencil beam grid
   za_min      = min( R.ZA_BORESI );
   za_max      = max( R.ZA_BORESI );
-  R.ZA_PENCIL = [ flip( za_min - O.DZA_GRID_EDGES ), ...
+  R.ZA_PENCIL = [ flip( za_min - Q.DZA_GRID_EDGES ), ...
                  linspace( za_min, za_max, ...
-                           1+ceil((za_max-za_min)/O.DZA_MAX_IN_CORE)),...
-                 za_max + O.DZA_GRID_EDGES ]';
+                           1+ceil((za_max-za_min)/Q.DZA_MAX_IN_CORE)),...
+                 za_max + Q.DZA_GRID_EDGES ]';
   xmlStore( fullfile( R.WORK_FOLDER, 'mblock_dlos_grid.xml' ), R.ZA_PENCIL, ...
                                                           'Matrix', 'binary' );
 
   % Find integration time for pre-calculated spectra
   antfiles = whichfiles( sprintf('antenna_fmode%02d*ms.xml',fmode), ...
-                                                            O.FOLDER_ANTENNA );
+                                                            Q.FOLDER_ANTENNA );
   %
   tint0 = zeros( size( antfiles ) );
   %
@@ -153,11 +153,11 @@ if any( strcmp( part, { 'mixer', 'all' } ) )  |  do_total
 
   C.PART         = 'mixer';
   C.LO           = f_lo;
-  C.F_GRID_NFILL = O.F_GRID_NFILL;
+  C.F_GRID_NFILL = Q.F_GRID_NFILL;
 
   % Get f_grid from absorption lookup table
-  abs_lookup = xmlLoad( fullfile( O.FOLDER_ABSLOOKUP, ...
-                                  O.ABSLOOKUP_OPTION, ...
+  abs_lookup = xmlLoad( fullfile( Q.FOLDER_ABSLOOKUP, ...
+                                  Q.ABSLOOKUP_OPTION, ...
                                   sprintf( 'abslookup_fmode%02d.xml', fmode ) ) );
   f_grid = abs_lookup.f_grid;
   xmlStore( fullfile( R.WORK_FOLDER, 'f_grid.xml' ), f_grid, 'Vector', 'binary' );
@@ -176,7 +176,7 @@ if any( strcmp( part, { 'mixer', 'all' } ) )  |  do_total
   G.grids     = { symgrid( [ 1e9, min(abs(f_grid([1 end])-C.LO))-1e3 ] ) };
   G.dataname  = 'Response';
   %
-  rs = O.SIDEBAND_LEAKAGE;
+  rs = Q.SIDEBAND_LEAKAGE;
   rm = 1 - rs;
   %
   if f_backend(1) > C.LO
@@ -201,8 +201,8 @@ end
 %
 if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
 
-  if do_total & ~O.F_BACKEND_COMMON
-    error( 'O.F_BACKEND_COMMON must be true for ''total'' option.' );
+  if do_total & ~Q.F_BACKEND_COMMON
+    error( 'Q.F_BACKEND_COMMON must be true for ''total'' option.' );
   end   
   
   C.PART = 'backend';
@@ -220,7 +220,7 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
   end
 
   % Backend response file
-  C.BACKEND_FILE = fullfile( O.FOLDER_BACKEND, ...
+  C.BACKEND_FILE = fullfile( Q.FOLDER_BACKEND, ...
                               sprintf( 'backend_df%04.0fkHz', ...
                               floor(diff(f_backend([1 2]))/1e3) ) );
   if L1B.Hanning(1) == true
@@ -230,7 +230,7 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
   end
 
   % A common set of backend frequencies assumed
-  if O.F_BACKEND_COMMON
+  if Q.F_BACKEND_COMMON
     % Channel positions, in IF
     xmlStore( fullfile( R.WORK_FOLDER, 'f_backend.xml' ), ...
                               abs( f_backend - f_lo ), 'Vector', 'binary' );

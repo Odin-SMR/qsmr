@@ -2,6 +2,7 @@
 %
 %   The following operations are performed:
 %     * Checks if Atmlab and Qsmr are part of Matlab's search path.
+%     * Checks if expected versions of Atmlab and ARTS are used
 %     * Adds folder information to R
 %
 %   It should suffice to call this function just once during a session.
@@ -15,13 +16,6 @@
 function R = q2_init
 
 
-%- Check if Atmlab is at hand
-%
-if ~exist( 'atmlab_init', 'file' )
-  error( 'It seems that Atmlab is not added to the search path.' );
-end
-
-
 %- Check if Qsmr itself is at hand
 %
 if ~exist( 'q_std', 'file' )
@@ -29,9 +23,22 @@ if ~exist( 'q_std', 'file' )
 end
 
 
-%- Init R by setting path to settings folder 
+%- Check Atmlab 
 %
-topfolder = folder_of_fun( mfilename, 1 );
+S = system_settings;
 %
-R.FOLDER_SETTINGS = fullfile( topfolder, 'Settings' );
+if ~exist( 'atmlab_init', 'file' )
+  error( 'It seems that Atmlab is not added to the search path.' );
+end
+%
+if ~isnan(S.ATMLAB_VERSION) & ~strcmp( atmlab_version, S.ATMLAB_VERSION )
+  error( 'Atmlab version deviates from selected.' );
+end
+
+
+%- Check ARTS
+%
+if ~isnan(S.ARTS_VERSION) & ~strcmp( arts_version, S.ARTS_VERSION )
+  error( 'ARTS version deviates from selected.' );
+end
 

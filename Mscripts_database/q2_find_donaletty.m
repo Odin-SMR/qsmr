@@ -5,9 +5,8 @@
 
 function [Tint,Zint,T,Z,PTZ]=q2_find_donaletty(pgrid,orbit,scan)
 
-%(O.P_GRID,L1B.ORBIT,L1B.SCAN);
 
-O.P_GRID=pgrid;
+Q.P_GRID=pgrid;
 L1B.ORBIT=orbit;
 L1B.SCAN=scan;
 hexorbits=dec2hex(L1B.ORBIT);
@@ -54,8 +53,8 @@ if length(list)>0
     T=PTZ(:,2,L1B.SCAN);
     P=PTZ(:,1,L1B.SCAN)*100;
     Z=PTZ(:,3,L1B.SCAN)*1000;
-    Tint=interpp(P,T,O.P_GRID);
-    Zint=interpp(P,Z,O.P_GRID);
+    Tint=interpp(P,T,Q.P_GRID);
+    Zint=interpp(P,Z,Q.P_GRID);
     if Zint(1)==Zint(2);
         Zint(2)=Zint(2)+0.1;
     end

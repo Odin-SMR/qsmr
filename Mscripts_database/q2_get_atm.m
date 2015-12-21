@@ -1,25 +1,25 @@
 % Q2_GET_ATM   Extracts atmospheric data from handled databases
 %
 %   The output structure has the following fields
-%      P   : pressure grid (set to be equal to O.P_GRID)
+%      P   : pressure grid (set to be equal to Q.P_GRID)
 %      T   : temperature profile
 %      Z   : geomtrical altitude profile
 %      VMR : gas species profiles
 %    
 %   The data can be compiled from different sources. The handled options are
-%      O.T_SOURCE           : WebApi, CIRA 86 and MSIS90
-%      O.ABS_SPECIES.SOURCE : WebApi and Bdx
+%      Q.T_SOURCE           : WebApi, CIRA 86 and MSIS90
+%      Q.ABS_SPECIES.SOURCE : WebApi and Bdx
 %
-% FORMAT   ATM = q2_get_atm( LOG, O )
+% FORMAT   ATM = q2_get_atm( LOG, Q )
 %
 % OUT  ATM   Structure holding atmospheric data, see above.
 % IN   LOG   Log data of a single scan.
-%      O     O struture for frequency mode. 
+%      Q     Q structure for frequency mode. 
 
 % 2015-05-22   Created by Patrick Eriksson.
 
 
-function ATM = q2_get_atm( LOG, O )
+function ATM = q2_get_atm( LOG, Q )
 %
 if length(LOG) > 1
   error( 'This function handles only single logdata entries.' );
@@ -33,12 +33,12 @@ end
 
 % Pressure grid to use
 %
-ATM.P = O.P_GRID;
+ATM.P = Q.P_GRID;
 
   
 % T and Z field
 %
-switch upper( O.T_SOURCE )
+switch upper( Q.T_SOURCE )
   
  case 'WebApi'
   %
@@ -79,19 +79,19 @@ switch upper( O.T_SOURCE )
  % ATM = find_ERA( ATM.P, L1B )
        
  otherwise
-  error( '%s is an unknown option for O.T_SOURCE.', O.T_SOURCE );
+  error( '%s is an unknown option for Q.T_SOURCE.', Q.T_SOURCE );
 end
 
 
 % VMR field
 %
-ATM.VMR = zeros( length(O.ABS_SPECIES), length(ATM.P), 1, 1 );
+ATM.VMR = zeros( length(Q.ABS_SPECIES), length(ATM.P), 1, 1 );
 %
-for i = 1 : length( O.ABS_SPECIES )
+for i = 1 : length( Q.ABS_SPECIES )
 
-  species = arts_tgs2species( O.ABS_SPECIES(i).TAG{1} );
+  species = arts_tgs2species( Q.ABS_SPECIES(i).TAG{1} );
   
-  switch O.ABS_SPECIES(i).SOURCE
+  switch Q.ABS_SPECIES(i).SOURCE
     
    case 'WebApi'
     %
@@ -100,12 +100,12 @@ for i = 1 : length( O.ABS_SPECIES )
     
    case 'Bdx'
     %
-    load( fullfile( O.FOLDER_BDX ,sprintf('apriori_%s.mat',species)) );
+    load( fullfile( Q.FOLDER_BDX ,sprintf('apriori_%s.mat',species)) );
     G = atmdata_regrid( Bdx, { ATM.P, lat, lon, mjd } );
     ATM.VMR(i,:,1,1) = G.DATA;
 
    otherwise
-    error( '%s is an unknown option for O.ABS_SPECIES.SOURCE.', ...
-                                                    O.ABS_SPECIES(i).SOURCE );
+    error( '%s is an unknown option for Q.ABS_SPECIES.SOURCE.', ...
+                                                    Q.ABS_SPECIES(i).SOURCE );
   end
 end
