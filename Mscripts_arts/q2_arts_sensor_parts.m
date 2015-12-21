@@ -22,10 +22,9 @@
 %     Q.ABSLOOKUP_OPTION
 %     Q.DZA_GRID_EDGES
 %     Q.DZA_MAX_IN_CORE
+%     Q.F_GRID_NFILL
 %     Q.FOLDER_ANTENNA
 %     Q.FOLDER_ABSLOOKUP
-%     Q.SIDEBAND_LEAKAGE
-%     Q.F_GRID_NFILL
 %     Q.SIDEBAND_LEAKAGE
 %
 % FORMAT R = q2_arts_sensor_parts(L1B,Q,R[,part])
@@ -172,8 +171,8 @@ if any( strcmp( part, { 'mixer', 'all' } ) )  |  do_total
   % Sideband response. So far just a flat function 
   G.name      = 'Sideband response function';
   G.gridnames = { 'Frequency' };
-  % Add 1 kHz margin to avoid error due to rounding
-  G.grids     = { symgrid( [ 1e9, min(abs(f_grid([1 end])-C.LO))-1e3 ] ) };
+  % Add 10 kHz margin to avoid error due to rounding
+  G.grids     = { symgrid( [ 1e9, min(abs(f_grid([1 end])-C.LO))-10e3 ] ) };
   G.dataname  = 'Response';
   %
   rs = Q.SIDEBAND_LEAKAGE;

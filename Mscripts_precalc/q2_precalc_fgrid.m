@@ -171,7 +171,7 @@ function f_opt = do_1range( Q, P, R, frange, precs, do_cubic );
   %
   for i = 1 : length( P.REFSPECTRA_LAT )
     %
-    [L1B,LOG] = homemade_l1b( O, P.REFSPECTRA_ZTAN, P.REFSPECTRA_LAT(i), ...
+    [L1B,LOG] = l1b_homemade( O, P.REFSPECTRA_ZTAN, P.REFSPECTRA_LAT(i), ...
                               P.REFSPECTRA_LON(i), P.REFSPECTRA_MJD(i) );
     %
     ATM =  q2_get_atm( LOG, O );

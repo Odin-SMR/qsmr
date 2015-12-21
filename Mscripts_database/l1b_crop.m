@@ -11,7 +11,7 @@
 % FORMAT   L1B = l1b_crop(L1B,itan[,issb])
 %
 % OUT  L1B   Cropped L1B data.
-% IN   L1B   Original L1B data
+% IN   L1B   Original L1B data.
 %      itan  Index of tangent altitudes to keep
 % OPT  issb  Index of sub-bands to keep. Default is to keep all.
 

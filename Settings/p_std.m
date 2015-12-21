@@ -5,7 +5,11 @@
 %
 % FORMAT P = p_std
 
-function P = p_std
+function P = p_std(use_spectro2)
+%
+if nargin == 0
+  use_spectro2 = false;
+end
 
   
 %-------------------------------------------------------------------------------
@@ -78,7 +82,9 @@ P.SPECTRO_FOLDER    =  fullfile( q2_topfolder, 'DataFiles', 'Spectroscopy' );
 
 % Also allowed to define a second folder. These data will overwrite
 % data from the first folder. This folder can be left undefined.
-%P.SPECTRO_FOLDER2   =  fullfile( q2_topfolder, 'DataFiles', 'Spectroscopy' );
+if use_spectro2
+  P.SPECTRO_FOLDER2 = '/home/patrick/Outdata2/Qsmr2/Spectroscopy';
+end
 
 % The set of temperature perturbations
 P.ABS_T_PERT        = symgrid( [0:10:100 120 150] )';

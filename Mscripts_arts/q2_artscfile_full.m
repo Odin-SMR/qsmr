@@ -229,11 +229,10 @@ function cfile_abscalc_basics( fid, C, workfolder )
   %
   fprintf( fid, 'abs_linesReadFromHitran( abs_lines, "%s", %.5e, %.5e )\n', ...
            C.HITRAN_PATH, C.HITRAN_FMIN, C.HITRAN_FMAX );
-  fprintf( fid, 'abs_lines_per_speciesCreateFromLines\n' );
   fprintf( fid, 'abs_linesArtscat5FromArtscat34\n' );
-  fprintf( fid, [ 'abs_lineshapeDefine( shape="Voigt_Kuntz6", ' ...
-                  'forefactor="VVW", cutoff=-1 )\n' ] );
   %
+  % Add hand-picked data:
+  fprintf( fid, 'ArrayOfLineRecordCreate(handpicked)\n' );
   for z = 1:2
     if z == 1
       fname = 'SPECTRO_FOLDER';
@@ -246,7 +245,6 @@ function cfile_abscalc_basics( fid, C, workfolder )
       spectrofiles = [];
     end        
     if ~isempty(spectrofiles)
-      fprintf( fid, 'ArrayOfLineRecordCreate(handpicked)\n' );
       for i = 1 : length(spectrofiles)
         fprintf( fid, 'ReadXML( handpicked, "%s" )\n', spectrofiles{i} );
         fprintf( fid, ...
@@ -254,6 +252,10 @@ function cfile_abscalc_basics( fid, C, workfolder )
       end
     end
   end
+  %
+  fprintf( fid, 'abs_lines_per_speciesCreateFromLines\n' );
+  fprintf( fid, [ 'abs_lineshapeDefine( shape="Voigt_Kuntz6", ' ...
+                  'forefactor="VVW", cutoff=-1 )\n' ] );    
   %
   fprintf( fid, 'isotopologue_ratiosInitFromBuiltin\n' );
   fprintf( fid, 'INCLUDE "%s"\n', C.CONTINUA_FILE );  

@@ -1,7 +1,12 @@
 2015-12-21  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
+	* Several tweaks and bug fixes. For example, hand-picked spectro
+	data had no effect.
+
+2015-12-21  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
 	* Some kind of revised version. Basic usage of logdata and l1b
-	data now in place. Old Q structure removed, and O renamed to Q. 
+	data now in place. Old Q structure removed, and O renamed to Q.
 
 2015-12-18  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 

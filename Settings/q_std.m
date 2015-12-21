@@ -18,6 +18,7 @@ precalcdir           = '/home/patrick/Outdata2/Qsmr2';
   
 Q.FMODE              = fmode;  
 
+%Q.FOLDER_ABSLOOKUP   = fullfile( precalcdir, 'AbsLookupWithSpectro2' );  
 Q.FOLDER_ABSLOOKUP   = fullfile( precalcdir, 'AbsLookup' );  
 Q.FOLDER_ANTENNA     = fullfile( precalcdir, 'Antenna' );  
 Q.FOLDER_BACKEND     = fullfile( precalcdir, 'Backend' );  
@@ -46,8 +47,6 @@ Q.CONTINUA_FILE      = fullfile( topfolder, 'DataFiles', 'Continua', ...
 
 Q.DZA_MAX_IN_CORE    = 0.01;
 Q.DZA_GRID_EDGES     = [ Q.DZA_MAX_IN_CORE*[1:3 5 8 12 21] ];
-
-Q.SIDEBAND_LEAKAGE   = 0.01;
 
 Q.F_BACKEND_COMMON   = true;
 
@@ -90,10 +89,11 @@ switch fmode
   Q.ABS_SPECIES(6).SOURCE   = 'Bdx';
   Q.ABS_SPECIES(6).RETRIEVE = false;
   %
-  Q.BACKEND_NR              = 2;
   Q.FRONTEND_NR             = 2;
-  Q.F_BACKEND_NOMINAL       = [ 501180:501580 502180:502380 ]*1e6;
   Q.F_LO_NOMINAL            = 497.88e9;
+  Q.SIDEBAND_LEAKAGE        = 0.01;
+  Q.BACKEND_NR              = 2;
+  Q.F_BACKEND_NOMINAL       = [ 501180:501580 502180:502380 ]*1e6;
   %-------------------------------------------------------------------------
 
     
@@ -125,10 +125,11 @@ switch fmode
   Q.ABS_SPECIES(5).SOURCE   = 'Bdx';
   Q.ABS_SPECIES(5).RETRIEVE = false;
   %
-  Q.BACKEND_NR              = 1;
   Q.FRONTEND_NR             = 4;
-  Q.F_BACKEND_NOMINAL       = [ 544120:544920 ]*1e6;
   Q.F_LO_NOMINAL            = 548.500e9;
+  Q.SIDEBAND_LEAKAGE        = 0.04;
+  Q.BACKEND_NR              = 1;
+  Q.F_BACKEND_NOMINAL       = [ 544120:544920 ]*1e6;
   %-------------------------------------------------------------------------
 
     

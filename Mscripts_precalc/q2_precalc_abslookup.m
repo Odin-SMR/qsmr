@@ -1,5 +1,9 @@
 % Q2_PRECALC_ABSLOOKUP
 %
+%   Note that this function considers P.SPECTRO_FOLDER2. Leave this field
+%   of P empty if only the standard SPECTRO_FODLER shall be used. If
+%   P.SPECTRO_FOLDER2 is set, the data in this folder gets top priority.
+%
 % FORMAT   q2_precalc_abslookup(QQ,P,R,precs)
 %        
 % IN    QQ      An array of Q structures
@@ -60,7 +64,7 @@ return
 function A = do_1fmode( Q, P, R, prec, do_cubic )
 
   % Table is calculated for atmospheric state behind first reference spectrum
-  [L1B,LOG] = homemade_l1b( Q, 30e3, P.REFSPECTRA_LAT(1), ...
+  [L1B,LOG] = l1b_homemade( Q, 30e3, P.REFSPECTRA_LAT(1), ...
                               P.REFSPECTRA_LON(1), P.REFSPECTRA_MJD(1) );
   ATM =  q2_get_atm( LOG, Q );
 
