@@ -8,21 +8,21 @@
 % Out:  
 %     info  structure with logdata
 %     a link to field descriptions to come..
-%         AltEnd:
-%         AltStart:
-%         DateTime: 
-%         EndLat: 
-%         EndLon: 
-%         FirstSpectrum: 
-%         FreqMode: 
-%         LastSpectrum:
-%         MJD: 
-%         NumSpec: 
-%         ScanID: 
-%         StartLat: 
-%         StartLon: 
-%         SunZD: 
-%         and URLs to l1b and aux data
+%      AltEnd:  
+%      AltStart 
+%      DateTime 
+%      FreqMode 
+%      LatEnd 
+%      LatStart
+%      LonEnd 
+%      LonStart 
+%      MJDEnd 
+%      MJDStart 
+%      NumSpec 
+%      ScanID 
+%      SunZD 
+%      URLS
+%         URLs to l1b and aux data
 % In:    
 %     mjd1  start date 
 %     mjd2  end data
@@ -61,7 +61,7 @@ urls = [];
 n = 1;
 for i = 1 : length(datevec)
   datei = datestr(datevec(i),'yyyy-mm-dd');
-  url = [ webapi_url,'/rest_api/v3/freqmode_info/',datei];
+  url = [ webapi_url,'/rest_api/v4/freqmode_info/',datei];
   y = get_date_info(url);
   if isempty(y.Info)
     continue
@@ -81,7 +81,7 @@ end
 
 n = 1;
 for i = 1:length(urls)
-  y = webread(urls{i}, weboptions('ContentType','json','Timeout',60));
+  y = webread(urls{i}, weboptions('ContentType','json','Timeout',120));
   for j = 1 : length(y.Info)
      info(n) = y.Info(j);
      n = n + 1;

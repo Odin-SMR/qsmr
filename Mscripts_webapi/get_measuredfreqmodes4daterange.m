@@ -38,14 +38,12 @@ datenum2 = mjd0 + mjd2;
 
 datevec = datenum1:datenum2;
 
-webapi_url = get_webapi_url(); %connect to test database
-webapi_url = 'http://malachite.rss.chalmers.se'; %connect to the live database
 
 freqmodes = [];
 
 for i = 1 : length(datevec)
   datei = datestr(datevec(i),'yyyy-mm-dd');
-  url = [ webapi_url,'/rest_api/v3/freqmode_info/',datei];
+  url = [ webapi_url,'/rest_api/v4/freqmode_info/',datei];
   y = get_date_info(url);
   if ~isempty(y.Info)
     freqmodes = [freqmodes, [y.Info(:).FreqMode]];
