@@ -13,8 +13,8 @@ webapi_url = get_webapi_url(); %connect to test database
 
 % get which freqmodes that were measured within a date range
  
-mjd1 = datenum('2015-01-03') - datenum('1858-11-17');
-mjd2 = datenum('2015-01-04') - datenum('1858-11-17');
+mjd1 = datenum('2014-01-01') - datenum('1858-11-17');
+mjd2 = datenum('2014-01-04') - datenum('1858-11-17');
 
 if test_database == 1
   freqmodes = get_measuredfreqmodes4daterange(mjd1,mjd2,webapi_url);
@@ -32,7 +32,7 @@ end
 % get scan logdata for all scans from a given freqmode
 % within a given date range 
 
-freqmode = freqmodes(2);
+freqmode = freqmodes(1);
 
 if test_database == 1
   info = get_logdata4freqmode(freqmode,mjd1,mjd2,webapi_url);
@@ -47,39 +47,48 @@ end
 %     are within +-10 degree 
 
 lat = 10;
-index1 = find( abs([info.EndLat])<lat | abs([info.StartLat])<lat);
-index2 = find( [info.MJD]<mjd2);
+index1 = find( abs([info.LatEnd])<lat | abs([info.LatStart])<lat);
+index2 = find( [info.MJDStart]<mjd2);
 index = intersect(index1,index2);
+maxindex = 9; % and only load maximum maxindex of them
+maxi = min(maxindex,length(index));
+index = index(randperm(length(index))); %scramble around index
+index = index(1:maxi);
+
 
 info = info(index);
 %-------------------------------------------------------------
 
+
 % read scan data
 
+
+urls=[info.URLS];
+
 % {info.URL} cell array of urls
-scandata = get_scan_l1b_data({info.URL}); 
+scandata = get_scan_l1b_data({urls.URL_spectra}); 
 
 if 0
   % get ptz and o3 apriori data
-  ptzdata = get_scan_aux_data({info.URL_ptz});
-  o3data =  get_scan_aux_data({info.URL_apriori_O3}); 
+  ptzdata = get_scan_aux_data({urls.URL_ptz});
+  o3data =  get_scan_aux_data({urls.URL_apriori_O3}); 
   % or if you want to get several a priori data
   apriori = {'H2O','O3','O2','N2'};
   % this loop will return H2Odata,O3data,O2data, and N2 data
   for i=1:length(apriori)
-    urls = eval(['{info.URL_apriori_',apriori{i},'}']);  
-    eval([apriori{i},'data = get_scan_aux_data(urls)']);
+    urls_apriori = eval(['{urls.URL_apriori_',apriori{i},'}']);  
+    eval([apriori{i},'data = get_scan_aux_data(urls_apriori)']);
   end
 end
 
 
 if 0
   % also possible to for url to be a string
-  url = info(1).URL;
+  url = info(1).URLS.URL_spectra;
   scandata = get_scan_l1b_data(url);
-  url = info(1).URL_ptz;
+  url = info(1).URLS.URL_ptz;
   ptzdata  = get_scan_aux_data(url);
-  url = info(1).URL_apriori_O3;
+  url = info(1).URLS.URL_apriori_O3;
   o3data   = get_scan_aux_data(url);
 end
 
@@ -100,9 +109,13 @@ for i = 1:min(length(scandata),9)
   freqmat = lofreq + IFreqmat;
   okind = find(~bitget(scandata(i).Quality,find(bitget(hex2dec('0020'),1:8))));
   subplot(3,3,i)
-  plot( freqmat(:,okind(3:end))/1e9, scandata(i).Spectrum(:,okind(3:end) ) )
+  plot( freqmat(:,okind)/1e9, scandata(i).Spectrum(:,okind ) )
   grid on
-  str = sprintf('ScanID: %s Source: %s',num2str(scandata(i).ScanID(1)),scandata(i).Source{1});
+  scanmjd = (scandata(i).MJD(1)+scandata(i).MJD(end))/2;
+  scandate = datestr(datenum('1858-11-17') + scanmjd,'yyyy-mm-ddTHH:MM:SS');
+  scanid = num2str(scandata(i).ScanID(1));
+  scanfreqmode = scandata(i).FreqMode(1);
+  str = sprintf('Date: %s \nScanID: %s FreqMode: %d', scandate,scanid,scanfreqmode);
   title(str,'fontsize',8)
   xlabel('Freq. [GHz]') 
   ylabel('Tb [K]')

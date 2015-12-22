@@ -10,7 +10,7 @@
 %     url  string or cell array of strings
 %   
 % Example Usage:
-%      url = 'http://malachite.rss.chalmers.se/rest_api/v3/scan/AC1/2/7002908396'
+%      url = 'http://malachite.rss.chalmers.se/rest_api/v4/scan/AC1/2/7002908396'
 %      y = get_scan_l1b_data(url)
 %      see also odin_webapi_demo.m for usage
 %
@@ -30,7 +30,7 @@ if ischar(urls)
 end
 
 for i = 1 : length(urls)
-  y = webread(urls{i}, weboptions('ContentType','json','Timeout',60));
+  y = webread(urls{i}, weboptions('ContentType','json','Timeout',120));
   % change output format
   yfields = fields(y);
   for j=1:length(yfields)
