@@ -16,14 +16,15 @@
 
 function [mjd,lat,lon,z] = q2_calc_scan_pos( LOG )
 
-mjd = LOG.MJD;
+mjd = mean( LOG.MJDStart + LOG.MJDEnd );
 
 r = constants( 'EARTH_RADIUS' );
 
-[x1,y1,z1] = geocentric2cart( r+LOG.AltStart, LOG.StartLat, LOG.StartLon );
-[x2,y2,z2] = geocentric2cart( r+LOG.AltEnd,   LOG.EndLat,   LOG.EndLon );
+[x1,y1,z1] = geocentric2cart( r+LOG.AltStart, LOG.LatStart, LOG.LonStart );
+[x2,y2,z2] = geocentric2cart( r+LOG.AltEnd,   LOG.LatEnd,   LOG.LonEnd );
 
 [z,lat,lon] = cart2geocentric( (x1+x2)/2, (y1+y2)/2, (z1+z2)/2 );
+
 
 % Lon shall be inside [0,360]
 if lon < 0

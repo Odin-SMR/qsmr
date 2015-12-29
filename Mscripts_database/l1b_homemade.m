@@ -8,7 +8,7 @@
 %   a vector, the length must be the same as for *ztan*. Several fields of
 %   L1B are set following *O*.
 %
-%   A basic LOG file can alos be obtained. URL fields are filled if ScanID is
+%   A basic LOG file can also be obtained. URL fields are filled if ScanID is
 %   not NaN.
 %
 % FORMAT   L1B = l1b_homemade(Q,ztan,lat,lon,mjd[,freqs,inttime])
@@ -19,7 +19,7 @@
 %       lat       Latitude(s).
 %       lon       Longitude(s).
 %       mjd       Modified Julian date(s).
-% OPT   scandid   Scab ID (a scalar value). Default is NaN.
+% OPT   scandid   Scan ID (a scalar value). Default is NaN.
 %       freqs     Frequency vector. Default is [], which flags to use 
 %                 Q.F_BACKEND_NOMINAL.
 %       z_odin    Altitude(s) of Odin.
@@ -79,11 +79,12 @@ L1B.ScanID      = vectorfield( scanid,               nt, 'scanid'        );
 if nargout > 1  
   LOG.AltEnd       = ztan(end);
   LOG.AltStart     = ztan(1);
-  LOG.EndLat       = lat(end);
-  LOG.StartLat     = lat(1);
-  LOG.EndLon       = lon(end);
-  LOG.StartLon     = lon(1);
-  LOG.MJD          = mean( mjd );
+  LOG.LatEnd       = lat(end);
+  LOG.LatStart     = lat(1);
+  LOG.LonEnd       = lon(end);
+  LOG.LonStart     = lon(1);
+  LOG.MJDEnd       = mjd(end);
+  LOG.MJDStart     = mjd(1);
   LOG.NumSpec      = length(ztan);
   LOG.ScanID       = scanid;
   %

@@ -4,50 +4,49 @@
 %   and AC sub-bands.
 %
 %   Note that the spectra get sorted according to the order specified by itan.
-%   The spectrum channels maintain the order independently of the order in *issb*. 
+%   The spectrum channels maintain the order independently of the order in *isub*. 
 %
 %   This function requires that L1B.Frequency is of original type.
 %
-% FORMAT   L1B = l1b_crop(L1B,itan[,issb])
+% FORMAT   L1B = l1b_crop(L1B,itan[,isub])
 %
 % OUT  L1B   Cropped L1B data.
 % IN   L1B   Original L1B data.
 %      itan  Index of tangent altitudes to keep
-% OPT  issb  Index of sub-bands to keep. Default is to keep all.
+% OPT  isub  Index of AC sub-bands to keep. Default is to keep all.
 
 % 2015-12-16   Patrick Eriksson
 
-function L1B = l1b_crop(L1B,itan,issb)
+function L1B = l1b_crop(L1B,itan,isub)
 %
 if nargin < 3
-  issb = find( L1B.Frequency.SSB(2:3:end) >= 1 );
+  isub = find( L1B.Frequency.SubBandIndex(1,:) >= 1 );
 else
-  if any(issb<1) | any(issb>8) | length(unique(issb))~=length(issb)
-    error( '*issb* can only contain values between 1 and 8, without duplicates.' );
+  if any(isub<1) | any(isub>8) | length(unique(isub))~=length(isub)
+    error( '*isub* can only contain values between 1 and 8, without duplicates.' );
   end
 end
 
 
-% Find channel index to keep and simultaneously adjust L1B.Frequency.SSB 
+% Find channel index to keep and simultaneously adjust L1B.Frequency.SubBandIndex 
 %
 ich = [];
 n   = 0;
 %
-[~,iorder] = sort( L1B.Frequency.SSB(2:3:end) );
+[~,iorder] = sort( L1B.Frequency.SubBandIndex(1,:) );
 %
 for i = iorder
-  i0  = (i-1)*3+1;
-  if find( i == issb )
-    if L1B.Frequency.SSB(i0+1) < 1  ||  L1B.Frequency.SSB(i0+2) < 1
-      error( 'You have selected a SSB (nr %d) that is already removed.', i );
+  if find( i == isub )
+    if L1B.Frequency.SubBandIndex(1,i) < 1  ||  L1B.Frequency.SubBandIndex(2,1) < 1
+      error( 'You have selected a SubBandIndex (nr %d) that is already removed.', i );
     end
-    ich  = [ ich L1B.Frequency.SSB(i0+1):L1B.Frequency.SSB(i0+2) ];
-    nnew = L1B.Frequency.SSB(i0+2) - L1B.Frequency.SSB(i0+1) + 1;
-    L1B.Frequency.SSB(i0+1) = n + 1;
-    L1B.Frequency.SSB(i0+2) = n + nnew;
+    ich  = [ ich L1B.Frequency.SubBandIndex(1,i):L1B.Frequency.SubBandIndex(2,i) ];
+    nnew = L1B.Frequency.SubBandIndex(2,i) - L1B.Frequency.SubBandIndex(1,i) + 1;
+    L1B.Frequency.SubBandIndex(1,i) = n + 1;
+    L1B.Frequency.SubBandIndex(2,i) = n + nnew;
     n = n + nnew;
   else
-    [L1B.Frequency.SSB(i0+1),L1B.Frequency.SSB(i0+2)] = deal( -1 );
+    [L1B.Frequency.SubBandIndex(1,i),L1B.Frequency.SubBandIndex(2,i)] = deal( -1 );
   end
 end
 
@@ -60,6 +59,9 @@ for i = 1 : length(names)
 
   switch names{i}
     
+   case 'Channels'
+    L1B.Channels = repmat( length(ich), 1, length(itan) );
+   
    case 'Frequency'
     L1B.Frequency.IFreqGrid = L1B.Frequency.IFreqGrid(ich); 
     L1B.Frequency.LOFreq    = L1B.Frequency.LOFreq(itan); 
@@ -67,10 +69,11 @@ for i = 1 : length(names)
    case 'Spectrum'
     L1B.Spectrum = L1B.Spectrum(ich,itan);
 
-   case 'SSB'
-     %
-       
+   case 'TrecSpectrum'
+    L1B.TrecSpectrum = L1B.TrecSpectrum(1,ich);
+    
    otherwise   
     L1B.(names{i}) = L1B.(names{i})(:,itan);
+  
   end
 end

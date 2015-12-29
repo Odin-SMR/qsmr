@@ -1,3 +1,7 @@
+2015-12-29  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Adopted to changes in LOG and L1B structure format.
+
 2015-12-21  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Several tweaks and bug fixes. For example, hand-picked spectro

@@ -1,6 +1,6 @@
 % L1B_FILTER   Altitude and quality filtering of L1B data
 %
-%   The only criterion affecting *issb* is *lag0_max*, all other arguments
+%   The only criterion affecting *isub* is *lag0_max*, all other arguments
 %   are related to *itan*.
 %
 %   The quality variables (q_xxxx) are defined in the L1b ATBD.
@@ -10,13 +10,13 @@
 %   To apply the filtering, call *l1b_crop* with the output arguments of
 %   this function.
 %
-% FORMAT   [itan,issb] = l1b_filter( L1B,
+% FORMAT   [itan,isub] = l1b_filter( L1B,
 %                                   [ztan_low,ztan_high,tint_maxdev,lag0_max,
 %                                    q_tspill, q_trec, q_noise, q_scan, q_nspec,
 %                                    q_tb,     q_tint, q_ref1,  q_ref2, q_moon])
 %
 % OUT  itan          Index of tangent altitudes that are OK according to criteria.
-%      issb          Index of sub-bands that are OK according to criteria.
+%      isub          Index of sub-bands that are OK according to criteria.
 % IN   L1B           L1B structure.
 % OPT  ztan_low      Minimum tangent altitude. 
 %                    Default is -Inf.
@@ -49,7 +49,7 @@
 
 % 2015-12-19   Patrick Eriksson
 
-function [itan,issb] = l1b_filter(L1B,varargin)
+function [itan,isub] = l1b_filter(L1B,varargin)
 %
 [ztan_low,ztan_high,tint_maxdev,lag0_max,...
  q_tspill,q_trec,q_noise,q_scan,q_nspec,q_tb,q_tint,q_ref1,q_ref2,q_moon] = ...
@@ -65,7 +65,6 @@ tint0 = [ 0.86 1.86 3.86 ];
 % Index of tangent altitudes to keep
 %
 itan = find( ...
-    L1B.Type                    == 8              &  ...
     L1B.Altitude                >= ztan_low       &  ...
     L1B.Altitude                <= ztan_high      &  ...
     ( abs(L1B.IntTime-tint0(1)) <= tint_maxdev |     ...
@@ -93,10 +92,10 @@ itan = find( ...
             find(bitget(hex2dec('0200'),1:10))) ) );    
 
 
-% Index of SSB to keep
+% Index of AC sub-bands to keep
 %
-issb = find( ...
-    L1B.Frequency.SSB(2:3:end) >= 1   &  ...
-    max(L1B.ZeroLagVar,[],2)'  <= lag0_max );
+isub = find( ...
+    L1B.Frequency.SubBandIndex(1,:) >= 1  &  ...
+    max(L1B.ZeroLagVar,[],2)'       <= lag0_max );
 
                     

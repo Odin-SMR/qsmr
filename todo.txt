@@ -29,6 +29,5 @@ Bengt:
 
 * FM nominal frequencies
 * Name/ID
-
 * ECEF GPSpos?
-
+* Remove old stuff in Mscripts_webapi

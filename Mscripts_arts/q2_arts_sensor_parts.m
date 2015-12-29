@@ -222,7 +222,7 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
   C.BACKEND_FILE = fullfile( Q.FOLDER_BACKEND, ...
                               sprintf( 'backend_df%04.0fkHz', ...
                               floor(diff(f_backend([1 2]))/1e3) ) );
-  if L1B.Hanning(1) == true
+  if L1B.Apodization(1) == true
     C.BACKEND_FILE = sprintf( '%s_withHan.xml', C.BACKEND_FILE );
   else
     C.BACKEND_FILE = sprintf( '%s_noHan.xml', C.BACKEND_FILE );

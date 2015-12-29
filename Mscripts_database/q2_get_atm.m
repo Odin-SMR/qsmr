@@ -26,7 +26,7 @@ if length(LOG) > 1
 end
 
 
-% Set MJD, lat and lon (even if not used if all data are from WebApi)
+% Set MJD, lat and lon (not used if all data are from WebApi)
 %
 [mjd,lat,lon] = q2_calc_scan_pos( LOG );
 

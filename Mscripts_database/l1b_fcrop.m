@@ -17,7 +17,7 @@
 
 function L1B = l1b_fcrop(L1B,flims)
 %
-if isfield( L1B.Frequency, 'SSB' )
+if isfield( L1B.Frequency, 'SubBandIndex' )
   error( 'This function demands that L1B.Frequency contains actual frequencies.' );
 end
 if size(flims,1) ~=2
