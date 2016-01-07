@@ -20,7 +20,7 @@ function q2_check_q(Q)
 if s > 0
   error( 'Error while reading q_fields.rst.' );
 end
-  
+
 
 %- Extract defined fields
 %

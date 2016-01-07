@@ -2,6 +2,7 @@
 Qsmr: definition of settings
 =======================================
 
+
 :Authors: 
 
    Patrick Eriksson <patrick.eriksson@chalmers.se> 
@@ -10,19 +11,23 @@ Qsmr: definition of settings
         
    0.1 
 
-
 :Date:
 
-   2015-XX-XX
+   2016-XX-XX
 
+:Summary: 
 
-:Abstract: 
+   This document contains a brief description of the inversion settings
+   considered by the Qsmr system. These settings are packed into a structure
+   denoted as Q. This structure must contain an exact set of fields; all fields
+   must be present and no additional ones are allowed. The defined fields are
+   described below, in alphabetical order.
 
-   This document contains a brief description of the settings considered by the
-   Qsmr system. These settings are packed into a structure denoted as Q. This
-   structure must contain an exact set of fields; all fields must be
-   present and no additional ones are allowed. The defined fields are described
-   below, in alphabetical order.
+   The Qsmr settings operates also with three other structures. For the various
+   pre-calculations a structure denoted as P is used. The fields of P are
+   defined and are shortly described in the file p_std.m. The structure R works
+   as repository for internal variables and data. That is, no fields of R is
+   set by the user.
 
 ~~~~~
 
@@ -80,6 +85,10 @@ FOLDER_ABSLOOKUP
 FOLDER_ANTENNA
    A string. Full path to folder containing antenna pattern response files.
 
+FOLDER_ARTSXMLDATA
+   A string. Full path to top folder of arts-xml-data. A correct settings is
+   only needed when using the MSIS90 climatology.
+
 FOLDER_BACKEND
    A string. Full path to folder containing backend channel response files.
 
@@ -89,6 +98,16 @@ FOLDER_BDX
 
 FOLDER_FGRID
    A string. Full path to folder containing frequency grids.   
+
+FOLDER_WORK
+   A string. Full path to a folder where temporary files and/or folders can 
+   be placed. If this field is set to '/tmp', a temporary folder is created and
+   all files are placed in this folder, and the folder is removed when the
+   calculations are done. Otherwise, temporary files are placed directly in the 
+   specified folder, and these are left when the calculations are done. This
+   option is usefull for debugging, but note that just a single Qsmr process can
+   use a folder for debugging. If several Qsmr processes are given the same dubugging
+   folder, files will be overwritten.
 
 FRONTEND_NR
    An integer. Index of expected frontend. Index coding described in L1B ATBD.
@@ -127,5 +146,5 @@ SIDEBAND_LEAKAGE
 
 T_SOURCE
    A string. This string describes from where temperature a priori shall be
-   taken. The following options are treated: 'WebApi', 'MSIS90' and 'CIRA86'.
-   The two last options require that arts-xml-data is at hand.
+   taken. The following options are treated: 'WebApi' and 'MSIS90'.
+   The two last options require that FOLDER_ARTSXMLDATA is set.

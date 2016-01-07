@@ -2,24 +2,15 @@ Rough meaning of structures used
 ---
 P: pre-calculation settings
 Q: Qsmr settings  
-S: system settings
 R: repository for internal variables
+S: system settings 
+
+S and R are basically only for internal use. P not used when doing inversions.
 
 
-To check that Qsmr correctly configured
+To start up Qsmr
 ---
 q2_init;
-
-
-A work folder must be specified. First option below sets a fixed folder, and
-the second option creates a temporary folder. Use onCleanup to not risk leaving
-a high number of temporary folder behind you!
----
-%
-R.WORK_FOLDER = '/home/patrick/WORKAREA';
-%
-R  = q2_create_workfolder( Q, R );
-cu = onCleanup( @()delete_tmpfolder( R.WORK_FOLDER ) );
 
 
 For automatic check of Q, do

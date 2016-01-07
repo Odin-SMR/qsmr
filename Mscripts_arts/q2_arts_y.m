@@ -7,15 +7,14 @@
 %
 % OUT   f           Frequency grid for spectra.
 %       Y           Spectra, as a matrix.
-% IN    Q           Q structure.
-%       R           R structure.
-%       L1B         L1B structure.
+% IN    L1B         L1B structure.
 %       ATM         Structure of ATM-type, see *q2_get_atm*.
+%       Q           Q structure.
 % OPT   do_sensor   Flag to include sensor or not. Default is true.
 
 % 2015-05-29   Created by Patrick Eriksson.
 
-function Y = q2_arts_y(L1B,ATM,Q,R,varargin)
+function Y = q2_arts_y(L1B,ATM,Q,varargin)
 %
 [do_sensor] = optargs( varargin, { true } );
   
@@ -27,6 +26,16 @@ fmode  = L1B.FreqMode(1);
 assert( fmode == Q.FMODE );
 
 
+%
+% Set/create work folder
+%
+[R.WORK_FOLDER,rm_wfolder] = q2_create_workfolder( Q );
+%
+if rm_wfolder
+  cu = onCleanup( @()q2_delete_workfolder( R.WORK_FOLDER ) );
+end
+  
+  
 %
 % Set atmospheric data
 %
@@ -74,7 +83,7 @@ C.R_EARTH            = R.R_EARTH;
 % Create cfile, calculate and load spectra
 %
 cfile  = q2_artscfile_full( C, R.WORK_FOLDER );
-status = arts( cfile );
+result = q2_arts( ['-r000 ',cfile] );
 %
 y      = xmlLoad( fullfile( R.WORK_FOLDER, 'y.xml' ) );
 %
@@ -86,3 +95,4 @@ else
   f = A.f_grid;
   Y = reshape( y, length(f), length(za) );
 end
+

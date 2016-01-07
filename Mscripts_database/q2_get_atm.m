@@ -49,35 +49,31 @@ switch upper( Q.T_SOURCE )
   ATM.T = X(:,1); 
   ATM.Z = X(:,2); 
     
- case 'CIRA86'
-  %
-  [ATM.Z,ATM.T] = p2z_cira86( ATM.P, lat, mjd2doy(mjd) );
-    
+ 
  case 'MSIS90'
   %
-  arts_xmldata_path = atmlab( 'ARTS_XMLDATA_PATH' );
-  if isnan( arts_xmldata_path ) 
-    error( 'You need to set ARTS_XMLDATA_PATH to obtain MSIS90.' );
-  end
   % Temperature
-  M = gf_artsxml( fullfile( arts_xmldata_path, 'planets', 'Earth', ...
+  M = gf_artsxml( fullfile( Q.FOLDER_ARTSXMLDATA, 'planets', 'Earth', ...
                             'MSIS90', 'climatology', 'msis90.t.xml' ), ...
                     'Temperature', 't_field' );
   G = atmdata_regrid( M, { ATM.P, lat, lon, mjd } );
   ATM.T = G.DATA;
   % Altitudes
-  M = gf_artsxml( fullfile( arts_xmldata_path, 'planets', 'Earth', ...
+  M = gf_artsxml( fullfile( Q.FOLDER_ARTSXMLDATA, 'planets', 'Earth', ...
                             'MSIS90', 'climatology', 'msis90.z.xml' ), ...
                   'Altitude', 'z_field' );
   G = atmdata_regrid( M, { ATM.P, lat, lon, mjd } );
   ATM.Z = G.DATA;
+ 
   
  %case 'DONALETTY'
  %  [ATM.T,ATM.Z] = q2_find_donaletty(ATM.P,L1B.ORBIT,L1B.SCAN);  
+  
    
  %case 'ERA'
  % ATM = find_ERA( ATM.P, L1B )
-       
+   
+   
  otherwise
   error( '%s is an unknown option for Q.T_SOURCE.', Q.T_SOURCE );
 end

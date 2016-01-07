@@ -1,3 +1,27 @@
+2016-01-07  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Work to make Qsmr independent of Atmlab's setting system. In
+	addition, it is now expected that arts can be reached from any
+	folder by calling arts4smr.
+
+	* Settings/system_settings: Removed.
+
+	* Mscripts_qsystem/q2_init.m: Matlab's search path now extended
+	here.
+
+	* Mscripts_qsystem/q2_set_path.m: Removed.
+
+	* Mscripts_arts/q2_arts.m: New. Atmlab's arts-m shall not be used.
+
+	* Settings/q_fields.rst: Extended and polished.
+
+	* Mscripts_qsystem/q2_delete_workfolder.m:
+	* Mscripts_qsystem/q2_create_workfolder.m: Creation and removal
+	now using local code, not the atmlab functions.
+
+	* Mscripts_database/q2_get_atm.m: Removed CIRA86. This to avoid a
+	dependency on ATMLAB settings. MSIS90 should anyhow be superior.
+
 2015-12-29  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Adopted to changes in LOG and L1B structure format.

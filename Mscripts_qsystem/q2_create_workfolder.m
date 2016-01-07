@@ -1,39 +1,52 @@
-% Q2_CREATE_WORKFOLDER   Creates the temporary work folder to be used
+% Q2_CREATE_WORKFOLDER   Creates or set the folder for temporary files
 %
-%   A new work folder is created and R.WORK_FOLDER is set to its path.
+%   A folder is created if Q.FOLDER_WORK equals '/tmp'. Otherwise
+%   *workfolder* is simply set to Q.FOLDER_WORK.
 %
-%   The input R is not allowed to already hold a work folder.
+%   For automatic (and safest) removal of the work folder, add this in the
+%   calling function
+%      [workfolder,rm_wfolder] = q2_create_workfolder( Q );
+%      if rm_wfolder
+%        cu = onCleanup( @()q2_delete_workfolder( workfolder ) );
+%      end
 %
-%   For automatic (and safest) removal of the work folder, add this to the
-%   top function
-%     cu = onCleanup( @()delete_tmpfolder( R.WORK_FOLDER ) );
-%
-% FORMAT   R = q2_create_workfolder(Q,R)
+% FORMAT   [workfolder,rm_wfolder] = q2_create_workfolder(Q,R)
 %        
-% IN    Q   A Q structure.
-%       R   Original R structure.
-% OUT   R   Modified R structure.
+% IN    Q            A Q structure.
+% OUT   workfolder   The folder created or selected.
+%       rm_wfolder   Boolean flagging if folder shall be removed or not.
 
 % 2015-05-18   Patrick Eriksson.
 
-function R = q2_create_workfolder(Q,R)
+function [workfolder,rm_wfolder] = q2_create_workfolder( Q )
 
-%- R can not already contain WORK_FOLDER
-%
-if isfield( R, 'WORK_FOLDER' )
-  error( 'R holds already a WORK_FOLDER.' );
+% Operation mode: create a temporary folder
+if strcmp( Q.FOLDER_WORK, '/tmp' )  |  strcmp( Q.FOLDER_WORK, '/tmp/' )
+  %
+  ready = false;
+  count = 10;
+  %
+  while ~ready & count
+    workfolder = tempname( Q.FOLDER_WORK );
+    su = mkdir( workfolder );
+    if su
+      ready = true;
+    else
+      count = count - 1;
+      if ~count
+        error( 'Could not create a temporary work folder.' );
+      end
+    end
+  end
+  %
+  rm_wfolder = true;
+  
+
+% Debugging mode: use given folder, and don't remove folder
+else
+  %
+  workfolder = Q.FOLDER_WORK;
+  rm_wfolder = false;
+  
 end
-
-
-%- Is WORK_AREA set correctly?
-%
-if ~exist( Q.WORK_AREA, 'dir' )
-  error( 'WORK_AREA is not a valid/existing folder.' );
-end
-
-
-%- Create a temporary folder
-%
-atmlab( 'WORK_AREA', Q.WORK_AREA ); 
-R.WORK_FOLDER = create_tmpfolder;
 

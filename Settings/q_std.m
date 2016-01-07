@@ -17,6 +17,11 @@ topfolder            = q2_topfolder;
 precalcdir           = '/home/patrick/Outdata2/Qsmr2';
   
 Q.FMODE              = fmode;  
+ 
+%Q.FOLDER_WORK        = '/home/patrick/WORKAREA';
+Q.FOLDER_WORK        = '/tmp';
+
+Q.FOLDER_ARTSXMLDATA = '/home/patrick/SVN/ARTS/arts-xml-data';
 
 %Q.FOLDER_ABSLOOKUP   = fullfile( precalcdir, 'AbsLookupWithSpectro2' );  
 Q.FOLDER_ABSLOOKUP   = fullfile( precalcdir, 'AbsLookup' );  
