@@ -41,8 +41,8 @@ Q.ABS_T_INTERP_ORDER = 3;
 % Only used when setting up absorption tables, and if on-the-fly would be done
 Q.P_GRID             = q2_pgrid( [], 90e3, true ); 
 
-Q.PPATH_LMAX         = 10e3;
-Q.PPATH_LRAYTRACE    = 6e3;
+Q.PPATH_LMAX         = 15e3;
+Q.PPATH_LRAYTRACE    = 20e3;
 
 Q.CONTINUA_FILE      = fullfile( topfolder, 'DataFiles', 'Continua', ...
                                                          'continua_std.arts' );
