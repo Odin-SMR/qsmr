@@ -3,7 +3,7 @@
 %   The function calculates spectra, with or without including sensor
 %   responses, based on a pre-calculated absorption lookup table.
 %
-% FORMAT [f,Y] = q2_arts_y(Q,R,L1B,ATM[,do_sensor])
+% FORMAT [f,Y] = q2_arts_y(L1B,ATM,Q[,do_sensor])
 %
 % OUT   f           Frequency grid for spectra.
 %       Y           Spectra, as a matrix.
@@ -70,13 +70,14 @@ xmlStore( fullfile( R.WORK_FOLDER, 'sensor_los.xml' ), za, 'Matrix', 'binary' );
 %
 C.ABSORPTION         = 'LoadTable';
 C.ABS_LOOKUP_TABLE   = fullfile( Q.FOLDER_ABSLOOKUP, Q.ABSLOOKUP_OPTION, ...
-                                 sprintf( 'abslookup_fmode%02d.xml', fmode ) );;
+                                  sprintf( 'abslookup_fmode%02d.xml', fmode ) );
 C.ABS_P_INTERP_ORDER = Q.ABS_P_INTERP_ORDER;
 C.ABS_T_INTERP_ORDER = Q.ABS_T_INTERP_ORDER;
 C.PPATH_LMAX         = Q.PPATH_LMAX;
 C.PPATH_LRAYTRACE    = Q.PPATH_LRAYTRACE;
 C.SPECIES            = arts_tgs_cnvrt( Q.ABS_SPECIES );
 C.R_EARTH            = R.R_EARTH;
+C.JACOBIAN_DO        = false;
 
 
 %

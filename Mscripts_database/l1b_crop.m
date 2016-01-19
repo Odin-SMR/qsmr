@@ -37,7 +37,7 @@ n   = 0;
 %
 for i = iorder
   if find( i == isub )
-    if L1B.Frequency.SubBandIndex(1,i) < 1  ||  L1B.Frequency.SubBandIndex(2,1) < 1
+    if L1B.Frequency.SubBandIndex(1,i) < 1  ||  L1B.Frequency.SubBandIndex(2,i) < 1
       error( 'You have selected a SubBandIndex (nr %d) that is already removed.', i );
     end
     ich  = [ ich L1B.Frequency.SubBandIndex(1,i):L1B.Frequency.SubBandIndex(2,i) ];

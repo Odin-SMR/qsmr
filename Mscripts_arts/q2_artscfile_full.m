@@ -302,6 +302,11 @@ function cfile_sensor_and_rte( fid, C, workfolder );
   %
   fprintf( fid, 'sensorOff\n' );
   fprintf( fid, 'IndexSet( sensor_checked, 1 )\n' );
+  %
+  if C.JACOBIAN_DO
+    fprintf( fid, 'INCLUDE "%s"\n', C.JACOBIAN_FILE );  
+  end
+  %
   fprintf( fid, 'yCalc\n' );
 return
 %----------------------------------------------------------------------------

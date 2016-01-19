@@ -1,3 +1,19 @@
+2016-01-19  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Started to implement retrievals.
+
+	* Mscripts_arts/q2_inv.m: Started.
+
+	* Settings/q_std.m: Polished and removed handling of multiple
+	fmodes.
+
+	* Settings/q_multi.m: A help function to compile arrays of Q.
+
+	* Mscripts_database/l1b_crop.m: Corrected bug in indexing of
+	SubBandIndex.
+
+	* Mscripts_qsystem/q2_check_q.m: Extended an error message.
+
 2016-01-07  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Work to make Qsmr independent of Atmlab's setting system. In

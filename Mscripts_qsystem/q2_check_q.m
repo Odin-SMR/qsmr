@@ -18,7 +18,7 @@ function q2_check_q(Q)
                                            'Settings', 'q_fields.rst' ) ] );
 %
 if s > 0
-  error( 'Error while reading q_fields.rst.' );
+  error( 'Error while scanning q_fields.rst: %s', res );
 end
 
 

@@ -1,59 +1,67 @@
 function Q = q_std(fmode)
 % 
-if length(fmode) > 1
-  for i = 1 : length(fmode)
-    Q(i) = q_std( fmode(i) );
-  end
-  return
-end
-%----------------------------------------------------------------------------
+assert( length(fmode) == 1 );
 
 
 %---------------------------------------------------------------------------
-%--- General settings
+%--- Pre-calculations
 %---------------------------------------------------------------------------
 
-topfolder            = q2_topfolder;
+Q.P_GRID             = q2_pgrid( [], 90e3, true ); 
+
 precalcdir           = '/home/patrick/Outdata2/Qsmr2';
-  
-Q.FMODE              = fmode;  
- 
-%Q.FOLDER_WORK        = '/home/patrick/WORKAREA';
-Q.FOLDER_WORK        = '/tmp';
-
-Q.FOLDER_ARTSXMLDATA = '/home/patrick/SVN/ARTS/arts-xml-data';
-
-%Q.FOLDER_ABSLOOKUP   = fullfile( precalcdir, 'AbsLookupWithSpectro2' );  
 Q.FOLDER_ABSLOOKUP   = fullfile( precalcdir, 'AbsLookup' );  
 Q.FOLDER_ANTENNA     = fullfile( precalcdir, 'Antenna' );  
 Q.FOLDER_BACKEND     = fullfile( precalcdir, 'Backend' );  
 Q.FOLDER_BDX         = fullfile( precalcdir, 'SpeciesApriori', 'Bdx' );  
 Q.FOLDER_FGRID       = fullfile( precalcdir, 'Fgrid' );  
 
-Q.T_SOURCE           = 'MSIS90';
+
+
+%---------------------------------------------------------------------------
+%--- Folders
+%---------------------------------------------------------------------------
+
+topfolder            = q2_topfolder;
+Q.FOLDER_ARTSXMLDATA = '/home/patrick/SVN/ARTS/arts-xml-data';
+%Q.FOLDER_WORK        = '/home/patrick/WORKAREA';
+Q.FOLDER_WORK        = '/tmp';
+
+
+%---------------------------------------------------------------------------
+%--- Absorption 
+%---------------------------------------------------------------------------
 
 Q.ABSLOOKUP_OPTION   = '100mK_linear';
 Q.F_GRID_NFILL       = 0;
 Q.ABS_P_INTERP_ORDER = 1;
 Q.ABS_T_INTERP_ORDER = 3;
-
-
-% Only used when setting up absorption tables, and if on-the-fly would be done
-Q.P_GRID             = q2_pgrid( [], 90e3, true ); 
+Q.CONTINUA_FILE      = fullfile( topfolder, 'DataFiles', 'Continua', ...
+                                                         'continua_std.arts' );
+  
+  
+%---------------------------------------------------------------------------
+%--- RT and sensor
+%---------------------------------------------------------------------------
 
 Q.PPATH_LMAX         = 15e3;
 Q.PPATH_LRAYTRACE    = 20e3;
-
-Q.CONTINUA_FILE      = fullfile( topfolder, 'DataFiles', 'Continua', ...
-                                                         'continua_std.arts' );
-
-%Q.DZA_MAX_IN_CORE    = 0.005;
-%Q.DZA_GRID_EDGES     = [ Q.DZA_MAX_IN_CORE*[1:4 6 9 13 18 24 31 42] ];
 
 Q.DZA_MAX_IN_CORE    = 0.01;
 Q.DZA_GRID_EDGES     = [ Q.DZA_MAX_IN_CORE*[1:3 5 8 12 21] ];
 
 Q.F_BACKEND_COMMON   = true;
+
+
+%---------------------------------------------------------------------------
+%--- Various
+%---------------------------------------------------------------------------
+
+Q.FMODE              = fmode;  
+  
+Q.T_SOURCE           = 'MSIS90';
+
+
 
 
 %---------------------------------------------------------------------------
@@ -141,7 +149,3 @@ switch fmode
  otherwise
   error( 'Frequency band %d is not yet handled (or not defined).', fmode );
 end
-
-
-
-
