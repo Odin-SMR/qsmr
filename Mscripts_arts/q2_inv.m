@@ -46,15 +46,9 @@ xmlStore( fullfile( R.WORK_FOLDER, 'sensor_los.xml' ), za, 'Matrix', 'binary' );
 
 
 %
-% Set-up Jacobian (by sub-function found below)
+% Create cfiles to use, with and without Jacobian calculation
 %
 jac_cfile = fullfile( R.WORK_FOLDER, 'jacobian.arts' );
-%
-R = setup_jac( Q, R, jac_cfile );
-  
-
-%
-% Create cfiles to use, with and without Jacobian calculation
 %
 C.ABSORPTION         = 'LoadTable';
 C.ABS_LOOKUP_TABLE   = fullfile( Q.FOLDER_ABSLOOKUP, Q.ABSLOOKUP_OPTION, ...
@@ -77,21 +71,37 @@ clear C
 
 
 %
+% Set-up Jacobian (by sub-function found below)
+%
+R = subfun4jac( Q, R, jac_cfile );
+  
+
+%
 % Create Sx and its inverse
 %
-[Sx,Sxinv] = arts_sx( Q, R );
+[Sx,Sxinv] = subfun4sx( Q, R );
 
 
 %
 % Create Se and its inverse
 %
+[Se,Seinv] = subfun4se( L1B );
 
 
 %
 % Define O
 %
+O = oem;
+%
+[O.A,O.cost,O.e,O.ga] = deal( true );
+%
+O.stop_dx             = Q.STOP_DX;
+O.ga_start            = Q.GA_START;
+O.ga_factor_not_ok    = Q.GA_FACTOR_NOT_OK;
+O.ga_factor_ok        = Q.GA_FACTOR_OK;
+O.ga_max              = Q.GA_MAX;
 
-  
+
 %
 % Run OEM
 %
@@ -101,14 +111,16 @@ clear C
 %
 % Create L2
 %
-L2 = NaN;
+L2 = X;
+
+
 
 
 %---------------------------------------------------------------------------
-%---------------------------------------------------------------------------
+%--- Jacobian
 %---------------------------------------------------------------------------
 
-function R = setup( Q, R, jac_cfile )
+function R = subfun4jac( Q, R, jac_cfile )
   
 % Open and init jacobian cfile
 %

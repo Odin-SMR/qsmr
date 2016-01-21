@@ -129,6 +129,24 @@ F_GRID_NFILL
 F_LO_NOMINAL
    A scalar value. Nominal value of the LO frequency.
 
+GA_FACTOR_NOT_OK
+   The factor with which the Marquardt-Levenberg factor is increased when not 
+   a lower cost value is obtained. This starts a new sub-iteration. This value
+   must be > 1.
+
+GA_FACTOR_OK
+  The factor with which the Marquardt-Levenberg factor is decreased after a
+  lower cost values has been reached. This value must be > 1.
+
+GA_MAX          
+  Maximum value for gamma factor for the Marquardt-Levenberg method. The 
+  stops if this value is reached and cost value is still not decreased.
+  This value must be > 0.
+
+GA_START
+  Start value for gamma factor for the Marquardt-Levenberg method. See the L2
+  ATBD for a definition of the gamma factor. This value must be >= 0.
+
 PPATH_LMAX
    A scalar value. The maximum distance between points of the propagation path.
    See further the ARTS workspace variable with the same name.
@@ -143,6 +161,13 @@ P_GRID
 
 SIDEBAND_LEAKAGE
    To be defined ...
+
+STOP_DX
+   OEM stop criterion. The iteration is halted when the change in x 
+   is < stop_dx. Eq. 5.29 in the book by Rodgers is followed, but a
+   normalisation with the length of x is applied. This means that STOP_DX
+   should in general be in the order of 0.01 (and not change of the state
+   vector is expanded).
 
 T_SOURCE
    A string. This string describes from where temperature a priori shall be

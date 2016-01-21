@@ -1,3 +1,9 @@
+2016-01-21  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Settings/q_fields.rst:
+	* Settings/q_std.m (q_std):
+	* Mscripts_arts/q2_inv.m (q2_inv): Introduced the OEM-ML settings.
+
 2016-01-19  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Started to implement retrievals.
