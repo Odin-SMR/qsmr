@@ -104,7 +104,7 @@ if any( strcmp( part, { 'antenna', 'all' } ) )  |  do_total
     if dt > 0.05
       error( ...
       'Integration time found (%.0f ms) with no matching antenna pattern.', ...
-                                                                      dt*1e3 );
+                                                                L1B.IntTime(i)*1e3 );
     end
   end
 

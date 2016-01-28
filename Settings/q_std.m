@@ -24,8 +24,8 @@ Q.FOLDER_FGRID       = fullfile( precalcdir, 'Fgrid' );
 
 topfolder            = q2_topfolder;
 Q.FOLDER_ARTSXMLDATA = '/home/patrick/SVN/ARTS/arts-xml-data';
-%Q.FOLDER_WORK        = '/home/patrick/WORKAREA';
-Q.FOLDER_WORK        = '/tmp';
+Q.FOLDER_WORK        = '/home/patrick/WORKAREA';
+%Q.FOLDER_WORK        = '/tmp';
 
 
 %---------------------------------------------------------------------------
@@ -129,12 +129,14 @@ switch fmode
   Q.ABS_SPECIES(1).RETRIEVE = true;
   Q.ABS_SPECIES(1).L2       = true;
   Q.ABS_SPECIES(1).GRID     = q2_pgrid( 10e3, 60e3 );
+  Q.ABS_SPECIES(1).UNC_REL  = 0.75;
   %
   Q.ABS_SPECIES(2).TAG{1}   = 'O3-*-444e9-554e9';
   Q.ABS_SPECIES(2).SOURCE   = 'Bdx';
   Q.ABS_SPECIES(2).RETRIEVE = true;
   Q.ABS_SPECIES(2).L2       = true;
   Q.ABS_SPECIES(2).GRID     = q2_pgrid( 10e3, 90e3 );
+  Q.ABS_SPECIES(2).UNC_REL  = 0.5;
   %
   Q.ABS_SPECIES(3).TAG{1}   = 'H2O';
   Q.ABS_SPECIES(3).TAG{2}   = 'H2O-ForeignContStandardType';
