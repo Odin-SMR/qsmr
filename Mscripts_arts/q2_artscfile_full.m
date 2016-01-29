@@ -65,9 +65,9 @@ else
   cfile_start( fid, C );
   cfile_abs( fid, C, workfolder );
   cfile_atm( fid, C, workfolder );
+  cfile_sensor_and_rt( fid, C, workfolder );
   cfile_jacobian( fid, C, workfolder );  
-  cfile_sensor_and_rte( fid, C, workfolder );
-  cfile_save_y( fid, workfolder );
+  cfile_ycalc( fid, C, workfolder );
   cfile_end( fid );
 end
 
@@ -281,12 +281,16 @@ return
   
 function cfile_jacobian( fid, C, workfolder )
   %
-  fprintf( fid, 'jacobianOff\n' );  
+  if C.JACOBIAN_DO
+    fprintf( fid, 'INCLUDE "%s"\n', C.JACOBIAN_FILE );  
+  else
+     fprintf( fid, 'jacobianOff\n' );  
+  end
 return
 %----------------------------------------------------------------------------
 
 
-function cfile_sensor_and_rte( fid, C, workfolder );
+function cfile_sensor_and_rt( fid, C, workfolder );
   %
   fprintf( fid, '\n\n#\n# Sensor + radiative transfer:\n#\n' );    
   %
@@ -302,22 +306,23 @@ function cfile_sensor_and_rte( fid, C, workfolder );
   %
   fprintf( fid, 'sensorOff\n' );
   fprintf( fid, 'IndexSet( sensor_checked, 1 )\n' );
-  %
-  if C.JACOBIAN_DO
-    fprintf( fid, 'INCLUDE "%s"\n', C.JACOBIAN_FILE );  
-  end
-  %
-  fprintf( fid, 'yCalc\n' );
 return
 %----------------------------------------------------------------------------
 
 
-function cfile_save_y( fid, workfolder );
+function cfile_ycalc( fid, C, workfolder );
+  %
+  fprintf( fid, 'yCalc\n' );
   %
   fprintf( fid, 'WriteXML( in=y, filename="%s" )\n', ...
                                             fullfile( workfolder, 'y.xml' ) );
   fprintf( fid, 'WriteXML( in=y_aux, filename="%s" )\n', ...
                                         fullfile( workfolder, 'y_aux.xml' ) );
+  %
+  if C.JACOBIAN_DO
+    fprintf( fid, 'WriteXML( in=jacobian, filename="%s" )\n', ...
+                                     fullfile( workfolder, 'jacobian.xml' ) );
+  end
 return
 %----------------------------------------------------------------------------
 

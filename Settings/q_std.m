@@ -130,6 +130,8 @@ switch fmode
   Q.ABS_SPECIES(1).L2       = true;
   Q.ABS_SPECIES(1).GRID     = q2_pgrid( 10e3, 60e3 );
   Q.ABS_SPECIES(1).UNC_REL  = 0.75;
+  Q.ABS_SPECIES(1).UNC_ABS  = 10e-9;
+  Q.ABS_SPECIES(1).LOG_ON   = false;
   %
   Q.ABS_SPECIES(2).TAG{1}   = 'O3-*-444e9-554e9';
   Q.ABS_SPECIES(2).SOURCE   = 'Bdx';
@@ -137,6 +139,8 @@ switch fmode
   Q.ABS_SPECIES(2).L2       = true;
   Q.ABS_SPECIES(2).GRID     = q2_pgrid( 10e3, 90e3 );
   Q.ABS_SPECIES(2).UNC_REL  = 0.5;
+  Q.ABS_SPECIES(2).UNC_ABS  = 1e-6;
+  Q.ABS_SPECIES(2).LOG_ON   = true;
   %
   Q.ABS_SPECIES(3).TAG{1}   = 'H2O';
   Q.ABS_SPECIES(3).TAG{2}   = 'H2O-ForeignContStandardType';

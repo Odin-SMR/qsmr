@@ -83,7 +83,7 @@ if any( strcmp( part, { 'antenna', 'all' } ) )  |  do_total
                  linspace( za_min, za_max, ...
                            1+ceil((za_max-za_min)/Q.DZA_MAX_IN_CORE)),...
                  za_max + Q.DZA_GRID_EDGES ]';
-  xmlStore( fullfile( R.WORK_FOLDER, 'mblock_dlos_grid.xml' ), R.ZA_PENCIL, ...
+  xmlStore( fullfile( R.workfolder, 'mblock_dlos_grid.xml' ), R.ZA_PENCIL, ...
                                                           'Matrix', 'binary' );
 
   % Find integration time for pre-calculated spectra
@@ -125,14 +125,14 @@ if any( strcmp( part, { 'antenna', 'all' } ) )  |  do_total
     % 
     ind = find( iant == iant_unique(i) );
     %
-    xmlStore( fullfile( R.WORK_FOLDER, 'antenna_dlos.xml' ), R.ZA_BORESI(ind), ...
+    xmlStore( fullfile( R.workfolder, 'antenna_dlos.xml' ), R.ZA_BORESI(ind), ...
                                                         'Matrix', 'binary' );
     C.ANTENNA_FILE = antfiles{ iant_unique(i) };
     %
     if ~do_total
-      cfile  = q2_artscfile_sensor( C, R.WORK_FOLDER );
+      cfile  = q2_artscfile_sensor( C, R.workfolder );
       status = arts( cfile );
-      Hpart  = xmlLoad( fullfile( R.WORK_FOLDER, 'sensor_response.xml' ) );
+      Hpart  = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
       %
       for j = 1 : length(ind)
         R.H_ANTEN(ind(j),:) = Hpart(j,:);
@@ -159,12 +159,12 @@ if any( strcmp( part, { 'mixer', 'all' } ) )  |  do_total
                                   Q.ABSLOOKUP_OPTION, ...
                                   sprintf( 'abslookup_fmode%02d.xml', fmode ) ) );
   f_grid = abs_lookup.f_grid;
-  xmlStore( fullfile( R.WORK_FOLDER, 'f_grid.xml' ), f_grid, 'Vector', 'binary' );
+  xmlStore( fullfile( R.workfolder, 'f_grid.xml' ), f_grid, 'Vector', 'binary' );
   clear abs_lookup
   %
   % Here we use a single angle
   if ~do_total
-    xmlStore( fullfile( R.WORK_FOLDER, 'mblock_dlos_grid.xml' ), [0], ...
+    xmlStore( fullfile( R.workfolder, 'mblock_dlos_grid.xml' ), [0], ...
                                                           'Matrix', 'binary' );
   end
   %
@@ -183,14 +183,14 @@ if any( strcmp( part, { 'mixer', 'all' } ) )  |  do_total
   else
     G.data      = [ rm rm rs rs ];
   end
-  C.SIDEBAND_FILE = fullfile( R.WORK_FOLDER, 'sideband_response.xml' );
+  C.SIDEBAND_FILE = fullfile( R.workfolder, 'sideband_response.xml' );
   xmlStore( C.SIDEBAND_FILE, G, 'GriddedField1', 'binary' );
   %
   if ~do_total
-    cfile     = q2_artscfile_sensor( C, R.WORK_FOLDER );
+    cfile     = q2_artscfile_sensor( C, R.workfolder );
     status    = arts( cfile );
-    R.H_MIXER = xmlLoad( fullfile( R.WORK_FOLDER, 'sensor_response.xml' ) );
-    R.F_MIXER = xmlLoad( fullfile( R.WORK_FOLDER, 'sensor_response_f.xml' ) );
+    R.H_MIXER = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
+    R.F_MIXER = xmlLoad( fullfile( R.workfolder, 'sensor_response_f.xml' ) );
   end
 end
 
@@ -208,13 +208,13 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
   
   % f_grid is here set to R.F_MIXER
   if ~do_total  
-    xmlStore( fullfile( R.WORK_FOLDER, 'f_grid.xml' ), R.F_MIXER, ...
+    xmlStore( fullfile( R.workfolder, 'f_grid.xml' ), R.F_MIXER, ...
                                                         'Vector',  'binary' );
   end
   
   % Here we use a single angle
   if ~do_total
-    xmlStore( fullfile( R.WORK_FOLDER, 'mblock_dlos_grid.xml' ), [0], ...
+    xmlStore( fullfile( R.workfolder, 'mblock_dlos_grid.xml' ), [0], ...
                                                          'Matrix', 'binary' );
   end
 
@@ -231,25 +231,25 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
   % A common set of backend frequencies assumed
   if Q.F_BACKEND_COMMON
     % Channel positions, in IF
-    xmlStore( fullfile( R.WORK_FOLDER, 'f_backend.xml' ), ...
+    xmlStore( fullfile( R.workfolder, 'f_backend.xml' ), ...
                               abs( f_backend - f_lo ), 'Vector', 'binary' );
     if ~do_total
-      cfile    = q2_artscfile_sensor( C, R.WORK_FOLDER );
+      cfile    = q2_artscfile_sensor( C, R.workfolder );
       status   = arts( cfile );
-      R.H_BACKE = xmlLoad( fullfile( R.WORK_FOLDER, 'sensor_response.xml' ) );
+      R.H_BACKE = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
     end
     
   % Backend frequencies vary (or rather non-fixed LO)
   else
     for i = 1 : length(L1B.Altitude)
       f_lo = get_fmixerback( L1B, i );
-      xmlStore( fullfile( R.WORK_FOLDER, 'f_backend.xml' ), ...
+      xmlStore( fullfile( R.workfolder, 'f_backend.xml' ), ...
                               abs( f_backend - f_lo ), 'Vector', 'binary' );
       if i == 1
-        cfile        = q2_artscfile_sensor( C, R.WORK_FOLDER );
+        cfile        = q2_artscfile_sensor( C, R.workfolder );
       end
       status       = arts( cfile );
-      R.H_BACKE{i} = xmlLoad( fullfile( R.WORK_FOLDER, 'sensor_response.xml' ) );
+      R.H_BACKE{i} = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
     end
   end
   
@@ -263,9 +263,9 @@ if do_total
   %
   C.PART = 'total';
   %
-  cfile     = q2_artscfile_sensor( C, R.WORK_FOLDER );
+  cfile     = q2_artscfile_sensor( C, R.workfolder );
   status    = arts( cfile );
-  R.H_TOTAL = xmlLoad( fullfile( R.WORK_FOLDER, 'sensor_response.xml' ) );
+  R.H_TOTAL = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
 end
 
 return

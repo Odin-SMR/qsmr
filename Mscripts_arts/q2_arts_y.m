@@ -29,23 +29,23 @@ assert( fmode == Q.FMODE );
 %
 % Set/create work folder
 %
-[R.WORK_FOLDER,rm_wfolder] = q2_create_workfolder( Q );
+[R.workfolder,rm_wfolder] = q2_create_workfolder( Q );
 %
 if rm_wfolder
-  cu = onCleanup( @()q2_delete_workfolder( R.WORK_FOLDER ) );
+  cu = onCleanup( @()q2_delete_workfolder( R.workfolder ) );
 end
   
   
 %
 % Set atmospheric data
 %
-xmlStore( fullfile( R.WORK_FOLDER, 'p_grid.xml' ), ATM.P, ...
+xmlStore( fullfile( R.workfolder, 'p_grid.xml' ), ATM.P, ...
                                                          'Vector', 'binary' );
-xmlStore( fullfile( R.WORK_FOLDER, 't_field.xml' ), ATM.T, ...
+xmlStore( fullfile( R.workfolder, 't_field.xml' ), ATM.T, ...
                                                         'Tensor3', 'binary' );
-xmlStore( fullfile( R.WORK_FOLDER, 'z_field.xml' ), ATM.Z, ...
+xmlStore( fullfile( R.workfolder, 'z_field.xml' ), ATM.Z, ...
                                                         'Tensor3', 'binary' );
-xmlStore( fullfile( R.WORK_FOLDER, 'vmr_field.xml' ), ATM.VMR, ...
+xmlStore( fullfile( R.workfolder, 'vmr_field.xml' ), ATM.VMR, ...
                                                         'Tensor4', 'binary' );
 
 
@@ -60,9 +60,9 @@ else
   [R.R_EARTH,R.Z_ODIN,za] = q2_calc_1dviewgeom( L1B );
 end
 %
-xmlStore( fullfile( R.WORK_FOLDER, 'sensor_pos.xml' ), ...
+xmlStore( fullfile( R.workfolder, 'sensor_pos.xml' ), ...
                              repmat( R.Z_ODIN, size(za) ), 'Matrix', 'binary' );
-xmlStore( fullfile( R.WORK_FOLDER, 'sensor_los.xml' ), za, 'Matrix', 'binary' );
+xmlStore( fullfile( R.workfolder, 'sensor_los.xml' ), za, 'Matrix', 'binary' );
 
 
 %
@@ -83,10 +83,10 @@ C.JACOBIAN_DO        = false;
 %
 % Create cfile, calculate and load spectra
 %
-cfile  = q2_artscfile_full( C, R.WORK_FOLDER );
+cfile  = q2_artscfile_full( C, R.workfolder );
 result = q2_arts( ['-r000 ',cfile] );
 %
-y      = xmlLoad( fullfile( R.WORK_FOLDER, 'y.xml' ) );
+y      = xmlLoad( fullfile( R.workfolder, 'y.xml' ) );
 %
 if do_sensor
   y = R.H_TOTAL * y;
