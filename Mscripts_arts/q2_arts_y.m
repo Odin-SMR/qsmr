@@ -90,7 +90,7 @@ y      = xmlLoad( fullfile( R.workfolder, 'y.xml' ) );
 %
 if do_sensor
   y = R.H_TOTAL * y;
-  Y = reshape( y, size(L1B.Frequency,1), length(L1B.Altitude) );
+  Y = reshape( y, size(L1B.Spectrum) );
 else
   A = xmlLoad( C.ABSORPTION );
   f = A.f_grid;

@@ -1,6 +1,31 @@
 function [R,y,J] = q2_oemiter( Q, R, x, iter )
 
 %---------------------------------------------------------------------------
+%--- Things done only at first call
+%---------------------------------------------------------------------------
+
+if iter == 1
+
+  % Store fixed atmosheric grids and data
+  xmlStore( fullfile( R.workfolder, 'p_grid.xml' ), R.ATM.P, ...
+                                                         'Vector', 'binary' );
+  xmlStore( fullfile( R.workfolder, 't_field.xml' ), R.ATM.T, ...
+                                                        'Tensor3', 'binary' );
+  xmlStore( fullfile( R.workfolder, 'z_field.xml' ), R.ATM.Z, ...
+                                                        'Tensor3', 'binary' );
+  % Jacobian for baseline fit
+  if Q.BASELINE_PIECEWISE 
+  else
+    R.Jbl = zeros( size(R.H_TOTAL,1), length(R.ZA_BORESI) );
+    nf  = size( R.H_BACKE, 1 );
+    for i = 1 : length(R.ZA_BORESI)
+      R.Jbl((i-1)*nf+1:i*nf,i) = 1;
+    end
+  end
+end
+
+
+%---------------------------------------------------------------------------
 %--- Perform mapping from x to ARTS or baseline variables 
 %---------------------------------------------------------------------------
 
@@ -30,8 +55,15 @@ for i = 1 : length( R.jq )
       assert( false );
     end
     clear xmapped ig
+   
     
-    otherwise   %--------------------------------------------------------------
+   case 'Polynomial baseline fit'   %-----------------------------------------
+    %
+    if iter > 1
+      R.bl = R.bl + R.Jbl * x(ind);
+    end
+
+   otherwise   %--------------------------------------------------------------
       error('Unknown retrieval quantitity.'); 
   end 
 end 
@@ -39,16 +71,9 @@ end
 
 
 %---------------------------------------------------------------------------
-%--- Store to files
+%--- Update vmr_field
 %---------------------------------------------------------------------------
 
-if iter == 1
-  xmlStore( fullfile( R.workfolder, 't_field.xml' ), R.ATM.T, ...
-                                                        'Tensor3', 'binary' );
-  xmlStore( fullfile( R.workfolder, 'z_field.xml' ), R.ATM.Z, ...
-                                                        'Tensor3', 'binary' );
-end
-%
 xmlStore( fullfile( R.workfolder, 'vmr_field.xml' ), vmr, ...
                                                         'Tensor4', 'binary' );
 
@@ -86,6 +111,9 @@ if do_j
       J(:,i) = J(:,i) / x(i);
     end
   end  
+  
+  % Add weightimng functions for baseline fit
+  J = [ J, R.Jbl ] ; 
 end
 
 

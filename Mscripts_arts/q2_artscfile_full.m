@@ -272,7 +272,8 @@ function cfile_atm( fid, C, workfolder )
                                     fullfile( workfolder, 'z_field.xml' ) );
   fprintf( fid, 'ReadXML( vmr_field, "%s" )\n', ...
                                     fullfile( workfolder, 'vmr_field.xml' ) );
-  fprintf( fid, 'atmfields_checkedCalc(bad_partition_functions_ok=1)\n' );
+  fprintf( fid, 'atmfields_checkedCalc( negative_vmr_ok = 1,\n' );
+  fprintf( fid, '   bad_partition_functions_ok = 1)\n' );
   fprintf( fid, 'atmgeom_checkedCalc\n' );
   fprintf( fid, 'cloudbox_checkedCalc\n' );
 return

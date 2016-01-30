@@ -1,8 +1,7 @@
-function L2 = q2_inv(LOG,L1B,Q)  
+function [L2,L2d] = q2_inv(LOG,L1B,Q)  
 
-  
-%
-% Asserts
+%  
+% Basic checks of data
 %
 assert( L1B.FreqMode(1) == Q.FMODE );
 
@@ -13,22 +12,22 @@ assert( L1B.FreqMode(1) == Q.FMODE );
 [R.workfolder,rm_wfolder] = q2_create_workfolder( Q );
 %
 if rm_wfolder
+  % Make sure temporary folders are removed
   cu = onCleanup( @()q2_delete_workfolder( R.workfolder ) );
   clear rm_workfolder
 end
   
   
 %
-% Get p_grid and a priori atmosphere
+% Get a priori atmosphere
 %
 R.ATM = q2_get_atm( LOG, Q );
 %
-xmlStore( fullfile( R.workfolder, 'p_grid.xml' ), R.ATM.P, ...
-                                                         'Vector', 'binary' );
+% (Data stored to ARTS files in q2_oemiter)
 
-
+  
 %
-% Initial sensor responses 
+% Initial sensor variables 
 %
 R  = q2_arts_sensor_parts( L1B, Q, R );
 R  = q2_arts_sensor( R );
@@ -46,7 +45,7 @@ xmlStore( fullfile( R.workfolder, 'sensor_los.xml' ), za, 'Matrix', 'binary' );
   
 
 %
-% Create full Sx and its inverse (using Atmlab)
+% Create full Sx and its inverse (using a function from Atmlab)
 %
 [Sx,Sxinv] = arts_sx( Q, R );
 
@@ -54,15 +53,15 @@ xmlStore( fullfile( R.workfolder, 'sensor_los.xml' ), za, 'Matrix', 'binary' );
 %
 % Create Se and its inverse
 %
-[Se,Seinv] = subfun4se( L1B );
+[Se,Seinv] = subfun4se( Q, L1B );
 
-
+keyboard
 %
 % Define O
 %
 O = oem;
 %
-[O.A,O.cost,O.e,O.ga] = deal( true );
+[O.A,O.cost,O.e,O.ga,O.yf] = deal( true );
 %
 O.stop_dx             = Q.STOP_DX;
 O.ga_start            = Q.GA_START;
@@ -80,7 +79,7 @@ O.ga_max              = Q.GA_MAX;
 %
 % Create L2
 %
-L2 = X;
+[L2,L2d] = subfun4l2( R, L1B, X );
 
 return
 
@@ -88,7 +87,7 @@ return
 
 
 %---------------------------------------------------------------------------
-%--- Retrieval quantities set-up
+%--- Retrieval quantities
 %---------------------------------------------------------------------------
 
 function[xa,Q,R] = subfun4retqs( Q, R )
@@ -119,18 +118,20 @@ function[xa,Q,R] = subfun4retqs( Q, R )
 
   
   % Init some of the bookkeeping variables
-  R.ji    = [];    
-  R.jq    = [];
-  R.i_rel = [];
-  lx      = 0;
+  R.ji    = [];    % Matches ARTS' jacobian_indices, but 1-based indexing
+  R.jq    = [];    % A slim version of ARTS' jacobian_quantities
+  R.i_rel = [];    % Index in x of abs- species. using rel, and not logrel
+  lx      = 0;     % Length of x
 
-  % Init variable defining jac_file
+  % Init array-of-string variable defining jac_file
   T{1} = 'Arts2{';
   T{2} = 'VectorCreate( empty_vector )';
   T{3} = 'VectorSet( empty_vector, [] )';
   T{4} = 'jacobianInit';
+
   
   % Abs specices
+  % -------------------------------------------------------------------------------- 
   %
   R.i_asj = find( [ Q.ABS_SPECIES.RETRIEVE ] );
   %
@@ -162,11 +163,41 @@ function[xa,Q,R] = subfun4retqs( Q, R )
                                                                         vector_name );
     T{end+1} = '   unit = "rel" )';
     %
-    Q.ABS_SPECIES(i).SX = covmat1d_from_cfun( Q.ABS_SPECIES(i).GRID, ...
-                                              Q.ABS_SPECIES(i).UNC_REL, ...
-                                                           'lin', 0.3, 0.00, @log10 );
+    % A priori uncertainty: Select max between rel and abs uncertainty, but
+    % don't exceed 1e6.
+    R.xa_vmr{i} = interpp( R.ATM.P, R.ATM.VMR(i,:)', Q.ABS_SPECIES(i).GRID );
+    Std         = [ Q.ABS_SPECIES(i).GRID, min( 1e6, ...
+                    max( Q.ABS_SPECIES(i).UNC_REL, ...
+                         Q.ABS_SPECIES(i).UNC_ABS./R.xa_vmr{i} ) ) ];
+    %
+    Q.ABS_SPECIES(i).SX = covmat1d_from_cfun( Q.ABS_SPECIES(i).GRID, Std, 'lin', ...
+                                              Q.ABS_SPECIES(i).CORRLEN, 0.00, @log10 );
   end
 
+  
+  % Pointing
+  % -------------------------------------------------------------------------------- 
+  %
+
+  
+  
+  % Baseline fit
+  % -------------------------------------------------------------------------------- 
+  %
+  iq               = length(R.jq) + 1;
+  np               = length( R.ZA_BORESI );
+  R.jq{iq}.maintag = 'Polynomial baseline fit';
+  R.jq{iq}.subtag  = 'Coefficient 0';  
+  R.ji{iq}{1}      = lx + 1;
+  R.ji{iq}{2}      = lx + np;
+  lx               = lx + np;
+  %
+  % We can here not use ARTS as sensor is done outside ARTS. If using ARTS
+  % we would get a baseline off-set for each pencil beam spectrum. Instead J
+  % is expanded in q2_oemiter to include the baseline fit.
+  %
+  Q.POLYFIT.SX0 = (Q.BASELINE_SI*Q.BASELINE_SI) * speye(np);
+    
   
   % Finalise and create file setting up the jacobian
   %
@@ -199,20 +230,31 @@ return
 %--- Se
 %---------------------------------------------------------------------------
 
-function [Se,Seinv] = subfun4se( L1B )
+function [Se,Seinv] = subfun4se( Q, L1B )
 
-  % Calculate covariance matrix for one spectrum and unit variance, and its
-  % inverse
-  f    = L1B.Frequency(:,1);
+  % Calculate covariance matrix for one spectrum and unit variance.
+  f    = L1B.Frequency.IFreqGrid(:,1);
   nf   = length( f );
   df   = L1B.FreqRes(1);
-  % A correlation length of 1.6*df gives a rough fit of emperically derived
-  % correlations. 1.6_df gives 0.6 and 0.2 to two closest channels.
-  S    = covmat1d_from_cfun( f, 1, 'lin', 1.6*df );
-  Sinv = S \ speye(nf);
+  % A correlation length of 2*df + exponential function gives a rough fit to
+  % correlation between adjacent channels (0.6). 
+  S    = covmat1d_from_cfun( f, 1, 'exp', 2*df, 0.001 );
 
-  % Compile complete matrices
+  % Its inverse. This should be close to a tri-diagonal matrix. Remove all
+  % very smalle elemenets to save space
   %
+  Sinv = S \ speye(nf);
+  %
+  [i,j,s] = find( abs(Sinv) > 0.001 );
+  n       = size(Sinv,1);
+  Sinv    = sparse(i,j,s,n,n);  
+
+  % Compile complete matrices by repeating S and Sinv, weighted with thermal
+  % noise standard deviation.
+  % This is done by determong row and column indexes, to create the final
+  % sparse matrices in one go. 
+
+  % Row, column, value, and number variables
   [i1,j1,s1] = find( S );
   [i2,j2,s2] = find( Sinv );
   %
@@ -223,16 +265,20 @@ function [Se,Seinv] = subfun4se( L1B )
   [ii1,jj1,ss1] = deal( zeros( n1*ntan, 1 ) );
   [ii2,jj2,ss2] = deal( zeros( n2*ntan, 1 ) );
   [nn1,nn2]     = deal( 0 );
-  %
+
+  % Loop tangent altitudes / spectra
   for t = 1 : ntan
-    %
-    var      = L1B.Trec(t) / sqrt( df * L1B.EffTime(t) );
+
+    % Variance of thermal noise for t:th spectrum 
+    var      = power( Q.NOISE_SCALEFAC*L1B.Trec(t), 2 ) / ( df * L1B.EffTime(t) );
+
     % Se
     ind      = nn1 + (1:n1);
     ii1(ind) = nf*(t-1) + i1;
     jj1(ind) = nf*(t-1) + j1;    
     ss1(ind) = var * s1;    
     nn1      = nn1 + n1;
+
     % Seinv
     ind      = nn2 + (1:n2);
     ii2(ind) = nf*(t-1) + i2;
@@ -240,8 +286,27 @@ function [Se,Seinv] = subfun4se( L1B )
     ss2(ind) = (1/var) * s2;    
     nn2      = nn2 + n2;
   end
-  %
+
+  % Create the matrices
   Se    = sparse( ii1, jj1, ss1, nf*ntan, nf*ntan );
   Seinv = sparse( ii2, jj2, ss2, nf*ntan, nf*ntan );
+return
 
+
+
+%---------------------------------------------------------------------------
+%--- L2
+%---------------------------------------------------------------------------
+
+function [L2,L2d] = subfun4l2( R, L1B, X )
+
+  F = l1b_frequency( L1B );
+  
+  plot( F/1e9, L1B.Spectrum, '.' )
+  hold on
+  plot( F/1e9, reshape(X.yf,size(L1B.Spectrum) )) 
+  hold off
+
+  L2  = X;
+  L2d = NaN;
 return

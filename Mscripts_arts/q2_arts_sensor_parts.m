@@ -279,5 +279,5 @@ function [f_lo,f_backend] = get_fmixerback( L1B, itan )
   lo_rest    = L1B.LOFreq(itan);
   df_doppler = f_rest - L1B.SkyFreq(itan);
   f_lo       = lo_rest + df_doppler * lo_rest / f_rest; 
-  f_backend  = L1B.Frequency(:,itan);
+  f_backend  = l1b_frequency( L1B, itan );
 return

@@ -1,6 +1,8 @@
 Patrick:
 ---
 
+* Check details in calculation of Se
+
 * Switch to use ellipsoid curvature radius
 
 * Varying frequencies in sensor
