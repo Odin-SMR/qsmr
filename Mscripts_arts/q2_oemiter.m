@@ -14,12 +14,17 @@ if iter == 1
   xmlStore( fullfile( R.workfolder, 'z_field.xml' ), R.ATM.Z, ...
                                                         'Tensor3', 'binary' );
   % Jacobian for baseline fit
-  if Q.BASELINE_PIECEWISE 
-  else
-    R.Jbl = zeros( size(R.H_TOTAL,1), length(R.ZA_BORESI) );
-    nf  = size( R.H_BACKE, 1 );
-    for i = 1 : length(R.ZA_BORESI)
-      R.Jbl((i-1)*nf+1:i*nf,i) = 1;
+  %
+  R.Jbl = zeros( size(R.H_TOTAL,1), size(R.bline_ilims,2)*length(R.ZA_BORESI) );
+  %
+  nf = size( R.H_BACKE, 1 );  % Number of channels
+  c  = 0;
+  %
+  for t = 1 : length(R.ZA_BORESI)
+    for i = 1 : size(R.bline_ilims,2)
+      c  = c + 1;
+      i0 = (t-1) * nf;
+      R.Jbl(i0+R.bline_ilims(1,i):i0+R.bline_ilims(2,i),c) = 1;
     end
   end
 end
@@ -56,6 +61,20 @@ for i = 1 : length( R.jq )
     end
     clear xmapped ig
    
+   case 'Sensor pointing'   %-------------------------------------------------
+    %
+    if iter > 1
+      xmlStore( fullfile( R.workfolder, 'sensor_los.xml' ), ...
+                R.ZA_PENCIL + x(ind), 'Matrix', 'binary' );
+    end
+
+   case 'Frequency'   %--------------------------------------------------------
+    %
+    if iter > 1
+      keyboard
+      %R = q2_arts_sensor_parts( L1B, Q, R, 'backend' );
+      %R = q2_arts_sensor( R );
+    end
     
    case 'Polynomial baseline fit'   %-----------------------------------------
     %
@@ -81,7 +100,7 @@ xmlStore( fullfile( R.workfolder, 'vmr_field.xml' ), vmr, ...
   
   
 %---------------------------------------------------------------------------
-%--- Run ARTS 
+%--- Run ARTS, load results, expand J and apply sensor matrix
 %---------------------------------------------------------------------------
 
 if nargout == 3
@@ -95,14 +114,13 @@ end
 arts( cfile );
 %
 y = xmlLoad( fullfile( R.workfolder, 'y.xml' ) );
-y = R.H_TOTAL * y;
 %
 if do_j  
   
-  % Load Jacobian
+  % Load Jacobian and apply sensor response matrix
   J = xmlLoad( fullfile( R.workfolder, 'jacobian.xml' ) );
-  J = R.H_TOTAL * J;
-  
+  J    = R.H_TOTAL * J;
+
   % Jacobian calculated for x, but for "rel" it should be with respect to xa:
   % (as arts takes x as xa, no scaling needed for "logrel", and no scaling 
   %  needed for first calculation)
@@ -112,9 +130,30 @@ if do_j
     end
   end  
   
-  % Add weightimng functions for baseline fit
-  J = [ J, R.Jbl ] ; 
+  % Derive pointing off-set weighting functions
+  %
+  nf = size( R.H_MIXER, 2 );  % Length of f_grid
+  dza = 0.001;
+  ymat = reshape( y, [nf length(R.ZA_PENCIL) ] );
+  ytmp = interp1( R.ZA_PENCIL, ymat', R.ZA_PENCIL+dza, 'pchip', 'extrap' )'; 
+  Jpoi = R.H_TOTAL * ( ytmp(:) - y ) / dza;
+
+  % Derive frequency off-set weighting functions
+  %
+  if 0
+  df   = 5e3;
+  ytmp = interp1( R.F_GRID, ymat, R.F_GRID+df, 'pchip', 'extrap' ); 
+  Jfre = R.H_TOTAL * ( ytmp(:) - y ) / df;
+  end
+  
+  % Expand Jacobian with locally derived parts
+  %J = [ J, Jpoi, Jfre, R.Jbl ] ; 
+  J = [ J, Jpoi, R.Jbl ] ; 
 end
+
+
+% Apply sensor response matrix on y
+y = R.H_TOTAL * y;
 
 
 %- Add baseline

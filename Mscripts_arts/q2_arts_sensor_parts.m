@@ -158,8 +158,8 @@ if any( strcmp( part, { 'mixer', 'all' } ) )  |  do_total
   abs_lookup = xmlLoad( fullfile( Q.FOLDER_ABSLOOKUP, ...
                                   Q.ABSLOOKUP_OPTION, ...
                                   sprintf( 'abslookup_fmode%02d.xml', fmode ) ) );
-  f_grid = abs_lookup.f_grid;
-  xmlStore( fullfile( R.workfolder, 'f_grid.xml' ), f_grid, 'Vector', 'binary' );
+  R.F_GRID = abs_lookup.f_grid;
+  xmlStore( fullfile( R.workfolder, 'f_grid.xml' ), R.F_GRID, 'Vector', 'binary' );
   clear abs_lookup
   %
   % Here we use a single angle
@@ -172,7 +172,7 @@ if any( strcmp( part, { 'mixer', 'all' } ) )  |  do_total
   G.name      = 'Sideband response function';
   G.gridnames = { 'Frequency' };
   % Add 10 kHz margin to avoid error due to rounding
-  G.grids     = { symgrid( [ 1e9, min(abs(f_grid([1 end])-C.LO))-10e3 ] ) };
+  G.grids     = { symgrid( [ 1e9, min(abs(R.F_GRID([1 end])-C.LO))-10e3 ] ) };
   G.dataname  = 'Response';
   %
   rs = Q.SIDEBAND_LEAKAGE;

@@ -41,7 +41,7 @@ xmlStore( fullfile( R.workfolder, 'sensor_los.xml' ), za, 'Matrix', 'binary' );
 %
 % Set up things around each retrieval quantity
 %
-[xa,Q,R] = subfun4retqs( Q, R );
+[xa,Q,R] = subfun4retqs( Q, R, L1B );
   
 
 %
@@ -55,7 +55,7 @@ xmlStore( fullfile( R.workfolder, 'sensor_los.xml' ), za, 'Matrix', 'binary' );
 %
 [Se,Seinv] = subfun4se( Q, L1B );
 
-keyboard
+
 %
 % Define O
 %
@@ -90,7 +90,7 @@ return
 %--- Retrieval quantities
 %---------------------------------------------------------------------------
 
-function[xa,Q,R] = subfun4retqs( Q, R )
+function[xa,Q,R] = subfun4retqs( Q, R, L1B )
 
   %
   % Create cfiles to use, with and without Jacobian calculation
@@ -166,35 +166,98 @@ function[xa,Q,R] = subfun4retqs( Q, R )
     % A priori uncertainty: Select max between rel and abs uncertainty, but
     % don't exceed 1e6.
     R.xa_vmr{i} = interpp( R.ATM.P, R.ATM.VMR(i,:)', Q.ABS_SPECIES(i).GRID );
-    Std         = [ Q.ABS_SPECIES(i).GRID, min( 1e6, ...
-                    max( Q.ABS_SPECIES(i).UNC_REL, ...
-                         Q.ABS_SPECIES(i).UNC_ABS./R.xa_vmr{i} ) ) ];
+    std         = min( 1e6, max( Q.ABS_SPECIES(i).UNC_REL, ...
+                                 Q.ABS_SPECIES(i).UNC_ABS./R.xa_vmr{i} ) );
+    lc          = Q.ABS_SPECIES(i).CORRLEN/15.5e3;
+    cco         = 0.001;
     %
-    Q.ABS_SPECIES(i).SX = covmat1d_from_cfun( Q.ABS_SPECIES(i).GRID, Std, 'lin', ...
-                                              Q.ABS_SPECIES(i).CORRLEN, 0.00, @log10 );
+    if 0
+      % This version calculates the inverse purely numerically, in arts_sx:
+      Q.ABS_SPECIES(i).SX = covmat1d_from_cfun( Q.ABS_SPECIES(i).GRID, ...
+                                                [ Q.ABS_SPECIES(i).GRID, std ], ...
+                                                'exp', lc, cco, @log10 );
+    else
+      % This version uses analytical expression for the inverse, but works
+      % only for constant spacing:
+      dz       = abs( diff( log10( Q.ABS_SPECIES(i).GRID ) ) );
+      assert( max(abs(dz-dz(1))) < 1e-9 );
+      [Q.ABS_SPECIES(i).SX,Q.ABS_SPECIES(i).SXINV] = ...
+                               covmat1d_markov( length(std), std, dz(1), lc, cco );
+    end
   end
+  %
+  clear vector_name file_name std lc cco dz
 
   
-  % Pointing
+  % Pointing off-set
   % -------------------------------------------------------------------------------- 
   %
+  iq                = length(R.jq) + 1;
+  R.jq{iq}.maintag  = 'Sensor pointing';
+  R.jq{iq}.subtag   = 'Zenith angle off-set';
+  lx                = lx + 1;
+  R.ji{iq}{1}       = lx;
+  R.ji{iq}{2}       = lx;
+  %
+  % Jacobian derived in *q2_oeimiter*.
+  %
+  var               = Q.POINTING_SI * Q.POINTING_SI;
+  Q.POINTING.SX     = var;
+  Q.POINTING.SXINV  = 1/var;
 
+  
+  % Frequency off-set
+  % -------------------------------------------------------------------------------- 
+  %
+  if 0
+  iq                = length(R.jq) + 1;
+  R.jq{iq}.maintag  = 'Frequency';
+  R.jq{iq}.subtag   = 'Shift';
+  lx                = lx + 1;
+  R.ji{iq}{1}       = lx;
+  R.ji{iq}{2}       = lx;
+  %
+  % Jacobian derived in *q2_oeimiter*.
+  %
+  var               = Q.FREQUENCY_SI * Q.FREQUENCY_SI;
+  Q.FSHIFTFIT.SX    = var;
+  Q.FSHIFTFIT.SXINV = 1/var;
+  end
   
   
   % Baseline fit
   % -------------------------------------------------------------------------------- 
   %
+  % We can here not use ARTS as sensor is done outside ARTS. If using ARTS
+  % we would get a baseline off-set for each pencil beam spectrum. Instead J
+  % is expanded in q2_oemiter to include the baseline fit.
+  %
+  % The columns of R.bline_ilims give the start and end index for each part
+  % of the baseline fit. If sub-bands are not fit, there is only a single column.
+  %
+  if Q.BASELINE_PIECEWISE 
+    R.bline_ilims  = zeros(2,4);
+    for i = 1 : 4
+      is = L1B.Frequency.SubBandIndex(:,(i-1)*2+[1:2]);
+      is = is(:);
+      if any( is > 0 )
+        R.bline_ilims(1,i) = min( is(is>0) );
+        R.bline_ilims(2,i) = max( is );
+      end
+    end
+    i              = find( R.bline_ilims(1,:) > 0 );
+    R.bline_ilims  = R.bline_ilims(:,i);
+  else
+    R.bline_ilims  = [ 1; size(R.H_BACKE,1) ];
+  end    
+  %
+  np               = size(R.bline_ilims,2) * length(R.ZA_BORESI);
   iq               = length(R.jq) + 1;
-  np               = length( R.ZA_BORESI );
   R.jq{iq}.maintag = 'Polynomial baseline fit';
   R.jq{iq}.subtag  = 'Coefficient 0';  
   R.ji{iq}{1}      = lx + 1;
   R.ji{iq}{2}      = lx + np;
   lx               = lx + np;
-  %
-  % We can here not use ARTS as sensor is done outside ARTS. If using ARTS
-  % we would get a baseline off-set for each pencil beam spectrum. Instead J
-  % is expanded in q2_oemiter to include the baseline fit.
   %
   Q.POLYFIT.SX0 = (Q.BASELINE_SI*Q.BASELINE_SI) * speye(np);
     
@@ -245,9 +308,10 @@ function [Se,Seinv] = subfun4se( Q, L1B )
   %
   Sinv = S \ speye(nf);
   %
-  [i,j,s] = find( abs(Sinv) > 0.001 );
+  [i,j,s] = find( Sinv );
   n       = size(Sinv,1);
-  Sinv    = sparse(i,j,s,n,n);  
+  ind     = find( abs(s) > 0.0001 );
+  Sinv    = sparse(i(ind),j(ind),s(ind),n,n);  
 
   % Compile complete matrices by repeating S and Sinv, weighted with thermal
   % noise standard deviation.

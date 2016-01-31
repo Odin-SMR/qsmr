@@ -82,10 +82,11 @@ Q.GA_MAX             = 1e4;
 
 Q.NOISE_SCALEFAC     = 1.2;
 
-Q.BASELINE_PIECEWISE = false;
+Q.BASELINE_PIECEWISE = true;
 Q.BASELINE_SI        = 2;
 
 Q.POINTING_SI        = 0.01;
+Q.FREQUENCY_SI       = 1e6;
 
 
 
