@@ -9,8 +9,6 @@ assert( length(fmode) == 1 );
 
 Q.FMODE              = fmode;  
   
-Q.T_SOURCE           = 'MSIS90';
-
 
 
 %---------------------------------------------------------------------------
@@ -32,9 +30,9 @@ Q.FOLDER_FGRID       = fullfile( precalcdir, 'Fgrid' );
 %--- Folders
 %---------------------------------------------------------------------------
 
-topfolder            = q2_topfolder;
-Q.FOLDER_ARTSXMLDATA = '/home/patrick/SVN/ARTS/arts-xml-data';
-Q.FOLDER_WORK        = '/home/patrick/WORKAREA';
+topfolder              = q2_topfolder;
+Q.FOLDER_ARTSXMLDATA   = '/home/patrick/SVN/ARTS/arts-xml-data';
+Q.FOLDER_WORK          = '/home/patrick/WORKAREA';
 %Q.FOLDER_WORK        = '/tmp';
 
 
@@ -42,11 +40,11 @@ Q.FOLDER_WORK        = '/home/patrick/WORKAREA';
 %--- Absorption 
 %---------------------------------------------------------------------------
 
-Q.ABSLOOKUP_OPTION   = '100mK_linear';
-Q.F_GRID_NFILL       = 0;
-Q.ABS_P_INTERP_ORDER = 1;
-Q.ABS_T_INTERP_ORDER = 3;
-Q.CONTINUA_FILE      = fullfile( topfolder, 'DataFiles', 'Continua', ...
+Q.ABSLOOKUP_OPTION     = '100mK_linear';
+Q.F_GRID_NFILL         = 0;
+Q.ABS_P_INTERP_ORDER   = 1;
+Q.ABS_T_INTERP_ORDER   = 3;
+Q.CONTINUA_FILE        = fullfile( topfolder, 'DataFiles', 'Continua', ...
                                                          'continua_std.arts' );
   
   
@@ -54,13 +52,13 @@ Q.CONTINUA_FILE      = fullfile( topfolder, 'DataFiles', 'Continua', ...
 %--- RT and sensor
 %---------------------------------------------------------------------------
 
-Q.PPATH_LMAX         = 15e3;
-Q.PPATH_LRAYTRACE    = 20e3;
+Q.PPATH_LMAX           = 15e3;
+Q.PPATH_LRAYTRACE      = 20e3;
 
-Q.DZA_MAX_IN_CORE    = 0.01;
-Q.DZA_GRID_EDGES     = [ Q.DZA_MAX_IN_CORE*[1:3 5 8 12 21] ];
+Q.DZA_MAX_IN_CORE      = 0.01;
+Q.DZA_GRID_EDGES       = [ Q.DZA_MAX_IN_CORE*[1:3 5 8 12 21] ];
 
-Q.F_BACKEND_COMMON   = true;
+Q.F_BACKEND_COMMON     = true;
 
 
 
@@ -68,11 +66,11 @@ Q.F_BACKEND_COMMON   = true;
 %--- OEM settings
 %---------------------------------------------------------------------------
 
-Q.STOP_DX            = 0.1;
-Q.GA_START           = 10;
-Q.GA_FACTOR_NOT_OK   = 10;
-Q.GA_FACTOR_OK       = 10;
-Q.GA_MAX             = 1e4;
+Q.STOP_DX              = 0.1;
+Q.GA_START             = 10;
+Q.GA_FACTOR_NOT_OK     = 10;
+Q.GA_FACTOR_OK         = 10;
+Q.GA_MAX               = 1e4;
 
 
 
@@ -87,6 +85,12 @@ Q.BASELINE_SI        = 2;
 
 Q.POINTING_SI        = 0.01;
 Q.FREQUENCY_SI       = 1e6;
+
+Q.T.SOURCE           = 'MSIS90';
+Q.T.RETRIEVE         = true;
+Q.T.L2               = true;
+Q.T.GRID             = q2_pgrid( 10e3, 80e3 );
+Q.T.SI               = [ 3 3 9 15 15 ];
 
 
 

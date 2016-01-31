@@ -53,7 +53,7 @@ do_total  = strcmp( part, 'total' );
 fmode  = L1B.FreqMode(1);
 assert( fmode == Q.FMODE );
 %
-% Determine f_lo and f_backend for middel point of scan
+% Determine f_lo and f_backend for middle point of scan
 % Always used for mixer+sideband, while LO can vary for backend 
 % Set by internal function, at end of file.
 [f_lo,f_backend] = get_fmixerback( L1B, round(length(L1B.Altitude)/2) );

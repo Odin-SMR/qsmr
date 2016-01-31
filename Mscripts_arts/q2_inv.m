@@ -23,8 +23,20 @@ end
 %
 R.ATM = q2_get_atm( LOG, Q );
 %
-% (Data stored to ARTS files in q2_oemiter)
+% (Atmospheric data stored to ARTS files in q2_oemiter)
 
+
+%
+% Store a rough geo-position (used for HSE)
+%
+xmlStore( fullfile( R.workfolder, 'lat_true.xml' ), ...
+                 L1B.Latitude(round(length(L1B.Latitude)/2)), ...
+                                                        'Vector', 'binary' );
+xmlStore( fullfile( R.workfolder, 'lon_true.xml' ), ...
+                 L1B.Longitude(round(length(L1B.Longitude)/2)), ...
+                                                        'Vector', 'binary' );
+  
+  
   
 %
 % Initial sensor variables 
@@ -36,6 +48,16 @@ za = R.ZA_PENCIL;
 xmlStore( fullfile( R.workfolder, 'sensor_pos.xml' ), ...
                              repmat( R.Z_ODIN, size(za) ), 'Matrix', 'binary' );
 xmlStore( fullfile( R.workfolder, 'sensor_los.xml' ), za, 'Matrix', 'binary' );
+%
+% Copy those parts of L1B that are needed to recalculate sensor resposnes to
+% adopt to retrieved frequency off-set
+R.L1B.Altitude    = L1B.Altitude;
+R.L1B.Apodization = L1B.Apodization;
+R.L1B.FreqMode    = L1B.FreqMode; 
+R.L1B.Frequency   = L1B.Frequency;
+R.L1B.LOFreq      = L1B.LOFreq;
+R.L1B.RestFreq    = L1B.RestFreq;
+R.L1B.SkyFreq     = L1B.SkyFreq;
 
 
 %
@@ -209,7 +231,6 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
   % Frequency off-set
   % -------------------------------------------------------------------------------- 
   %
-  if 0
   iq                = length(R.jq) + 1;
   R.jq{iq}.maintag  = 'Frequency';
   R.jq{iq}.subtag   = 'Shift';
@@ -222,7 +243,6 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
   var               = Q.FREQUENCY_SI * Q.FREQUENCY_SI;
   Q.FSHIFTFIT.SX    = var;
   Q.FSHIFTFIT.SXINV = 1/var;
-  end
   
   
   % Baseline fit

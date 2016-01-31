@@ -7,7 +7,7 @@
 %      VMR : gas species profiles
 %    
 %   The data can be compiled from different sources. The handled options are
-%      Q.T_SOURCE           : WebApi, CIRA 86 and MSIS90
+%      Q.T.SOURCE           : WebApi, CIRA 86 and MSIS90
 %      Q.ABS_SPECIES.SOURCE : WebApi and Bdx
 %
 % FORMAT   ATM = q2_get_atm( LOG, Q )
@@ -38,7 +38,7 @@ ATM.P = Q.P_GRID;
   
 % T and Z field
 %
-switch upper( Q.T_SOURCE )
+switch upper( Q.T.SOURCE )
   
  case 'WebApi'
   %
@@ -75,7 +75,7 @@ switch upper( Q.T_SOURCE )
    
    
  otherwise
-  error( '%s is an unknown option for Q.T_SOURCE.', Q.T_SOURCE );
+  error( '%s is an unknown option for Q.T.SOURCE.', Q.T.SOURCE );
 end
 
 

@@ -46,9 +46,14 @@ ABS_SPECIES
    species following the ARTS format, e.g. O3-\*-501e9-503e9. SOURCE: A string
    describing from where temperature a priori shall be taken. Handled options 
    are 'WebApi' and 'Bdx'. RETRIEVE: A boolean, flagging if the species shall
-   be retrieved or not. L2: A boolean, flagging if the species is part of L2
-   data of the frequency mode. GRID: Retrieval grid to use for the species. L2
-   and GRID are ignored if RETRIEVE is false.
+   be retrieved or not. All fields below are ignore if RETRIEVE is false. 
+   L2: A boolean, flagging if the species is part of L2 data of the frequency
+   mode. GRID: Retrieval grid to use for the species. UNC_REL and UNC_ABS:
+   Minimum relative and absolute uncertainty, respectively. The absolute and
+   relative values are compared using the a priori profile and the largest
+   of the two is selected (with a max at 1e6 in relative value). CORRLEN:
+   Correlation length, in meter, to use when creating Sx. LOG_ON: Set to true
+   to impose a positive constrain for the species.  
 
 ABS_T_INTERP_ORDER
    An integer. The polynomial order to apply for temperature interpolation of the
@@ -57,6 +62,14 @@ ABS_T_INTERP_ORDER
 
 BACKEND_NR
    An integer. Index of expected backend. Index coding described in L1B ATBD.
+
+BASELINE_PIECEWISE
+   A boolean. If set to false, the baseline off-set is assumed to be constant
+   over the complete frequency band. If set to true, a baseline off-set is
+   fitted for each autocorrelator sub-band pair.
+
+BASELINE_SI
+   A scalar. The standard deviation of baseline off-set variability.
 
 CONTINUA_FILE
    A string. Full path to file containing description of absorption
@@ -109,6 +122,9 @@ FOLDER_WORK
    use a folder for debugging. If several Qsmr processes are given the same dubugging
    folder, files will be overwritten.
 
+FREQUENCY_SI
+   A scalar. The standard deviation of frequency off-set variability.
+
 FRONTEND_NR
    An integer. Index of expected frontend. Index coding described in L1B ATBD.
 
@@ -147,6 +163,13 @@ GA_START
   Start value for gamma factor for the Marquardt-Levenberg method. See the L2
   ATBD for a definition of the gamma factor. This value must be >= 0.
 
+NOISE_SCALEFAC
+   A scalar. A tuning parameter to adjust the values in Se. The thermal noise
+   standard deviation obtained by the L1B data is multiplicated with this factor.
+
+POINTING_SI
+   A scalar. The standard deviation of pointing off-set variability.
+
 PPATH_LMAX
    A scalar value. The maximum distance between points of the propagation path.
    See further the ARTS workspace variable with the same name.
@@ -169,7 +192,13 @@ STOP_DX
    should in general be in the order of 0.01 (and not change of the state
    vector is expanded).
 
-T_SOURCE
-   A string. This string describes from where temperature a priori shall be
-   taken. The following options are treated: 'WebApi' and 'MSIS90'.
-   The two last options require that FOLDER_ARTSXMLDATA is set.
+T
+   A structure. Definition of atmospheric temperature profile. The fields of
+   the structure are as follows. SOURCE: A string describing from where
+   temperature a priori shall be taken. Handled options are 'WebApi' and
+   'MSIS90'. RETRIEVE: A boolean, flagging if temperature shall be retrieved or
+   not. All fields below are ignore if RETRIEVE is false. L2: A boolean,
+   flagging if temperature is part of L2 data of the frequency mode. GRID:
+   Retrieval grid to use for temperature. SI: A vector of length 5, with a 
+   priori standard deviation at 100, 10, 1, 0.1 and 0.01 hPa (roughly 16, 32,
+   48, 64 and 80 km).

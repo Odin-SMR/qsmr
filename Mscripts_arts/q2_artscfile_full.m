@@ -135,6 +135,10 @@ function cfile_start( fid, C )
   fprintf( fid, '}\n' );
   fprintf( fid, '#\n' );
   fprintf( fid, 'NumericSet( molarmass_dry_air, 28.966 )\n' );
+  fprintf( fid, 'AgendaSet( g0_agenda ){\n' );
+  fprintf( fid, '   Ignore( lon )\n' );
+  fprintf( fid, '   g0Earth\n' );
+  fprintf( fid, '}\n' );
   fprintf( fid, 'VectorSet( refellipsoid, [ %d, 0 ] )\n', C.R_EARTH );
   fprintf( fid, 'MatrixSet( z_surface, [ 1e3 ] )\n' );
   fprintf( fid, '#\n' );
@@ -272,8 +276,16 @@ function cfile_atm( fid, C, workfolder )
                                     fullfile( workfolder, 'z_field.xml' ) );
   fprintf( fid, 'ReadXML( vmr_field, "%s" )\n', ...
                                     fullfile( workfolder, 'vmr_field.xml' ) );
+  %
   fprintf( fid, 'atmfields_checkedCalc( negative_vmr_ok = 1,\n' );
   fprintf( fid, '   bad_partition_functions_ok = 1)\n' );
+  %
+  fprintf( fid, 'ReadXML( lat_true, "%s" )\n', ...
+                                    fullfile( workfolder, 'lat_true.xml' ) );
+  fprintf( fid, 'ReadXML( lon_true, "%s" )\n', ...
+                                    fullfile( workfolder, 'lon_true.xml' ) );    
+  fprintf( fid, 'z_fieldFromHSE( p_hse = 500e2, z_hse_accuracy = 1 )' );
+  %
   fprintf( fid, 'atmgeom_checkedCalc\n' );
   fprintf( fid, 'cloudbox_checkedCalc\n' );
 return

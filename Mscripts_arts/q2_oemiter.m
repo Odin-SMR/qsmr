@@ -71,9 +71,15 @@ for i = 1 : length( R.jq )
    case 'Frequency'   %--------------------------------------------------------
     %
     if iter > 1
-      keyboard
-      %R = q2_arts_sensor_parts( L1B, Q, R, 'backend' );
-      %R = q2_arts_sensor( R );
+      L1B = R.L1B;
+      %
+      L1B.LOFreq   = L1B.LOFreq   + x(ind);
+      L1B.RestFreq = L1B.RestFreq + x(ind);
+      L1B.SkyFreq  = L1B.SkyFreq  + x(ind);
+      %
+      R = q2_arts_sensor_parts( L1B, Q, R, 'mixer' );
+      R = q2_arts_sensor_parts( L1B, Q, R, 'backend' );
+      R = q2_arts_sensor( R );
     end
     
    case 'Polynomial baseline fit'   %-----------------------------------------
@@ -119,7 +125,7 @@ if do_j
   
   % Load Jacobian and apply sensor response matrix
   J = xmlLoad( fullfile( R.workfolder, 'jacobian.xml' ) );
-  J    = R.H_TOTAL * J;
+  J = R.H_TOTAL * J;
 
   % Jacobian calculated for x, but for "rel" it should be with respect to xa:
   % (as arts takes x as xa, no scaling needed for "logrel", and no scaling 
@@ -140,15 +146,13 @@ if do_j
 
   % Derive frequency off-set weighting functions
   %
-  if 0
   df   = 5e3;
   ytmp = interp1( R.F_GRID, ymat, R.F_GRID+df, 'pchip', 'extrap' ); 
   Jfre = R.H_TOTAL * ( ytmp(:) - y ) / df;
-  end
   
   % Expand Jacobian with locally derived parts
-  %J = [ J, Jpoi, Jfre, R.Jbl ] ; 
-  J = [ J, Jpoi, R.Jbl ] ; 
+  J = [ J, Jpoi, Jfre, R.Jbl ] ; 
+
 end
 
 
