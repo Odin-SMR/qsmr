@@ -55,9 +55,6 @@ R.L1B.Altitude    = L1B.Altitude;
 R.L1B.Apodization = L1B.Apodization;
 R.L1B.FreqMode    = L1B.FreqMode; 
 R.L1B.Frequency   = L1B.Frequency;
-R.L1B.LOFreq      = L1B.LOFreq;
-R.L1B.RestFreq    = L1B.RestFreq;
-R.L1B.SkyFreq     = L1B.SkyFreq;
 
 
 %
@@ -100,6 +97,8 @@ O.ga_max              = Q.GA_MAX;
 
 %
 % Create L2
+%
+R.z_field = xmlLoad( fullfile( R.workfolder, 'z_field.xml' ) );
 %
 [L2,L2d] = subfun4l2( R, L1B, X );
 
@@ -211,38 +210,72 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
   clear vector_name file_name std lc cco dz
 
   
+  % Temperature profile
+  % -------------------------------------------------------------------------------- 
+  %
+  if Q.T.RETRIEVE
+    iq               = length(R.jq) + 1;
+    np               = length( Q.T.GRID );
+    R.jq{iq}.maintag = 'Atmospheric temperatures';
+    R.ji{iq}{1}      = lx + 1;
+    R.ji{iq}{2}      = lx + np;
+    lx               = lx + np;
+    %
+    vector_name      = sprintf( 'retgrid%d', iq );
+    file_name        = fullfile( R.workfolder, [vector_name,'.xml'] );
+    xmlStore( file_name, Q.T.GRID, 'Vector' );
+    %
+    T{end+1} = sprintf( 'VectorCreate( %s )', vector_name );
+    T{end+1} = sprintf( 'ReadXML( %s, "%s" )', vector_name, file_name );
+    T{end+1} = 'jacobianAddTemperature( method = "analytical",';
+    T{end+1} = sprintf( '   g1 = %s, g2 = empty_vector, g3 = empty_vector,', ...
+                                                                        vector_name );
+    T{end+1} = '   hse = "on" )';
+    %
+    dz       = abs( diff( log10( Q.T.GRID ) ) );
+    assert( max(abs(dz-dz(1))) < 1e-9 );
+    std      = interpp( [100e2 10e2 1e2 10 1]', vec2col(Q.T.UNC), Q.T.GRID );
+    [Q.T.SX,Q.T.SXINV] = covmat1d_markov( length(std), std, dz(1), ...
+                                          Q.T.CORRLEN/15.5e3, 0.001 );
+  end
+  
+  
   % Pointing off-set
   % -------------------------------------------------------------------------------- 
   %
-  iq                = length(R.jq) + 1;
-  R.jq{iq}.maintag  = 'Sensor pointing';
-  R.jq{iq}.subtag   = 'Zenith angle off-set';
-  lx                = lx + 1;
-  R.ji{iq}{1}       = lx;
-  R.ji{iq}{2}       = lx;
-  %
-  % Jacobian derived in *q2_oeimiter*.
-  %
-  var               = Q.POINTING_SI * Q.POINTING_SI;
-  Q.POINTING.SX     = var;
-  Q.POINTING.SXINV  = 1/var;
-
+  if Q.POINTING.RETRIEVE
+    iq                = length(R.jq) + 1;
+    R.jq{iq}.maintag  = 'Sensor pointing';
+    R.jq{iq}.subtag   = 'Zenith angle off-set';
+    lx                = lx + 1;
+    R.ji{iq}{1}       = lx;
+    R.ji{iq}{2}       = lx;
+    %
+    % Jacobian derived in *q2_oeimiter*.
+    %
+    var               = Q.POINTING.UNC * Q.POINTING.UNC;
+    Q.POINTING.SX     = var;
+    Q.POINTING.SXINV  = 1/var;
+  end
+  
   
   % Frequency off-set
   % -------------------------------------------------------------------------------- 
   %
-  iq                = length(R.jq) + 1;
-  R.jq{iq}.maintag  = 'Frequency';
-  R.jq{iq}.subtag   = 'Shift';
-  lx                = lx + 1;
-  R.ji{iq}{1}       = lx;
-  R.ji{iq}{2}       = lx;
-  %
-  % Jacobian derived in *q2_oeimiter*.
-  %
-  var               = Q.FREQUENCY_SI * Q.FREQUENCY_SI;
-  Q.FSHIFTFIT.SX    = var;
-  Q.FSHIFTFIT.SXINV = 1/var;
+  if Q.FREQUENCY.RETRIEVE
+    iq                = length(R.jq) + 1;
+    R.jq{iq}.maintag  = 'Frequency';
+    R.jq{iq}.subtag   = 'Shift';
+    lx                = lx + 1;
+    R.ji{iq}{1}       = lx;
+    R.ji{iq}{2}       = lx;
+    %
+    % Jacobian derived in *q2_oeimiter*.
+    %
+    var               = Q.FREQUENCY.UNC * Q.FREQUENCY.UNC;
+    Q.FSHIFTFIT.SX    = var;
+    Q.FSHIFTFIT.SXINV = 1/var;
+  end
   
   
   % Baseline fit
@@ -255,32 +288,35 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
   % The columns of R.bline_ilims give the start and end index for each part
   % of the baseline fit. If sub-bands are not fit, there is only a single column.
   %
-  if Q.BASELINE_PIECEWISE 
-    R.bline_ilims  = zeros(2,4);
-    for i = 1 : 4
-      is = L1B.Frequency.SubBandIndex(:,(i-1)*2+[1:2]);
-      is = is(:);
-      if any( is > 0 )
-        R.bline_ilims(1,i) = min( is(is>0) );
-        R.bline_ilims(2,i) = max( is );
+  if Q.BASELINE.RETRIEVE
+    %  
+    if Q.BASELINE.PIECEWISE 
+      R.bline_ilims  = zeros(2,4);
+      for i = 1 : 4
+        is = L1B.Frequency.SubBandIndex(:,(i-1)*2+[1:2]);
+        is = is(:);
+        if any( is > 0 )
+          R.bline_ilims(1,i) = min( is(is>0) );
+          R.bline_ilims(2,i) = max( is );
+        end
       end
-    end
-    i              = find( R.bline_ilims(1,:) > 0 );
-    R.bline_ilims  = R.bline_ilims(:,i);
-  else
-    R.bline_ilims  = [ 1; size(R.H_BACKE,1) ];
-  end    
-  %
-  np               = size(R.bline_ilims,2) * length(R.ZA_BORESI);
-  iq               = length(R.jq) + 1;
-  R.jq{iq}.maintag = 'Polynomial baseline fit';
-  R.jq{iq}.subtag  = 'Coefficient 0';  
-  R.ji{iq}{1}      = lx + 1;
-  R.ji{iq}{2}      = lx + np;
-  lx               = lx + np;
-  %
-  Q.POLYFIT.SX0 = (Q.BASELINE_SI*Q.BASELINE_SI) * speye(np);
-    
+      i              = find( R.bline_ilims(1,:) > 0 );
+      R.bline_ilims  = R.bline_ilims(:,i);
+    else
+      R.bline_ilims  = [ 1; size(R.H_BACKE,1) ];
+    end    
+    %
+    np               = size(R.bline_ilims,2) * length(R.ZA_BORESI);
+    iq               = length(R.jq) + 1;
+    R.jq{iq}.maintag = 'Polynomial baseline fit';
+    R.jq{iq}.subtag  = 'Coefficient 0';  
+    R.ji{iq}{1}      = lx + 1;
+    R.ji{iq}{2}      = lx + np;
+    lx               = lx + np;
+    %
+    Q.POLYFIT.SX0    = (Q.BASELINE.UNC*Q.BASELINE.UNC) * speye(np);
+  end
+  
   
   % Finalise and create file setting up the jacobian
   %
@@ -353,21 +389,21 @@ function [Se,Seinv] = subfun4se( Q, L1B )
   % Loop tangent altitudes / spectra
   for t = 1 : ntan
 
-    % Variance of thermal noise for t:th spectrum 
-    var      = power( Q.NOISE_SCALEFAC*L1B.Trec(t), 2 ) / ( df * L1B.EffTime(t) );
+    % Standard deviation of thermal noise for t:th spectrum 
+    thn = L1B.TrecSpectrum'  .* ( Q.NOISE_SCALEFAC / sqrt(df*L1B.EffTime(t)) );
 
     % Se
     ind      = nn1 + (1:n1);
     ii1(ind) = nf*(t-1) + i1;
     jj1(ind) = nf*(t-1) + j1;    
-    ss1(ind) = var * s1;    
+    ss1(ind) = thn(i1) .* thn(j1) .* s1;    
     nn1      = nn1 + n1;
 
     % Seinv
     ind      = nn2 + (1:n2);
     ii2(ind) = nf*(t-1) + i2;
     jj2(ind) = nf*(t-1) + j2;    
-    ss2(ind) = (1/var) * s2;    
+    ss2(ind) = s2 ./ ( thn(i2) .* thn(j2) );
     nn2      = nn2 + n2;
   end
 
@@ -391,6 +427,8 @@ function [L2,L2d] = subfun4l2( R, L1B, X )
   plot( F/1e9, reshape(X.yf,size(L1B.Spectrum) )) 
   hold off
 
-  L2  = X;
-  L2d = NaN;
+  L2    = X;
+  L2.jq = R.jq;
+  L2.ji = R.ji;
+  L2d   = NaN;
 return

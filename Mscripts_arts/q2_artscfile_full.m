@@ -329,12 +329,14 @@ function cfile_ycalc( fid, C, workfolder );
   %
   fprintf( fid, 'WriteXML( in=y, filename="%s" )\n', ...
                                             fullfile( workfolder, 'y.xml' ) );
-  fprintf( fid, 'WriteXML( in=y_aux, filename="%s" )\n', ...
-                                        fullfile( workfolder, 'y_aux.xml' ) );
+  %fprintf( fid, 'WriteXML( in=y_aux, filename="%s" )\n', ...
+  %                                      fullfile( workfolder, 'y_aux.xml' ) );
   %
   if C.JACOBIAN_DO
     fprintf( fid, 'WriteXML( in=jacobian, filename="%s" )\n', ...
                                      fullfile( workfolder, 'jacobian.xml' ) );
+    fprintf( fid, 'WriteXML( in=z_field, filename="%s" )\n', ...
+                                     fullfile( workfolder, 'z_field.xml' ) );
   end
 return
 %----------------------------------------------------------------------------

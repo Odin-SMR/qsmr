@@ -1,17 +1,10 @@
 Patrick:
 ---
 
-* Check details in calculation of Se
+* Derive channel noise correlation
 
 * Switch to use ellipsoid curvature radius
 
-* Varying frequencies in sensor
-
-* What are standard t_int?
-
-* Revise l1b_filter
-
-* Go back to narrow freq range for f opt.
 
 
 Joonas:
@@ -29,7 +22,4 @@ Joonas:
 
 Bengt:
 
-* FM nominal frequencies
-* Name/ID
-* ECEF GPSpos?
-* Remove old stuff in Mscripts_webapi
+

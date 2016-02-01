@@ -275,9 +275,6 @@ return
 % Frequencies picked from spectrum with index *itan*
 % Given LO is "doppler corrected" by scaling difference between RestFreq and SkyFreq
 function [f_lo,f_backend] = get_fmixerback( L1B, itan )
-  f_rest     = L1B.RestFreq(itan );
-  lo_rest    = L1B.LOFreq(itan);
-  df_doppler = f_rest - L1B.SkyFreq(itan);
-  f_lo       = lo_rest + df_doppler * lo_rest / f_rest; 
-  f_backend  = l1b_frequency( L1B, itan );
+  f_lo      = L1B.Frequency.LOFreq(itan);
+  f_backend = f_lo + L1B.Frequency.IFreqGrid;
 return
