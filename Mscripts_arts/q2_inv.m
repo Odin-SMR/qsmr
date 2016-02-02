@@ -73,7 +73,7 @@ R.L1B.Frequency   = L1B.Frequency;
 % Create Se and its inverse
 %
 [Se,Seinv] = subfun4se( Q, L1B );
-
+keyboard
 
 %
 % Define O
@@ -352,23 +352,44 @@ return
 function [Se,Seinv] = subfun4se( Q, L1B )
 
   % Calculate covariance matrix for one spectrum and unit variance.
-  f    = L1B.Frequency.IFreqGrid(:,1);
-  nf   = length( f );
-  df   = L1B.FreqRes(1);
-  % A correlation length of 2*df + exponential function gives a rough fit to
-  % correlation between adjacent channels (0.6). 
-  S    = covmat1d_from_cfun( f, 1, 'exp', 2*df, 0.001 );
-
-  % Its inverse. This should be close to a tri-diagonal matrix. Remove all
-  % very smalle elemenets to save space
   %
-  Sinv = S \ speye(nf);
+  nf = size( L1B.Spectrum, 1 );
   %
-  [i,j,s] = find( Sinv );
-  n       = size(Sinv,1);
-  ind     = find( abs(s) > 0.0001 );
-  Sinv    = sparse(i(ind),j(ind),s(ind),n,n);  
-
+  switch Q.NOISE_CORRMODEL
+    case 'none'
+      S = speye( nf, nf );
+      %
+    case 'expo'
+      f    = L1B.Frequency.IFreqGrid(:,1);
+      df   = L1B.FreqRes(1);
+      % A correlation length of 2*df + exponential function gives a rough fit to
+      % correlation values given below.
+      S    = covmat1d_from_cfun( f, 1, 'exp', 2*df, 0.001 );
+      %
+    case 'empi'
+      % Emperically derived correlation to closest three channels are:
+      % 0.68. 0.2 and 0.
+      % To make things simple we ignore the fact that there can be frequency
+      % gaps between the channels.
+      S  = spdiags( repmat([0.2 0.68 1 0.68 0.2],nf,1), -2:2, nf, nf );
+      
+    otherwise
+      error( 'Unknown option for Q.NOISE_CORRMODEL (%s)', Q.NOISE_CORRMODEL );
+  end
+  
+  % Its inverse. 
+  %
+  if strcmp( Q.NOISE_CORRMODEL, 'none' )
+    Sinv = S;
+  else
+    Sinv = S \ speye(nf);
+    % Remove all very small elements to save space
+    [i,j,s] = find( Sinv );
+    n       = size(Sinv,1);
+    ind     = find( abs(s) > 0.0001 );
+    Sinv    = sparse(i(ind),j(ind),s(ind),n,n);  
+  end
+  
   % Compile complete matrices by repeating S and Sinv, weighted with thermal
   % noise standard deviation.
   % This is done by determong row and column indexes, to create the final
@@ -390,7 +411,8 @@ function [Se,Seinv] = subfun4se( Q, L1B )
   for t = 1 : ntan
 
     % Standard deviation of thermal noise for t:th spectrum 
-    thn = L1B.TrecSpectrum'  .* ( Q.NOISE_SCALEFAC / sqrt(df*L1B.EffTime(t)) );
+    thn = L1B.TrecSpectrum'  .* ( Q.NOISE_SCALEFAC / ...
+                                  sqrt(L1B.FreqRes(1)*L1B.EffTime(t)) );
 
     % Se
     ind      = nn1 + (1:n1);

@@ -169,6 +169,13 @@ NOISE_SCALEFAC
    A scalar. A tuning parameter to adjust the values in Se. The thermal noise
    standard deviation obtained by the L1B data is multiplicated with this factor.
 
+NOISE_CORRMODEL
+  A string. Model of correlations inside Se. Only correlation between adjecent
+  channels of each spectrum is modelled. The options are as follows. 'none':
+  this generates a pure diagonal Se. 'empi': Uses emperically derived values
+  making Se a five-diagonal matrix. 'expo': Exponentially decreasing
+  correlation, approximating the emperically derived values.
+
 POINTING
    A structure. Definition of pointing off-set retrieval. The fields of the
    structure are as follows. RETRIEVE: A boolean, flagging if pointing off-set

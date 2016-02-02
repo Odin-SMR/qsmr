@@ -78,6 +78,7 @@ Q.GA_MAX             = 1e4;
 %--- Retrieval settings
 %---------------------------------------------------------------------------
 
+Q.NOISE_CORRMODEL    = 'empi';  % 'none', 'empi' 'expo'
 Q.NOISE_SCALEFAC     = 1.2;
 
 Q.BASELINE.RETRIEVE  = true;

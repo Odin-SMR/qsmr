@@ -1,3 +1,8 @@
+2016-02-02  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_arts/q2_inv.m (subfun4se): Introduced different models
+	for correlation of noise between channels.
+
 2016-02-01  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Added retrieval of frequency off-set and temperature. Better
