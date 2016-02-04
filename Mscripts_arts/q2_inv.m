@@ -14,7 +14,7 @@ assert( prod(size(Q.ZTAN_RANGE)) == 2 );
 %
 [itan,isub] = l1b_filter( L1B, Q.ZTAN_RANGE(1), Q.ZTAN_RANGE(2) );
 %
-if length(itan) < 5
+if length(itan) < Q.MIN_N_SPECTRA
   L2  = sprintf( 'Too few spectra left in scan (%d)', length(itan) );
   L2d = [];
   return
@@ -28,7 +28,7 @@ L1B = l1b_crop( L1B, itan, isub );
 %
 L1B = l1b_fcrop( L1B, Q.F_RANGES );
 %
-if size(L1B.Spectrum,1) < 100
+if size(L1B.Spectrum,1) < Q.MIN_N_FREQS
   L2  = sprintf( 'Too few frequencies left in spectra (%d)', ...
                                             size(L1B.Spectrum,1) );
   L2d = [];
@@ -135,7 +135,7 @@ R.t_field = xmlLoad( fullfile( R.workfolder, 't_field.xml' ) );
 %
 % Create L2
 %
-[L2,L2d] = subfun4l2( Q, R, LOG, L1B, X );
+[L2,L2d] = subfun4l2( Q, R, Sx, Se, LOG, L1B, X );
 
 return
 
@@ -155,7 +155,7 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
   %
   C.ABSORPTION         = 'LoadTable';
   C.ABS_LOOKUP_TABLE   = fullfile( Q.FOLDER_ABSLOOKUP, Q.ABSLOOKUP_OPTION, ...
-                                    sprintf( 'abslookup_fmode%02d.xml', Q.FMODE ) );
+                              sprintf( 'abslookup_fmode%02d.xml', Q.FREQMODE ) );
   C.ABS_P_INTERP_ORDER = Q.ABS_P_INTERP_ORDER;
   C.ABS_T_INTERP_ORDER = Q.ABS_T_INTERP_ORDER;
   C.PPATH_LMAX         = Q.PPATH_LMAX;
@@ -220,9 +220,9 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
     T{end+1} = '   unit = "rel" )';
     %
     % A priori uncertainty: Select max between rel and abs uncertainty, but
-    % don't exceed 1e6.
+    % don't exceed 1e3.
     R.xa_vmr{i} = interpp( R.ATM.P, R.ATM.VMR(i,:)', Q.ABS_SPECIES(i).GRID );
-    std         = min( 1e6, max( Q.ABS_SPECIES(i).UNC_REL, ...
+    std         = min( 1e3, max( Q.ABS_SPECIES(i).UNC_REL, ...
                                  Q.ABS_SPECIES(i).UNC_ABS./R.xa_vmr{i} ) );
     lc          = Q.ABS_SPECIES(i).CORRLEN/15.5e3;
     cco         = 0.001;
@@ -475,7 +475,7 @@ return
 %--- L2
 %---------------------------------------------------------------------------
 
-function [L2,L2d] = subfun4l2( Q, R, LOG,L1B, X )
+function [L2,L2d] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
 
   %- Init L2
   %
@@ -485,26 +485,31 @@ function [L2,L2d] = subfun4l2( Q, R, LOG,L1B, X )
   %
   L2d = [];
   %
-  L2d.FreqMode  = LOG.FreqMode;
-  L2d.InvMode   = Q.INVMODE;
-  L2d.ScanId    = LOG.ScanID;
-  L2d.STW       = L1B.STW;
+  L2d.FreqMode     = LOG.FreqMode;
+  L2d.InveMode     = Q.INVEMODE;
+  L2d.ScanId       = LOG.ScanID;
+  L2d.STW          = L1B.STW;
   %
-  L2d.Yfitted   = X.yf;
+  % Some retrieval quality values
+  L2d.Residual     = X.cost_y(end);
+  L2d.FitSpectrum  = X.yf;
+  L2d.MinLmFactor  = min( X.ga );
   %
   % Instrumental off-set parameters are zero if not retrieved
-  L2d.Baseline  = 0;
-  L2d.Frequency = 0;
-  L2d.Pointing  = 0;
+  L2d.BaselineMean = zeros(size(L1B.Spectrum,1),1);;
+  L2d.BaselineVar  = L2d.BaselineMean;
+  L2d.Frequency    = 0;
+  L2d.Pointing     = 0;
   
   
   %- Loop retrieval quantities and fill L2 and L2d
   %
   for i = 1 : length( R.jq )
 
-    ind   = R.ji{i}{1} : R.ji{i}{2};
-    is_l2 = false;
-    
+    ind     = R.ji{i}{1} : R.ji{i}{2};
+    is_l2   = false;
+    is_gas  = false;
+
     switch R.jq{i}.maintag
 
      case 'Absorption species'   %------------------------------------------------
@@ -514,6 +519,7 @@ function [L2,L2d] = subfun4l2( Q, R, LOG,L1B, X )
       if Q.ABS_SPECIES(ig).RETRIEVE & Q.ABS_SPECIES(ig).L2
         %
         is_l2               = true;
+        is_gas              = true;
         L2(end+1).Product   = Q.ABS_SPECIES(ig).L2NAME;
         %
         L2(end).Pressure    = Q.ABS_SPECIES(ig).GRID;
@@ -526,13 +532,12 @@ function [L2,L2d] = subfun4l2( Q, R, LOG,L1B, X )
         elseif strcmp( R.jq{i}.mode, 'logrel' )
           L2(end).VMR = L2(end).Apriori .* exp(X.x(ind));
         end
-        %  
-        %L2(end).AVK         = A(ind,ind);
       end 
       
      case 'Atmospheric temperatures'   %------------------------------------------
       %
       if Q.T.RETRIEVE & Q.T.L2
+        is_l2               = true;
         assert(0);
       end
      
@@ -546,8 +551,14 @@ function [L2,L2d] = subfun4l2( Q, R, LOG,L1B, X )
       
      case 'Polynomial baseline fit'   %-------------------------------------------
       %
-      L2d.Baseline = mean( reshape( X.x(ind), size(R.bline_ilims,2), ...
-                                              length(R.ZA_BORESI) ) )';
+       if Q.BASELINE.PIECEWISE 
+         B = reshape( X.x(ind), size(R.bline_ilims,2), length(R.ZA_BORESI) );
+         L2d.BaselineMean = mean( B )';
+         L2d.BaselineVar  = var( B )';
+       else
+         L2d.BaselineMean = X.x(ind);
+         L2d.BaselineVar  = zeros( size( L2d.BaselMean ) );         
+       end
 
      otherwise   %-----------------------------------------------------------------
         error('Unknown retrieval quantitity.'); 
@@ -556,24 +567,56 @@ function [L2,L2d] = subfun4l2( Q, R, LOG,L1B, X )
     % Common parts of L2
     if is_l2
       %
-      L2(end).FreqMode  = L2d.FreqMode;
-      L2(end).InvMode   = L2d.InvMode;
-      L2(end).ScanId    = L2d.ScanId;
+      L2(end).FreqMode    = L2d.FreqMode;
+      L2(end).InveMode    = L2d.InveMode;
+      L2(end).ScanId      = L2d.ScanId;
       %
       % Geo-positions and time
-      L2(end).MJD       = mean( L1B.MJD );
-      L2(end).Lat1D     = NaN;
-      L2(end).Lon1D     = NaN;
-      L2(end).Latitude  = interp1( L1B.Altitude, L1B.Latitude, L2(end).Altitude, ...
-                                   'pchip', 'extrap' );
-      L2(end).Longitude = interp1( L1B.Altitude, L1B.Longitude, L2(end).Altitude, ...
-                                   'pchip', 'extrap' );
-      % 
+      L2(end).MJD         = mean( L1B.MJD );
+      L2(end).Lat1D       = NaN;
+      L2(end).Lon1D       = NaN;
+      L2(end).Latitude    = interp1( L1B.Altitude, L1B.Latitude, ...
+                                     L2(end).Altitude, 'pchip', 'extrap' );
+      L2(end).Longitude   = interp1( L1B.Altitude, L1B.Longitude, ...
+                                     L2(end).Altitude, 'pchip', 'extrap' );
+      %
+      % Retrieval characteristics
+      lx                   = length(ind);
+      Gpart                = X.G(ind,:);
+      Apart                = Gpart * X.J;
+      L2(end).AVK          = Apart(:,ind);
+      L2(end).ErrorNoise   = diag( Gpart * Se * Gpart' );
+      Apart(:,ind)         = 0;
+      % Use instead this line to include internal smoothing error
+      %Apart(:,ind)         = Apart(:,ind) - eye(lx);
+      L2(end).ErrorTotal   = sqrt( L2(end).ErrorNoise + ...
+                                   diag( Apart * Sx * Apart' ) );
+      L2(end).ErrorNoise   = sqrt( L2(end).ErrorNoise );
+      %
+      % Apply scalings required for gases.
+      if is_gas
+        if Q.ABS_SPECIES(ig).LOG_ON
+          L2(end).AVK        = L2(end).AVK .* ( L2(end).VMR * (1./L2(end).VMR') );
+          L2(end).ErrorNoise = L2(end).Apriori .* L2(end).ErrorNoise;
+          L2(end).ErrorTotal = L2(end).Apriori .* L2(end).ErrorTotal;
+        else
+          L2(end).AVK = L2(end).AVK .* ...
+                                      ( L2(end).Apriori * (1./L2(end).Apriori') );
+          L2(end).ErrorNoise = L2(end).VMR .* L2(end).ErrorNoise;
+          L2(end).ErrorTotal = L2(end).VMR .* L2(end).ErrorTotal;
+        end
+      end
+      %
+      % Calculate measurement respons, now when scalings done
+      L2(end).MeasRespone  = sum( L2(end).AVK, 2 );      
+      %
+      % How to set Quality;
+      L2(end).Quality      = NaN;
     end
   end 
 
   % Sort fields in alphabetical order
-  L2  = orderfields( L2 );
   L2d = orderfields( L2d );
+  L2  = orderfields( L2 );
   
 return

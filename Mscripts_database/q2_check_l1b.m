@@ -17,7 +17,7 @@ if length(unique( L1B.FreqMode )) > 1
   error( 'The L1B data can just contain a single frequency mode.' );
 end
 %
-if L1B.FreqMode(1) ~= Q.FMODE
+if L1B.FreqMode(1) ~= Q.FREQMODE
   error( 'Different frequency mode in L1B and Q (%d rep. %d).', ...
          L1B.FreqMode(1), Q.FMODE );
 end

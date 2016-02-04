@@ -1,17 +1,17 @@
-function Q = q_std(fmode,invmode)
+function Q = q_std(freqmode,invemode)
 %
-if nargin < 2, invmode = 'stnd'; end
+if nargin < 2, invemode = 'stnd'; end
 %
-assert( length(fmode) == 1 );
+assert( length(freqmode) == 1 );
 
 
 
 %---------------------------------------------------------------------------
-%--- Frequencyu and inversion modes
+%--- Frequency and inversion modes
 %---------------------------------------------------------------------------
 
-Q.FMODE              = fmode;  
-Q.INVMODE            = invmode;  
+Q.FREQMODE           = freqmode;  
+Q.INVEMODE           = invemode;  
 
 
 %---------------------------------------------------------------------------
@@ -102,15 +102,24 @@ Q.T.CORRLEN          = 8e3;
 
 
 %---------------------------------------------------------------------------
+%--- Quality demands
+%---------------------------------------------------------------------------
+
+Q.MIN_N_SPECTRA      = 8;
+Q.MIN_N_FREQS        = 100;
+
+
+
+%---------------------------------------------------------------------------
 %--- Band specific
 %---------------------------------------------------------------------------
 
-switch fmode
+switch freqmode
   
  case 1
   %
-  if ~strcmp( invmode, 'stnd' )
-    error( 'Inversion modes of fmode %d are: ''stnd''.', fmode ); 
+  if ~strcmp( invemode, 'stnd' )
+    error( 'Inversion modes of freqmode %d are: ''stnd''.', freqmode ); 
   end
   %
   Q.BACKEND_NR              = 2;
@@ -130,7 +139,7 @@ switch fmode
   Q.ABS_SPECIES(1).L2NAME   = 'ClO-501GHz-20to50km';
   Q.ABS_SPECIES(1).GRID     = q2_pgrid( 12e3, 65e3 );
   Q.ABS_SPECIES(1).UNC_REL  = 0.5;
-  Q.ABS_SPECIES(1).UNC_ABS  = 5e-10;
+  Q.ABS_SPECIES(1).UNC_ABS  = 2.5e-10;
   Q.ABS_SPECIES(1).CORRLEN  = 5e3;
   Q.ABS_SPECIES(1).LOG_ON   = false;
   %
@@ -143,7 +152,7 @@ switch fmode
   Q.ABS_SPECIES(2).UNC_REL  = 0.5;
   Q.ABS_SPECIES(2).UNC_ABS  = 1e-6;
   Q.ABS_SPECIES(2).CORRLEN  = 5e3;
-  Q.ABS_SPECIES(2).LOG_ON   = true;
+  Q.ABS_SPECIES(2).LOG_ON   = false;
   %
   Q.ABS_SPECIES(3).TAG{1}   = 'N2O-*-491e9-511e9';
   Q.ABS_SPECIES(3).SOURCE   = 'Bdx';
@@ -152,9 +161,9 @@ switch fmode
   Q.ABS_SPECIES(3).L2NAME   = 'N2O-502GHz-20-50km';
   Q.ABS_SPECIES(3).GRID     = q2_pgrid( 12e3, 65e3 );
   Q.ABS_SPECIES(3).UNC_REL  = 0.5;
-  Q.ABS_SPECIES(3).UNC_ABS  = 10e-9;
+  Q.ABS_SPECIES(3).UNC_ABS  = 50e-9;
   Q.ABS_SPECIES(3).CORRLEN  = 5e3;
-  Q.ABS_SPECIES(3).LOG_ON   = true;
+  Q.ABS_SPECIES(3).LOG_ON   = false;
   %
   Q.ABS_SPECIES(4).TAG{1}   = 'H2O';
   Q.ABS_SPECIES(4).TAG{2}   = 'H2O-ForeignContStandardType';
@@ -164,7 +173,7 @@ switch fmode
   Q.ABS_SPECIES(4).L2       = false;
   Q.ABS_SPECIES(4).GRID     = q2_pgrid( 12e3, 30e3 );
   Q.ABS_SPECIES(4).UNC_REL  = 0.5;
-  Q.ABS_SPECIES(4).UNC_ABS  = 2e-6;
+  Q.ABS_SPECIES(4).UNC_ABS  = 1e-6;
   Q.ABS_SPECIES(4).CORRLEN  = 5e3;
   Q.ABS_SPECIES(4).LOG_ON   = true;
   %
@@ -223,5 +232,5 @@ switch fmode
 
     
  otherwise
-  error( 'Frequency band %d is not yet handled (or not defined).', fmode );
+  error( 'Frequency band %d is not yet handled (or not defined).', freqmode );
 end

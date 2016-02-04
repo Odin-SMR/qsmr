@@ -51,7 +51,7 @@ topfolder = q2_topfolder;
 do_total  = strcmp( part, 'total' );
 %
 fmode  = L1B.FreqMode(1);
-assert( fmode == Q.FMODE );
+assert( fmode == Q.FREQMODE );
 %
 % Determine f_lo and f_backend for middle point of scan
 % Always used for mixer+sideband, while LO can vary for backend 
