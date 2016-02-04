@@ -23,7 +23,7 @@ function Y = q2_arts_y(L1B,ATM,Q,varargin)
 % Frequency mode 
 %
 fmode  = L1B.FreqMode(1);
-assert( fmode == Q.FMODE );
+assert( fmode == Q.FREQMODE );
 
 
 %

@@ -11,7 +11,8 @@ assert( length(freqmode) == 1 );
 %---------------------------------------------------------------------------
 
 Q.FREQMODE           = freqmode;  
-Q.INVEMODE           = invemode;  
+Q.INVEMODE           = invemode;
+
 
 
 %---------------------------------------------------------------------------
@@ -150,7 +151,7 @@ switch freqmode
   Q.ABS_SPECIES(2).GRID     = q2_pgrid( 12e3, 65e3 );
   Q.ABS_SPECIES(2).L2NAME   = 'O3-501GHz-20to50km';
   Q.ABS_SPECIES(2).UNC_REL  = 0.5;
-  Q.ABS_SPECIES(2).UNC_ABS  = 1e-6;
+  Q.ABS_SPECIES(2).UNC_ABS  = 0.5e-6;
   Q.ABS_SPECIES(2).CORRLEN  = 5e3;
   Q.ABS_SPECIES(2).LOG_ON   = false;
   %

@@ -29,6 +29,10 @@ Qsmr: definition of settings
    as repository for internal variables and data. That is, no fields of R is
    set by the user.
 
+   Most fields of Q are of simple types such scalar value, vector or string,
+   but some fields are structures. This more complex type is only used for
+   retrieval quantities, in order to follow  the Qpack system.
+
 ~~~~~
 
 ABSLOOKUP_OPTION
@@ -63,7 +67,7 @@ ABS_T_INTERP_ORDER
 BACKEND_NR
    An integer. Index of expected backend. Index coding described in L1B ATBD.
 
-FREQUENCY
+BASELINE
    A structure. Definition of baseline off-set retrieval. The fields of the
    structure are as follows. RETRIEVE: A boolean, flagging if baseline off-set
    shall be retrieved or not. UNC: A priori uncertainty (1 std dev). PIECEWISE:
@@ -85,10 +89,6 @@ DZA_MAX_IN_CORE
    A scalar value. Determines the maximum spacing (in degrees) of the angular
    grid used for pencil beam calculations. This value sets the spacing between
    the lower and upper boresight direction.
-
-FMODE
-   An integer. The frequency mode. See L1B ATBD for definition of existing
-   frequency modes.
 
 FOLDER_ABSLOOKUP
    A string. Full path to folder containing the different versions of absorption
@@ -122,7 +122,11 @@ FOLDER_WORK
    use a folder for debugging. If several Qsmr processes are given the same dubugging
    folder, files will be overwritten.
 
-FREQUENCY
+FREQMODE
+   An integer. The frequency mode. See L1B ATBD for definition of existing
+   frequency modes.
+
+FREQUENCY 
    A structure. Definition of frequency off-set retrieval. The fields of the
    structure are as follows. RETRIEVE: A boolean, flagging if frequency off-set
    shall be retrieved or not. UNC: A priori uncertainty (1 std dev).
@@ -135,8 +139,11 @@ F_BACKEND_COMMON
    frequencies throughout the scan. If false, these frequencies are allowed to
    vary over the scan.
 
-F_BACKEND_NOMINAL
-   A vector. Nominal value of the backend channel centre frequencies.
+F_RANGES
+   A matrix, having two colmns. This matrix specifies the frequency ranges to
+   include in the retrieval, where the first and second column give the lower
+   and upper frequency limit, respectively. Each row specifies a new frequency
+   range to include.
 
 F_GRID_NFILL
    An integer. If set to > 0, the sensor response matrix will include a cubic
@@ -148,26 +155,41 @@ F_LO_NOMINAL
    A scalar value. Nominal value of the LO frequency.
 
 GA_FACTOR_NOT_OK
-   The factor with which the Marquardt-Levenberg factor is increased when not 
-   a lower cost value is obtained. This starts a new sub-iteration. This value
-   must be > 1.
+   A scalar value. The factor with which the Marquardt-Levenberg factor is
+   increased when not a lower cost value is obtained. This starts a new
+   sub-iteration. This value must be > 1.
 
 GA_FACTOR_OK
-  The factor with which the Marquardt-Levenberg factor is decreased after a
-  lower cost values has been reached. This value must be > 1.
+   A scalar value. The factor with which the Marquardt-Levenberg factor is
+   decreased after a lower cost values has been reached. This value must be > 1.
 
 GA_MAX          
-  Maximum value for gamma factor for the Marquardt-Levenberg method. The 
-  stops if this value is reached and cost value is still not decreased.
-  This value must be > 0.
+   A scalar value. Maximum value for gamma factor for the Marquardt-Levenberg
+   method. The stops if this value is reached and cost value is still not
+   decreased. This value must be > 0.
 
 GA_START
-  Start value for gamma factor for the Marquardt-Levenberg method. See the L2
-  ATBD for a definition of the gamma factor. This value must be >= 0.
+   A scalar value. Start value for gamma factor for the Marquardt-Levenberg
+   method. See the L2 ATBD for a definition of the gamma factor. This value must
+   be >= 0.
+
+INVEMODE
+   A string. A short string maning the inversion set-up used.
+
+MIN_N_FREQS
+   A scalar value. The required number of frequencies of each spectrum to start
+   an inversion. This number refers to the number of spectra after frequency
+   cropping and quality filtering.
+
+MIN_N_SPECTRA
+   A scalar value. The required number of spectra of a scan to start an
+   inversion. This number refers to the number of spectra after altitude
+   cropping and quality filtering.
 
 NOISE_SCALEFAC
-   A scalar. A tuning parameter to adjust the values in Se. The thermal noise
-   standard deviation obtained by the L1B data is multiplicated with this factor.
+   A scalar value. A tuning parameter to adjust the values in Se. The thermal
+   noise standard deviation obtained by the L1B data is multiplicated with this
+   factor.
 
 NOISE_CORRMODEL
   A string. Model of correlations inside Se. Only correlation between adjecent
@@ -214,3 +236,7 @@ T
    priori uncertainty (1 std dev)  at 100, 10, 1, 0.1 and 0.01 hPa (roughly 
    16, 32, 48, 64 and 80 km). CORRLEN: Correlation length, in meter, to use 
    when creating Sx.
+
+ZTAN_RANGE
+   A vector of length 2. The first and last element of this vector give the
+   lower and upper tangent limit for spectra to include in the retrieval.

@@ -42,23 +42,23 @@ end
 
 % Check if Q contains all defined fields
 %
-for i = 1 : length(F)
-  if ~isfield( Q, F{i} )
-    error( 'At least the field *%s* is missing in Q.', F{i} );
-  end
+qfields = fieldnames( Q );
+mfields = setdiff( F, qfields );
+%
+for i = 1 : length(mfields)
+  fprintf( 'The field %s is missing in Q.\n', mfields{i} );    
+  error( 'At least one field is missing in Q.' );
 end
 
 
 % Check if Q contains any undefined field
 %
-QF = fieldnames(Q);
+mfields = setdiff( qfields, F );
 %
-if length(F) ~= length(QF) 
-  for i = 1 : length(QF)
-    if ~any( strcmp(QF{i}, F ) )
-      error( 'At least the field *%s* of Q is undefined.', QF{i} );
-    end
-  end
+for i = 1 : length(mfields)
+  fprintf( 'The field %s of Q is not defined.\n', mfields{i} );    
+  error( 'At least one undefined field in Q.' );
 end
+
 
 

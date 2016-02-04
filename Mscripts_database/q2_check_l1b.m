@@ -19,14 +19,14 @@ end
 %
 if L1B.FreqMode(1) ~= Q.FREQMODE
   error( 'Different frequency mode in L1B and Q (%d rep. %d).', ...
-         L1B.FreqMode(1), Q.FMODE );
+         L1B.FreqMode(1), Q.FREQMODE );
 end
 
 
 % Frontend
 %
 if any( L1B.Frontend ~= Q.FRONTEND_NR )
-  error( 'Different frontend in L1B and Q (%d rep. %d).', ...
+  error( 'Different frontend in L1B and Q (%d resp. %d).', ...
          L1B.Frontend(1), Q.FRONTEND_NR );
 end
 

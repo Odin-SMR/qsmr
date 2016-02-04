@@ -597,21 +597,21 @@ function [L2,L2d] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
       if is_gas
         if Q.ABS_SPECIES(ig).LOG_ON
           L2(end).AVK        = L2(end).AVK .* ( L2(end).VMR * (1./L2(end).VMR') );
-          L2(end).ErrorNoise = L2(end).Apriori .* L2(end).ErrorNoise;
-          L2(end).ErrorTotal = L2(end).Apriori .* L2(end).ErrorTotal;
+          L2(end).ErrorNoise = L2(end).ErrorNoise .* L2(end).VMR;
+          L2(end).ErrorTotal = L2(end).ErrorTotal .* L2(end).VMR;
         else
           L2(end).AVK = L2(end).AVK .* ...
                                       ( L2(end).Apriori * (1./L2(end).Apriori') );
-          L2(end).ErrorNoise = L2(end).VMR .* L2(end).ErrorNoise;
-          L2(end).ErrorTotal = L2(end).VMR .* L2(end).ErrorTotal;
+          L2(end).ErrorNoise = L2(end).ErrorNoise .* L2(end).Apriori;
+          L2(end).ErrorTotal = L2(end).ErrorTotal .* L2(end).Apriori;
         end
       end
       %
       % Calculate measurement respons, now when scalings done
-      L2(end).MeasRespone  = sum( L2(end).AVK, 2 );      
+      L2(end).MeasResponse = sum( L2(end).AVK, 2 );      
       %
       % How to set Quality;
-      L2(end).Quality      = NaN;
+      L2(end).Quality = NaN;
     end
   end 
 
