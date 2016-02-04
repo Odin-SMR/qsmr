@@ -93,9 +93,9 @@ itan = find( ...
 
 
 % Index of AC sub-bands to keep
-%
+% (consider ZeroLagVar only for those spectra to keep)
 isub = find( ...
     L1B.Frequency.SubBandIndex(1,:) >= 1  &  ...
-    max(L1B.ZeroLagVar,[],2)'       <= lag0_max );
+    max(L1B.ZeroLagVar(:,itan),[],2)'       <= lag0_max );
 
                     

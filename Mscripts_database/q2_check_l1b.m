@@ -2,12 +2,10 @@
 %
 %    Performs only basic, non-costly, checks.
 %
-%    This function requires that L1B.Frequency is of original type.
-%
 % FORAMT  q2_check_l1b( L1B, Q )
 %
 % IN   L1B   L1B structure.
-%      Q     Q structure for exoected frequency mode.
+%      Q     Q structure for expected frequency mode.
 
 % 2015-12-21   Patrick Eriksson
 

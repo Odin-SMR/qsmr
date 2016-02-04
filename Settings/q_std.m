@@ -1,14 +1,17 @@
-function Q = q_std(fmode)
-% 
+function Q = q_std(fmode,invmode)
+%
+if nargin < 2, invmode = 'stnd'; end
+%
 assert( length(fmode) == 1 );
 
 
+
 %---------------------------------------------------------------------------
-%--- Various general
+%--- Frequencyu and inversion modes
 %---------------------------------------------------------------------------
 
 Q.FMODE              = fmode;  
-  
+Q.INVMODE            = invmode;  
 
 
 %---------------------------------------------------------------------------
@@ -93,7 +96,6 @@ Q.FREQUENCY.UNC      = 1e6;
 
 Q.T.SOURCE           = 'MSIS90';
 Q.T.RETRIEVE         = true;
-Q.T.L2               = true;
 Q.T.GRID             = q2_pgrid( 10e3, 80e3 );
 Q.T.UNC              = [ 3 3 9 15 15 ];
 Q.T.CORRLEN          = 8e3;
@@ -107,11 +109,26 @@ switch fmode
   
  case 1
   %
+  if ~strcmp( invmode, 'stnd' )
+    error( 'Inversion modes of fmode %d are: ''stnd''.', fmode ); 
+  end
+  %
+  Q.BACKEND_NR              = 2;
+  Q.FRONTEND_NR             = 2;
+  Q.F_LO_NOMINAL            = 497.88e9;
+  Q.SIDEBAND_LEAKAGE        = 0.02;
+  %
+  Q.F_RANGES                = [ 501.16e9 501.60e9; 501.97e9 502.40e9 ];
+  Q.ZTAN_RANGE              = [ 16e3 60e3 ];
+  %
+  Q.T.L2                    = false;
+  %
   Q.ABS_SPECIES(1).TAG{1}   = 'ClO-*-491e9-511e9';
   Q.ABS_SPECIES(1).SOURCE   = 'Bdx';
   Q.ABS_SPECIES(1).RETRIEVE = true;
   Q.ABS_SPECIES(1).L2       = true;
-  Q.ABS_SPECIES(1).GRID     = q2_pgrid( 10e3, 60e3 );
+  Q.ABS_SPECIES(1).L2NAME   = 'ClO-501GHz-20to50km';
+  Q.ABS_SPECIES(1).GRID     = q2_pgrid( 12e3, 65e3 );
   Q.ABS_SPECIES(1).UNC_REL  = 0.5;
   Q.ABS_SPECIES(1).UNC_ABS  = 5e-10;
   Q.ABS_SPECIES(1).CORRLEN  = 5e3;
@@ -121,7 +138,8 @@ switch fmode
   Q.ABS_SPECIES(2).SOURCE   = 'Bdx';
   Q.ABS_SPECIES(2).RETRIEVE = true;
   Q.ABS_SPECIES(2).L2       = true;
-  Q.ABS_SPECIES(2).GRID     = q2_pgrid( 10e3, 80e3 );
+  Q.ABS_SPECIES(2).GRID     = q2_pgrid( 12e3, 65e3 );
+  Q.ABS_SPECIES(2).L2NAME   = 'O3-501GHz-20to50km';
   Q.ABS_SPECIES(2).UNC_REL  = 0.5;
   Q.ABS_SPECIES(2).UNC_ABS  = 1e-6;
   Q.ABS_SPECIES(2).CORRLEN  = 5e3;
@@ -131,7 +149,8 @@ switch fmode
   Q.ABS_SPECIES(3).SOURCE   = 'Bdx';
   Q.ABS_SPECIES(3).RETRIEVE = true;
   Q.ABS_SPECIES(3).L2       = true;
-  Q.ABS_SPECIES(3).GRID     = q2_pgrid( 10e3, 60e3 );
+  Q.ABS_SPECIES(3).L2NAME   = 'N2O-502GHz-20-50km';
+  Q.ABS_SPECIES(3).GRID     = q2_pgrid( 12e3, 65e3 );
   Q.ABS_SPECIES(3).UNC_REL  = 0.5;
   Q.ABS_SPECIES(3).UNC_ABS  = 10e-9;
   Q.ABS_SPECIES(3).CORRLEN  = 5e3;
@@ -143,7 +162,7 @@ switch fmode
   Q.ABS_SPECIES(4).SOURCE   = 'Bdx';
   Q.ABS_SPECIES(4).RETRIEVE = true;
   Q.ABS_SPECIES(4).L2       = false;
-  Q.ABS_SPECIES(4).GRID     = q2_pgrid( 10e3, 30e3 );
+  Q.ABS_SPECIES(4).GRID     = q2_pgrid( 12e3, 30e3 );
   Q.ABS_SPECIES(4).UNC_REL  = 0.5;
   Q.ABS_SPECIES(4).UNC_ABS  = 2e-6;
   Q.ABS_SPECIES(4).CORRLEN  = 5e3;
@@ -156,12 +175,6 @@ switch fmode
   Q.ABS_SPECIES(6).TAG{1}   = 'O2-*-401e9-601e9';
   Q.ABS_SPECIES(6).SOURCE   = 'Bdx';
   Q.ABS_SPECIES(6).RETRIEVE = false;
-  %
-  Q.FRONTEND_NR             = 2;
-  Q.F_LO_NOMINAL            = 497.88e9;
-  Q.SIDEBAND_LEAKAGE        = 0.02;
-  Q.BACKEND_NR              = 2;
-  Q.F_BACKEND_NOMINAL       = [ 501180:501580 502180:502380 ]*1e6;
   %-------------------------------------------------------------------------
 
     

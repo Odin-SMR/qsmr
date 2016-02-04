@@ -21,5 +21,8 @@ Joonas:
 
 
 Bengt:
+---
+
+* Why do number of frequences per sub-band differ?
 
 

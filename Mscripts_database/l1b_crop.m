@@ -6,8 +6,6 @@
 %   Note that the spectra get sorted according to the order specified by itan.
 %   The spectrum channels maintain the order independently of the order in *isub*. 
 %
-%   This function requires that L1B.Frequency is of original type.
-%
 % FORMAT   L1B = l1b_crop(L1B,itan[,isub])
 %
 % OUT  L1B   Cropped L1B data.

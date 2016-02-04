@@ -3,7 +3,37 @@ function [L2,L2d] = q2_inv(LOG,L1B,Q)
 %  
 % Basic checks of data
 %
-assert( L1B.FreqMode(1) == Q.FMODE );
+q2_check_l1b( L1B, Q );
+
+
+%
+% Crop in tangent altitudes and apply quality criteria
+% (so far we are using default of l1b_filer for quality filter)
+%
+assert( prod(size(Q.ZTAN_RANGE)) == 2 );
+%
+[itan,isub] = l1b_filter( L1B, Q.ZTAN_RANGE(1), Q.ZTAN_RANGE(2) );
+%
+if length(itan) < 5
+  L2  = sprintf( 'Too few spectra left in scan (%d)', length(itan) );
+  L2d = [];
+  return
+end
+%
+L1B = l1b_crop( L1B, itan, isub );
+
+
+%
+% Crop in frequency
+%
+L1B = l1b_fcrop( L1B, Q.F_RANGES );
+%
+if size(L1B.Spectrum,1) < 100
+  L2  = sprintf( 'Too few frequencies left in spectra (%d)', ...
+                                            size(L1B.Spectrum,1) );
+  L2d = [];
+  return
+end
 
 
 %
@@ -73,14 +103,14 @@ R.L1B.Frequency   = L1B.Frequency;
 % Create Se and its inverse
 %
 [Se,Seinv] = subfun4se( Q, L1B );
-keyboard
+
 
 %
 % Define O
 %
 O = oem;
 %
-[O.A,O.cost,O.e,O.ga,O.yf] = deal( true );
+[O.cost,O.ga,O.yf,O.J,O.G] = deal( true );
 %
 O.stop_dx             = Q.STOP_DX;
 O.ga_start            = Q.GA_START;
@@ -96,11 +126,16 @@ O.ga_max              = Q.GA_MAX;
 
 
 %
-% Create L2
+% Pick up last z_field and t_field as help to fill L2
 %
 R.z_field = xmlLoad( fullfile( R.workfolder, 'z_field.xml' ) );
+R.t_field = xmlLoad( fullfile( R.workfolder, 't_field.xml' ) );
+
+
 %
-[L2,L2d] = subfun4l2( R, L1B, X );
+% Create L2
+%
+[L2,L2d] = subfun4l2( Q, R, LOG, L1B, X );
 
 return
 
@@ -440,17 +475,105 @@ return
 %--- L2
 %---------------------------------------------------------------------------
 
-function [L2,L2d] = subfun4l2( R, L1B, X )
+function [L2,L2d] = subfun4l2( Q, R, LOG,L1B, X )
 
-  F = l1b_frequency( L1B );
+  %- Init L2
+  %
+  L2  = [];
+
+  %- Start to fill L2d
+  %
+  L2d = [];
+  %
+  L2d.FreqMode  = LOG.FreqMode;
+  L2d.InvMode   = Q.INVMODE;
+  L2d.ScanId    = LOG.ScanID;
+  L2d.STW       = L1B.STW;
+  %
+  L2d.Yfitted   = X.yf;
+  %
+  % Instrumental off-set parameters are zero if not retrieved
+  L2d.Baseline  = 0;
+  L2d.Frequency = 0;
+  L2d.Pointing  = 0;
   
-  plot( F/1e9, L1B.Spectrum, '.' )
-  hold on
-  plot( F/1e9, reshape(X.yf,size(L1B.Spectrum) )) 
-  hold off
+  
+  %- Loop retrieval quantities and fill L2 and L2d
+  %
+  for i = 1 : length( R.jq )
 
-  L2    = X;
-  L2.jq = R.jq;
-  L2.ji = R.ji;
-  L2d   = NaN;
+    ind   = R.ji{i}{1} : R.ji{i}{2};
+    is_l2 = false;
+    
+    switch R.jq{i}.maintag
+
+     case 'Absorption species'   %------------------------------------------------
+      %
+      ig      = R.i_asj(i);    % Gas species index
+      %
+      if Q.ABS_SPECIES(ig).RETRIEVE & Q.ABS_SPECIES(ig).L2
+        %
+        is_l2               = true;
+        L2(end+1).Product   = Q.ABS_SPECIES(ig).L2NAME;
+        %
+        L2(end).Pressure    = Q.ABS_SPECIES(ig).GRID;
+        L2(end).Altitude    = interpp( R.ATM.P, R.z_field, L2(end).Pressure );
+        L2(end).Temperature = interpp( R.ATM.P, R.t_field, L2(end).Pressure );
+        L2(end).Apriori     = interpp( R.ATM.P, R.ATM.VMR(ig,:)', L2(end).Pressure );
+        %
+        if strcmp( R.jq{i}.mode, 'rel' )
+          L2(end).VMR = L2(end).Apriori .* X.x(ind);
+        elseif strcmp( R.jq{i}.mode, 'logrel' )
+          L2(end).VMR = L2(end).Apriori .* exp(X.x(ind));
+        end
+        %  
+        %L2(end).AVK         = A(ind,ind);
+      end 
+      
+     case 'Atmospheric temperatures'   %------------------------------------------
+      %
+      if Q.T.RETRIEVE & Q.T.L2
+        assert(0);
+      end
+     
+     case 'Sensor pointing' %-----------------------------------------------------
+      %
+      L2d.Pointing = X.x(ind);
+
+     case 'Frequency'   %---------------------------------------------------------
+      %
+      L2d.Frequency = X.x(ind);
+      
+     case 'Polynomial baseline fit'   %-------------------------------------------
+      %
+      L2d.Baseline = mean( reshape( X.x(ind), size(R.bline_ilims,2), ...
+                                              length(R.ZA_BORESI) ) )';
+
+     otherwise   %-----------------------------------------------------------------
+        error('Unknown retrieval quantitity.'); 
+    end 
+    
+    % Common parts of L2
+    if is_l2
+      %
+      L2(end).FreqMode  = L2d.FreqMode;
+      L2(end).InvMode   = L2d.InvMode;
+      L2(end).ScanId    = L2d.ScanId;
+      %
+      % Geo-positions and time
+      L2(end).MJD       = mean( L1B.MJD );
+      L2(end).Lat1D     = NaN;
+      L2(end).Lon1D     = NaN;
+      L2(end).Latitude  = interp1( L1B.Altitude, L1B.Latitude, L2(end).Altitude, ...
+                                   'pchip', 'extrap' );
+      L2(end).Longitude = interp1( L1B.Altitude, L1B.Longitude, L2(end).Altitude, ...
+                                   'pchip', 'extrap' );
+      % 
+    end
+  end 
+
+  % Sort fields in alphabetical order
+  L2  = orderfields( L2 );
+  L2d = orderfields( L2d );
+  
 return

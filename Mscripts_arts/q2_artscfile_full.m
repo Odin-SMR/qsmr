@@ -337,6 +337,8 @@ function cfile_ycalc( fid, C, workfolder );
                                      fullfile( workfolder, 'jacobian.xml' ) );
     fprintf( fid, 'WriteXML( in=z_field, filename="%s" )\n', ...
                                      fullfile( workfolder, 'z_field.xml' ) );
+    fprintf( fid, 'WriteXML( in=t_field, filename="%s" )\n', ...
+                                     fullfile( workfolder, 't_field.xml' ) );
   end
 return
 %----------------------------------------------------------------------------
