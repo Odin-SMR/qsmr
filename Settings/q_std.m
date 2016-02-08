@@ -70,8 +70,8 @@ Q.F_BACKEND_COMMON   = true;
 %--- OEM settings
 %---------------------------------------------------------------------------
 
-Q.STOP_DX            = 0.1;
-Q.GA_START           = 10;
+Q.STOP_DX            = 1;
+Q.GA_START           = 1;
 Q.GA_FACTOR_NOT_OK   = 10;
 Q.GA_FACTOR_OK       = 10;
 Q.GA_MAX             = 1e4;
@@ -129,6 +129,7 @@ switch freqmode
   Q.SIDEBAND_LEAKAGE        = 0.02;
   %
   Q.F_RANGES                = [ 501.16e9 501.60e9; 501.97e9 502.40e9 ];
+  %Q.F_RANGES                = [ 501.18e9 501.58e9; 501.98e9 502.38e9 ];
   Q.ZTAN_RANGE              = [ 16e3 60e3 ];
   %
   Q.T.L2                    = false;

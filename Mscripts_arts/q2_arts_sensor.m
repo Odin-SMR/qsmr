@@ -18,7 +18,7 @@ function R = q2_arts_sensor(R)
 %
 [i,j,s] = find( R.H_ANTEN );
 %
-nfin = size( R.H_MIXER, 2 );
+nfin = size( R.H_BACKE{1}, 2 );
 ns   = length( s );
 %
 [ii,jj,ss] = deal( zeros( ns*nfin, 1 ) );
@@ -37,19 +37,16 @@ H1 = sparse( ii, jj, ss, size(R.H_ANTEN,1)*nfin, size(R.H_ANTEN,2)*nfin );
 
 
 
-% Mixer+backend, if f_backend assumed to be constant
-if issparse(R.H_BACKE)
-
-  % Combine mixer and backend
-  %
-  Hf = R.H_BACKE * R.H_MIXER;
+% Backend, if LO assumed to be constant 
+%
+if length(R.H_BACKE) == 1
 
   % Expand mixer + backend
   %
-  [i,j,s] = find( Hf );
+  [i,j,s] = find( R.H_BACKE{1} );
   %
-  nbore = size( R.H_ANTEN, 1 );
-  nfout = size( R.H_BACKE, 1 );
+  nbore = size( R.H_ANTEN,    1 );
+  nfout = size( R.H_BACKE{1}, 1 );
   ns    = length( s );
   %
   [ii,jj,ss] = deal( zeros( ns*nbore, 1 ) );
@@ -77,9 +74,8 @@ else
   %
   for b = 1 : nbore
     %
-    Hf = R.H_BACKE{b} * R.H_MIXER;
-    %
-    [i,j,s] = find( Hf );
+
+    [i,j,s] = find( R.H_BACKE{b} );
     ns    = length( s );
     %
     if b == 1

@@ -8,11 +8,14 @@
 %   part(s) is generated. These compact versions can expanded and combined by
 %   *q2_arts_sensor*, to the full response matrix. 
 %
+%   Note that 'backend' here is short-hand for mixer + sideband and
+%   spectrometer. 
+%
 %   These fields are added to R (for the option 'all'):
-%    F_MIXER
+%    F_GRID
 %    H_ANTEN
 %    H_BACKE
-%    H_MIXER
+%    LO
 %    R_EARTH
 %    ZA_BORESI   
 %    ZA_PENCIL
@@ -35,7 +38,7 @@
 %       R      R structure.
 % OPT   part   What part(s) to calculate. Default is 'all'. This argument
 %              matches directly C.PART of q2_artscfile_sensor, and other
-%              options are: 'antenna', 'mixer', 'backend', 'all' and 'total'.
+%              options are: 'antenna', 'backend', 'all' and 'total'.
 
 % 2015-05-29   Created by Patrick Eriksson.
 
@@ -52,19 +55,8 @@ do_total  = strcmp( part, 'total' );
 %
 fmode  = L1B.FreqMode(1);
 assert( fmode == Q.FREQMODE );
-%
-% Determine f_lo and f_backend for middle point of scan
-% Always used for mixer+sideband, while LO can vary for backend 
-% Set by internal function, at end of file.
-[f_lo,f_backend] = get_fmixerback( L1B, round(length(L1B.Altitude)/2) );
 
 
-% The different parts are calculated in smallest possible block:
-%   Antenna: calculated for a single frequency
-%   Mixer and backend: calculated for a single beam
-% 
-% After this, the blocks are expanded and combined
-  
   
 %
 % Antenna part
@@ -146,13 +138,13 @@ clear Hpart t_int
 
 
 %
-% Mixer + sideband
+% Mixer + sideband + backend
 %
-if any( strcmp( part, { 'mixer', 'all' } ) )  |  do_total
+if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
 
-  C.PART         = 'mixer';
-  C.LO           = f_lo;
-  C.F_GRID_NFILL = Q.F_GRID_NFILL;
+  if do_total & ~Q.F_BACKEND_COMMON
+    error( 'Q.F_BACKEND_COMMON must be true for ''total'' option.' );
+  end   
 
   % Get f_grid from absorption lookup table
   abs_lookup = xmlLoad( fullfile( Q.FOLDER_ABSLOOKUP, ...
@@ -161,56 +153,6 @@ if any( strcmp( part, { 'mixer', 'all' } ) )  |  do_total
   R.F_GRID = abs_lookup.f_grid;
   xmlStore( fullfile( R.workfolder, 'f_grid.xml' ), R.F_GRID, 'Vector', 'binary' );
   clear abs_lookup
-  %
-  % Here we use a single angle
-  if ~do_total
-    xmlStore( fullfile( R.workfolder, 'mblock_dlos_grid.xml' ), [0], ...
-                                                          'Matrix', 'binary' );
-  end
-  %
-  % Sideband response. So far just a flat function 
-  G.name      = 'Sideband response function';
-  G.gridnames = { 'Frequency' };
-  % Add 10 kHz margin to avoid error due to rounding
-  G.grids     = { symgrid( [ 1e9, min(abs(R.F_GRID([1 end])-C.LO))-10e3 ] ) };
-  G.dataname  = 'Response';
-  %
-  rs = Q.SIDEBAND_LEAKAGE;
-  rm = 1 - rs;
-  %
-  if f_backend(1) > C.LO
-    G.data      = [ rs rs rm rm ];
-  else
-    G.data      = [ rm rm rs rs ];
-  end
-  C.SIDEBAND_FILE = fullfile( R.workfolder, 'sideband_response.xml' );
-  xmlStore( C.SIDEBAND_FILE, G, 'GriddedField1', 'binary' );
-  %
-  if ~do_total
-    cfile     = q2_artscfile_sensor( C, R.workfolder );
-    status    = arts( cfile );
-    R.H_MIXER = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
-    R.F_MIXER = xmlLoad( fullfile( R.workfolder, 'sensor_response_f.xml' ) );
-  end
-end
-
-
-%
-% Backend
-%
-if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
-
-  if do_total & ~Q.F_BACKEND_COMMON
-    error( 'Q.F_BACKEND_COMMON must be true for ''total'' option.' );
-  end   
-  
-  C.PART = 'backend';
-  
-  % f_grid is here set to R.F_MIXER
-  if ~do_total  
-    xmlStore( fullfile( R.workfolder, 'f_grid.xml' ), R.F_MIXER, ...
-                                                        'Vector',  'binary' );
-  end
   
   % Here we use a single angle
   if ~do_total
@@ -221,35 +163,86 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
   % Backend response file
   C.BACKEND_FILE = fullfile( Q.FOLDER_BACKEND, ...
                               sprintf( 'backend_df%04.0fkHz', ...
-                              floor(diff(f_backend([1 2]))/1e3) ) );
+                              floor(L1B.FreqRes(1)/1e3) ) );
   if L1B.Apodization(1) == true
     C.BACKEND_FILE = sprintf( '%s_withHan.xml', C.BACKEND_FILE );
   else
     C.BACKEND_FILE = sprintf( '%s_noHan.xml', C.BACKEND_FILE );
   end
 
-  % A common set of backend frequencies assumed
+  % Set number of lo-s to consider
+  %
   if Q.F_BACKEND_COMMON
+    nlo = 1;
+  else
+    nlo = length(L1B.Altitude);
+  end
+  
+  % Loop lo-s
+  %
+  R.LO = zeros( length(L1B.Altitude), 1 );
+  %
+  for i = 1 : nlo
+      
+    % Set LO and channel frequencies
+    %
+    if nlo == 1
+      [~,iref] = min( abs( L1B.Altitude - 60e3 ) );
+      [f_lo,f_backend] = get_fmixerback( L1B, iref );
+      R.LO(:) = f_lo;
+    else
+      [f_lo,f_backend] = get_fmixerback( L1B, i );
+      R.LO(i) = f_lo;
+    end
+          
+    % Run ARTS for "mixer"
+    %--------------------------------------------------------------------------------
+    %
+    C.PART         = 'mixer';
+    C.LO           = f_lo;
+    C.F_GRID_NFILL = Q.F_GRID_NFILL;
+    %
+    % Sideband response. So far just a flat function 
+    G.name      = 'Sideband response function';
+    G.gridnames = { 'Frequency' };
+    % Add 10 kHz margin to avoid error due to rounding
+    G.grids     = { symgrid( [ 1e9, min(abs(R.F_GRID([1 end])-f_lo))-10e3 ] ) };
+    G.dataname  = 'Response';
+    %
+    rs = Q.SIDEBAND_LEAKAGE;
+    rm = 1 - rs;
+    %
+    if f_backend(1) > f_lo
+      G.data      = [ rs rs rm rm ];
+    else
+      G.data      = [ rm rm rs rs ];
+    end
+    C.SIDEBAND_FILE = fullfile( R.workfolder, 'sideband_response.xml' );
+    xmlStore( C.SIDEBAND_FILE, G, 'GriddedField1', 'binary' );
+    %
+    if ~do_total
+      cfile  = q2_artscfile_sensor( C, R.workfolder );
+      status = arts( cfile );
+      H1     = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
+    end
+
+    
+    % Run ARTS for "backend" and combine H-matrices
+    %--------------------------------------------------------------------------------
+    %
+    C.PART = 'backend';
+    %
+    % f_grid is taken as f_mixer saved in mixer part, an IF-grid
+    %
     % Channel positions, in IF
     xmlStore( fullfile( R.workfolder, 'f_backend.xml' ), ...
                               abs( f_backend - f_lo ), 'Vector', 'binary' );
     if ~do_total
       cfile    = q2_artscfile_sensor( C, R.workfolder );
       status   = arts( cfile );
-      R.H_BACKE = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
-    end
-    
-  % Backend frequencies vary (or rather non-fixed LO)
-  else
-    for i = 1 : length(L1B.Altitude)
-      f_lo = get_fmixerback( L1B, i );
-      xmlStore( fullfile( R.workfolder, 'f_backend.xml' ), ...
-                              abs( f_backend - f_lo ), 'Vector', 'binary' );
-      if i == 1
-        cfile        = q2_artscfile_sensor( C, R.workfolder );
-      end
-      status       = arts( cfile );
-      R.H_BACKE{i} = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
+      H2       = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
+      %
+      R.H_BACKE{i} = H2 * H1;
     end
   end
   
@@ -268,12 +261,12 @@ if do_total
   R.H_TOTAL = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
 end
 
+
 return
 
 
 
 % Frequencies picked from spectrum with index *itan*
-% Given LO is "doppler corrected" by scaling difference between RestFreq and SkyFreq
 function [f_lo,f_backend] = get_fmixerback( L1B, itan )
   f_lo      = L1B.Frequency.LOFreq(itan);
   f_backend = f_lo + L1B.Frequency.IFreqGrid;

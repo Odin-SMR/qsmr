@@ -284,7 +284,7 @@ function cfile_atm( fid, C, workfolder )
                                     fullfile( workfolder, 'lat_true.xml' ) );
   fprintf( fid, 'ReadXML( lon_true, "%s" )\n', ...
                                     fullfile( workfolder, 'lon_true.xml' ) );    
-  fprintf( fid, 'z_fieldFromHSE( p_hse = 500e2, z_hse_accuracy = 1 )' );
+  %fprintf( fid, 'z_fieldFromHSE( p_hse = 500e2, z_hse_accuracy = 1 )\n' );
   %
   fprintf( fid, 'atmgeom_checkedCalc\n' );
   fprintf( fid, 'cloudbox_checkedCalc\n' );

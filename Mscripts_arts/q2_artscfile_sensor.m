@@ -87,12 +87,12 @@ switch lower(C.PART)
     fprintf( fid, 'WriteXML( in=sensor_response, filename="%s" )\n', ...
                        fullfile( workfolder, sprintf('sensor_response.xml' ) ) );
     fprintf( fid, 'WriteXML( in=sensor_response_f, filename="%s" )\n', ...
-                     fullfile( workfolder, sprintf('sensor_response_f.xml' ) ) );
+                     fullfile( workfolder, sprintf('f_mixer.xml' ) ) );
     
   case 'backend'
     %
     fprintf( fid, 'ReadXML( f_grid, "%s" )\n', ...
-                                          fullfile( workfolder, 'f_grid.xml' ) ); 
+                                          fullfile( workfolder, 'f_mixer.xml' ) ); 
     fprintf( fid, 'sensor_responseInit\n' );
     fprintf( fid, 'ReadXML( f_backend, "%s" )\n', ...
                                        fullfile( workfolder, 'f_backend.xml' ) ); 

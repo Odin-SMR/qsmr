@@ -23,7 +23,7 @@ if iter == 1
   if Q.BASELINE.RETRIEVE    
     R.Jbl = zeros( size(R.H_TOTAL,1), size(R.bline_ilims,2)*length(R.ZA_BORESI) );
     %
-    nf = size( R.H_BACKE, 1 );  % Number of channels
+    nf = size( R.H_BACKE{1}, 1 );  % Number of channels
     c  = 0;
     %
     for t = 1 : length(R.ZA_BORESI)
@@ -87,7 +87,6 @@ for i = 1 : length( R.jq )
       L1B                  = R.L1B;
       L1B.Frequency.LOFreq = L1B.Frequency.LOFreq   + x(ind);
       %
-      R = q2_arts_sensor_parts( L1B, Q, R, 'mixer' );
       R = q2_arts_sensor_parts( L1B, Q, R, 'backend' );
       R = q2_arts_sensor( R );
     end
@@ -153,7 +152,7 @@ if do_j
   % Derive pointing off-set weighting functions
   %
   if Q.POINTING.RETRIEVE
-    nf = size( R.H_MIXER, 2 );  % Length of f_grid
+    nf = size( R.H_BACKE{1}, 2 );  % Length of f_grid
     dza = 0.001;
     ymat = reshape( y, [nf length(R.ZA_PENCIL) ] );
     ytmp = interp1( R.ZA_PENCIL, ymat', R.ZA_PENCIL+dza, 'pchip', 'extrap' )'; 

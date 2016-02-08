@@ -65,8 +65,7 @@ xmlStore( fullfile( R.workfolder, 'lat_true.xml' ), ...
 xmlStore( fullfile( R.workfolder, 'lon_true.xml' ), ...
                  L1B.Longitude(round(length(L1B.Longitude)/2)), ...
                                                         'Vector', 'binary' );
-  
-  
+    
   
 %
 % Initial sensor variables 
@@ -79,11 +78,12 @@ xmlStore( fullfile( R.workfolder, 'sensor_pos.xml' ), ...
                              repmat( R.Z_ODIN, size(za) ), 'Matrix', 'binary' );
 xmlStore( fullfile( R.workfolder, 'sensor_los.xml' ), za, 'Matrix', 'binary' );
 %
-% Copy those parts of L1B that are needed to recalculate sensor resposnes to
+% Copy those parts of L1B that are needed to recalculate sensor responses to
 % adopt to retrieved frequency off-set
 R.L1B.Altitude    = L1B.Altitude;
 R.L1B.Apodization = L1B.Apodization;
 R.L1B.FreqMode    = L1B.FreqMode; 
+R.L1B.FreqRes     = L1B.FreqRes; 
 R.L1B.Frequency   = L1B.Frequency;
 
 
@@ -335,8 +335,9 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
           R.bline_ilims(2,i) = max( is );
         end
       end
-      i              = find( R.bline_ilims(1,:) > 0 );
-      R.bline_ilims  = R.bline_ilims(:,i);
+      i                = find( R.bline_ilims(1,:) > 0 );
+      R.bline_ilims    = R.bline_ilims(:,i);
+      R.acpart_active  = i;
     else
       R.bline_ilims  = [ 1; size(R.H_BACKE,1) ];
     end    
@@ -481,25 +482,34 @@ function [L2,L2d] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
   %
   L2  = [];
 
+  %- Basic sizez
+  %
+  ntan = length( L1B.Altitude );
+  
   %- Start to fill L2d
   %
   L2d = [];
   %
+  % Basic identification
   L2d.FreqMode     = LOG.FreqMode;
   L2d.InveMode     = Q.INVEMODE;
   L2d.ScanId       = LOG.ScanID;
+  %
+  % Data describing what data that actually were used
   L2d.STW          = L1B.STW;
+  L2d.ChannelID    = NaN;
   %
-  % Some retrieval quality values
+  % Fitting data
   L2d.Residual     = X.cost_y(end);
-  L2d.FitSpectrum  = X.yf;
   L2d.MinLmFactor  = min( X.ga );
+  L2d.FitSpectrum  = reshape( X.yf, size(L1B.Spectrum) );  
   %
-  % Instrumental off-set parameters are zero if not retrieved
-  L2d.BaselineMean = zeros(size(L1B.Spectrum,1),1);;
-  L2d.BaselineVar  = L2d.BaselineMean;
-  L2d.Frequency    = 0;
-  L2d.Pointing     = 0;
+  % Instrumental variables.
+  % Off-set parameters are set to zero if not retrieved
+  L2d.LOFreq       = R.LO;
+  L2d.BlineOffSet  = zeros( 4, ntan );
+  L2d.FreqOffSet   = zeros( 1, ntan );
+  L2d.PointOffSet  = zeros( 1, ntan );
   
   
   %- Loop retrieval quantities and fill L2 and L2d
@@ -543,21 +553,19 @@ function [L2,L2d] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
      
      case 'Sensor pointing' %-----------------------------------------------------
       %
-      L2d.Pointing = X.x(ind);
+      L2d.PointOffSet = X.x(ind);
 
      case 'Frequency'   %---------------------------------------------------------
       %
-      L2d.Frequency = X.x(ind);
+      L2d.FreqOffSet = X.x(ind);
       
      case 'Polynomial baseline fit'   %-------------------------------------------
       %
        if Q.BASELINE.PIECEWISE 
-         B = reshape( X.x(ind), size(R.bline_ilims,2), length(R.ZA_BORESI) );
-         L2d.BaselineMean = mean( B )';
-         L2d.BaselineVar  = var( B )';
+         L2d.BlineOffSet(R.acpart_active,:) = reshape( X.x(ind), ...
+                                      size(R.bline_ilims,2), length(R.ZA_BORESI) );
        else
-         L2d.BaselineMean = X.x(ind);
-         L2d.BaselineVar  = zeros( size( L2d.BaselMean ) );         
+         L2d.BlineOffSet(R.acpart_active,:) = X.x(ind);
        end
 
      otherwise   %-----------------------------------------------------------------
