@@ -35,7 +35,7 @@ end
 
 freqmode = freqmodes4dates{1}.freqmodes(1);
 
-first check if the freqmode was deployed for all dates
+% first check if the freqmode was deployed for all dates
 mjdvec_tmp = [];
 for i = 1:length(freqmodes4dates)
   if any( freqmodes4dates{i}.freqmodes == freqmode )
