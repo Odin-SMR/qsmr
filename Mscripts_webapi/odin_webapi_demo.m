@@ -14,15 +14,16 @@ webapi_url = get_webapi_url(); %connect to test database
 % get which freqmodes that were measured within a date range
  
 mjd1 = datenum('2014-01-01') - datenum('1858-11-17');
-mjd2 = datenum('2014-01-04') - datenum('1858-11-17');
+mjd2 = datenum('2014-01-02') - datenum('1858-11-17');
+mjdvec = mjd1:mjd2;
 
 if test_database == 1
-  freqmodes = get_measuredfreqmodes4daterange(mjd1,mjd2,webapi_url);
+  freqmode4dates = get_measuredfreqmodes4daterange(mjdvec,webapi_url);
 else
-  freqmodes = get_measuredfreqmodes4daterange(mjd1,mjd2);
+  freqmodes4dates = get_measuredfreqmodes4daterange(mjdvec);
 end
 
-if isempty(freqmodes)
+if isempty(freqmodes4dates)
   display('No data found for the desired dates')
   return
 end
@@ -32,12 +33,22 @@ end
 % get scan logdata for all scans from a given freqmode
 % within a given date range 
 
-freqmode = freqmodes(1);
+freqmode = freqmodes4dates{1}.freqmodes(1);
+
+first check if the freqmode was deployed for all dates
+mjdvec_tmp = [];
+for i = 1:length(freqmodes4dates)
+  if any( freqmodes4dates{i}.freqmodes == freqmode )
+     mjdvec_tmp = [mjdvec_tmp, freqmodes4dates{i}.mjd];
+  end
+end
+mjdvec = mjdvec_tmp;
+
 
 if test_database == 1
-  info = get_logdata4freqmode(freqmode,mjd1,mjd2,webapi_url);
+  info = get_logdata4freqmode(freqmode,mjdvec,webapi_url);
 else
-  info = get_logdata4freqmode(freqmode,mjd1,mjd2);
+  info = get_logdata4freqmode(freqmode,mjdvec);
 end
 
 %--------------------------------------------------------------

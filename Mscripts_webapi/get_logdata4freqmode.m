@@ -1,5 +1,5 @@
 % returns a structure with log information
-% of scans from the given date and freqmode
+% of scans from the given dates and freqmode
 %
 % Usage:
 %
@@ -24,8 +24,7 @@
 %      URLS
 %         URLs to l1b and aux data
 % In:    
-%     mjd1  start date 
-%     mjd2  end data
+%     mjdvec vector with mjd
 %     freqmode  scalar 
 %     webapi_url optional default is to search data from the odin
 %     live database
@@ -35,27 +34,25 @@
 %      mjd1 = datenum('2015-01-03') - datenum('1858-11-17');
 %      mjd2 = datenum('2015-01-04') - datenum('1858-11-17');
 %      freqmode = 2
-%      info = get_logdata4freqmode(freqmode,mjd1,mjd2)
+%      info = get_logdata4freqmode(freqmode,mjd1:mjd2)
 %
 %      webapi_url = get_webapi_url(); %connect to test database
-%      info = get_logdata4freqmode(freqmode,mjd1,mjd2,webapi_url)
+%      info = get_logdata4freqmode(freqmode,mjd1:mjd2,webapi_url)
 % 
 %      see also odin_webapi_demo.m for usage
 %
 % Created by Bengt Rydberg 2015-12-17
 
-function info = get_logdata4freqmode(freqmode,mjd1,mjd2,webapi_url)
+function info = get_logdata4freqmode(freqmode,mjdvec,webapi_url)
 
-if nargin<4
+if nargin<3
   webapi_url = 'http://malachite.rss.chalmers.se';
 end
 
 
 mjd0 = datenum('1858-11-17');
-datenum1 = mjd0 + mjd1;
-datenum2 = mjd0 + mjd2;
 
-datevec = datenum1:datenum2;
+datevec = mjd0 + mjdvec;
 
 urls = [];
 n = 1;
