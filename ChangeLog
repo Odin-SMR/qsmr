@@ -1,3 +1,15 @@
+2016-02-10  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Updated to changes in L1B frequency part. And some associated
+	code improvements.
+
+2016-02-08  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_arts/q2_inv.m: L2d changed.
+
+	* Mscripts_arts/q2_arts_sensor_parts.m: Old mixer and backend, now
+	treated as one part. Clearer handling of LO. 
+
 2016-02-04  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Some smaller changes and bug fixes.

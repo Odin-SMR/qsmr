@@ -61,8 +61,10 @@ for i = 1 : length(names)
     L1B.Channels = repmat( length(ich), 1, length(itan) );
    
    case 'Frequency'
-    L1B.Frequency.IFreqGrid = L1B.Frequency.IFreqGrid(ich); 
-    L1B.Frequency.LOFreq    = L1B.Frequency.LOFreq(itan); 
+    L1B.Frequency.AppliedDopplerCorr = L1B.Frequency.AppliedDopplerCorr(itan);   
+    L1B.Frequency.ChannelsID         = L1B.Frequency.ChannelsID(ich); 
+    L1B.Frequency.IFreqGrid          = L1B.Frequency.IFreqGrid(ich); 
+    L1B.Frequency.LOFreq             = L1B.Frequency.LOFreq(itan); 
    
    case 'Spectrum'
     L1B.Spectrum = L1B.Spectrum(ich,itan);

@@ -62,8 +62,8 @@ Q.PPATH_LRAYTRACE    = 20e3;
 Q.DZA_MAX_IN_CORE    = 0.01;
 Q.DZA_GRID_EDGES     = [ Q.DZA_MAX_IN_CORE*[1:3 5 8 12 21] ];
 
-Q.F_BACKEND_COMMON   = true;
-
+Q.LO_COMMON          = true;
+Q.LO_ZREF            = 60e3;
 
 
 %---------------------------------------------------------------------------

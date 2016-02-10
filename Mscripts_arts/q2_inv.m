@@ -26,7 +26,7 @@ L1B = l1b_crop( L1B, itan, isub );
 %
 % Crop in frequency
 %
-L1B = l1b_fcrop( L1B, Q.F_RANGES );
+L1B = l1b_fcrop( L1B, Q.F_RANGES, Q.LO_ZREF );
 %
 if size(L1B.Spectrum,1) < Q.MIN_N_FREQS
   L2  = sprintf( 'Too few frequencies left in spectra (%d)', ...
@@ -339,7 +339,7 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
       R.bline_ilims    = R.bline_ilims(:,i);
       R.acpart_active  = i;
     else
-      R.bline_ilims  = [ 1; size(R.H_BACKE,1) ];
+      R.bline_ilims  = [ 1; size(L1B.Spectrum,1) ];
     end    
     %
     np               = size(R.bline_ilims,2) * length(R.ZA_BORESI);
@@ -497,16 +497,16 @@ function [L2,L2d] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
   %
   % Data describing what data that actually were used
   L2d.STW          = L1B.STW;
-  L2d.ChannelID    = NaN;
+  L2d.ChannelsID   = L1B.Frequency.ChannelsID;
   %
   % Fitting data
+  L2d.LOFreq       = R.LO;    % Note that these are final LO-s
   L2d.Residual     = X.cost_y(end);
   L2d.MinLmFactor  = min( X.ga );
   L2d.FitSpectrum  = reshape( X.yf, size(L1B.Spectrum) );  
   %
   % Instrumental variables.
   % Off-set parameters are set to zero if not retrieved
-  L2d.LOFreq       = R.LO;
   L2d.BlineOffSet  = zeros( 4, ntan );
   L2d.FreqOffSet   = zeros( 1, ntan );
   L2d.PointOffSet  = zeros( 1, ntan );

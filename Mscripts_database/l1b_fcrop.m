@@ -10,18 +10,20 @@
 %       flims  Frequency limits. A matrix with two columns. Each row
 %              describes a frequency range, where first/second element
 %              gives the lower/upper limit of the range.
+%       zref   Reference altitude. That is, frequencies are extracted for
+%              spectrum with closest altitude.
 
 % 2015-12-20   Patrick Eriksson
 
-function L1B = l1b_fcrop(L1B,flims)
+function L1B = l1b_fcrop(L1B,flims,zref)
 %
 if size(flims,2) ~=2
   error( '*flims* must have two columns.' );
 end
 
 % Get the frequency grid to use for cropping
-it   = round(length(L1B.Altitude)/2);
-fref = l1b_frequency( L1B, it );
+[~,it] = min( abs( L1B.Altitude - zref ) );
+fref   = l1b_frequency( L1B, it );
 
 % Loop frequency ranges and find channels hits
 %
@@ -35,9 +37,10 @@ end
 
 % Pick-out data inside frequency range(s)
 %
-L1B.Spectrum            = L1B.Spectrum(iok,:);
-L1B.TrecSpectrum        = L1B.TrecSpectrum(iok);
-L1B.Frequency.IFreqGrid = L1B.Frequency.IFreqGrid(iok,:);
+L1B.Spectrum             = L1B.Spectrum(iok,:);
+L1B.TrecSpectrum         = L1B.TrecSpectrum(iok);
+L1B.Frequency.ChannelsID = L1B.Frequency.ChannelsID(iok);
+L1B.Frequency.IFreqGrid  = L1B.Frequency.IFreqGrid(iok);
 
 % Adjust SubBandIndex
 %

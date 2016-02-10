@@ -134,11 +134,6 @@ FREQUENCY
 FRONTEND_NR
    An integer. Index of expected frontend. Index coding described in L1B ATBD.
 
-F_BACKEND_COMMON
-   A boolean. If true, the backend channels are treated to have the same
-   frequencies throughout the scan. If false, these frequencies are allowed to
-   vary over the scan.
-
 F_RANGES
    A matrix, having two colmns. This matrix specifies the frequency ranges to
    include in the retrieval, where the first and second column give the lower
@@ -175,6 +170,17 @@ GA_START
 
 INVEMODE
    A string. A short string maning the inversion set-up used.
+
+LO_COMMON
+   A boolean. If true, the initial value of LO frequencies are set to be
+   constant over the scan. This value is set following LO_ZREF If false, the 
+   L1B value for each altitude is used.
+
+LO_ZREF
+   A scalar value. Reference altitude for LO frequency. When performing
+   frequency cropping, frequencies are taken from the spectra with the closest
+   altitude. Further, if LO_COMMON is set to true, the LO frequency is taken
+   from the L1B data of the spectrum closest to this altitude.
 
 MIN_N_FREQS
    A scalar value. The required number of frequencies of each spectrum to start

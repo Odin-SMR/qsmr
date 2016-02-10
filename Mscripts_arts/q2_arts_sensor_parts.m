@@ -28,6 +28,9 @@
 %     Q.F_GRID_NFILL
 %     Q.FOLDER_ANTENNA
 %     Q.FOLDER_ABSLOOKUP
+%     Q.FOLDER_BACKEND
+%     Q.LO_COMMON
+%     Q.LO_ZREF
 %     Q.SIDEBAND_LEAKAGE
 %
 % FORMAT R = q2_arts_sensor_parts(L1B,Q,R[,part])
@@ -142,8 +145,8 @@ clear Hpart t_int
 %
 if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
 
-  if do_total & ~Q.F_BACKEND_COMMON
-    error( 'Q.F_BACKEND_COMMON must be true for ''total'' option.' );
+  if do_total & ~Q.LO_COMMON
+    error( 'Q.LO_COMMON must be true for ''total'' option.' );
   end   
 
   % Get f_grid from absorption lookup table
@@ -172,7 +175,7 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
 
   % Set number of lo-s to consider
   %
-  if Q.F_BACKEND_COMMON
+  if Q.LO_COMMON
     nlo = 1;
   else
     nlo = length(L1B.Altitude);
@@ -187,32 +190,32 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
     % Set LO and channel frequencies
     %
     if nlo == 1
-      [~,iref] = min( abs( L1B.Altitude - 60e3 ) );
-      [f_lo,f_backend] = get_fmixerback( L1B, iref );
-      R.LO(:) = f_lo;
+      [~,iref]  = min( abs( L1B.Altitude - Q.LO_ZREF ) );
+      f_backend = l1b_frequency( L1B, iref );
+      R.LO(:)   = L1B.Frequency.LOFreq( iref );
     else
-      [f_lo,f_backend] = get_fmixerback( L1B, i );
-      R.LO(i) = f_lo;
+      f_backend = l1b_frequency( L1B, i );
+      R.LO(i)   = L1B.Frequency.LOFreq( i );
     end
           
     % Run ARTS for "mixer"
     %--------------------------------------------------------------------------------
     %
     C.PART         = 'mixer';
-    C.LO           = f_lo;
+    C.LO           = R.LO(i);
     C.F_GRID_NFILL = Q.F_GRID_NFILL;
     %
     % Sideband response. So far just a flat function 
     G.name      = 'Sideband response function';
     G.gridnames = { 'Frequency' };
     % Add 10 kHz margin to avoid error due to rounding
-    G.grids     = { symgrid( [ 1e9, min(abs(R.F_GRID([1 end])-f_lo))-10e3 ] ) };
+    G.grids     = { symgrid( [ 1e9, min(abs(R.F_GRID([1 end])-R.LO(i)))-10e3 ] ) };
     G.dataname  = 'Response';
     %
     rs = Q.SIDEBAND_LEAKAGE;
     rm = 1 - rs;
     %
-    if f_backend(1) > f_lo
+    if f_backend(1) > R.LO(i)
       G.data      = [ rs rs rm rm ];
     else
       G.data      = [ rm rm rs rs ];
@@ -236,7 +239,7 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
     %
     % Channel positions, in IF
     xmlStore( fullfile( R.workfolder, 'f_backend.xml' ), ...
-                              abs( f_backend - f_lo ), 'Vector', 'binary' );
+                              abs( f_backend - R.LO(i) ), 'Vector', 'binary' );
     if ~do_total
       cfile    = q2_artscfile_sensor( C, R.workfolder );
       status   = arts( cfile );
@@ -260,14 +263,3 @@ if do_total
   status    = arts( cfile );
   R.H_TOTAL = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
 end
-
-
-return
-
-
-
-% Frequencies picked from spectrum with index *itan*
-function [f_lo,f_backend] = get_fmixerback( L1B, itan )
-  f_lo      = L1B.Frequency.LOFreq(itan);
-  f_backend = f_lo + L1B.Frequency.IFreqGrid;
-return
