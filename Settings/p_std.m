@@ -64,7 +64,7 @@ P.REFSPECTRA_ZTAN   = 15e3 : 5e3 : 100e3;
 P.FGRID_TEST_DF     = 200e3;
 
 % How much frequency margin to add, to both primary and image band
-P.FGRID_EDGE_MARGIN = 20e6;
+P.FGRID_EDGE_MARGIN = 10e6;
 
 
 

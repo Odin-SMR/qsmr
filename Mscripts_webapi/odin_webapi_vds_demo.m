@@ -44,12 +44,12 @@
 
 % select one freqmode/instrument/species
 clear
-freqmode = 2;
+freqmode = 1;
 instrument = 'MLS';
 species = 'O3';
 
 
-url = 'http://malachite.rss.chalmers.se/rest_api/v4/vds/'
+url = 'http://malachite.rss.chalmers.se/rest_api/v4/vds/';
 y0 = webread(url, weboptions('ContentType','json','Timeout',60));
 VDS = y0.VDS;
 
@@ -63,7 +63,7 @@ end
 % select the desired data
 for i = 1:length(VDS)
   for j = 1:length(VDS(i).comp)
-     if ( VDS(i).FreqMode==2 & ...
+     if ( VDS(i).FreqMode==freqmode & ...
           isequal( VDS(i).comp(j).Instrument, lower(instrument) ) & ...
           isequal( VDS(i).comp(j).Species, species) )
         i1 = i;
@@ -85,7 +85,7 @@ y2 = webread(url, weboptions('ContentType','json','Timeout',60));
 scramble = randperm( length(y2.VDS) );
 i2 = scramble(1);
 VDS = y2.VDS(i2);
-url = VDS.URL 
+url = VDS.URL;
 y3 = webread(url, weboptions('ContentType','json','Timeout',60));
 VDS = y3.VDS;
 
@@ -137,7 +137,7 @@ for i = 1:s0
   ylabel('Tb [K]')
   ylim([-10,250])
 
-  c1 = subplot(s0,2,2 + 2*(i-1))
+  c1 = subplot(s0,2,2 + 2*(i-1));
 
   if isequal(instrument,'MLS');
 

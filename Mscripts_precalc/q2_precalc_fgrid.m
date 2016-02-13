@@ -20,7 +20,7 @@
 %    Some critical settings here are
 %      Q.ABS_SPECIES
 %      Q.P_GRID
-%      Q.F_BACKEND_NOMINAL
+%      Q.F_RANGES
 %      Q.F_LO_NOMINAL
 %      P.FGRID_TEST_DF
 %      P.FGRID_EDGE_MARGIN
@@ -37,7 +37,7 @@
 %
 %    Final files are stored in a subfolder of Q.FOLDER_FGRID
 %
-% FORMAT   q2_precalc_fgrid(QQ,P,R,precs)
+% FORMAT   q2_precalc_fgrid(QQ,P,workfolder,precs)
 %        
 % IN    QQ       An array of Q structures
 %       P        A P structure
@@ -47,10 +47,9 @@
 
 % 2015-05-25   Created by Patrick Eriksson.
 
-function q2_precalc_fgrid(QQ,P,R,precs,varargin)
+function q2_precalc_fgrid(QQ,P,workfolder,precs,varargin)
 %
 [do_cubic] = optargs( varargin, { false } );
-
 
 
 %- Check folder and file names
@@ -75,7 +74,7 @@ end
 %
 for i = 1 : length( QQ )
 
-  f_opt = do_1fmode( QQ(i), P, R, precs, do_cubic );
+  f_opt = do_1fmode( QQ(i), P, workfolder, precs, do_cubic );
 
   for j = 1 : length( precs )
 
@@ -98,7 +97,9 @@ return
 
 
 
-function f_opt = do_1fmode( Q, P, R, precs, do_cubic );
+function f_opt = do_1fmode( Q, P, workfolder, precs, do_cubic );
+  %
+  assert( size(Q.F_RANGES,2) == 2 );
 
   %- Hard-coded O settings
   % 
@@ -109,21 +110,16 @@ function f_opt = do_1fmode( Q, P, R, precs, do_cubic );
     f_opt{j} = [];
   end
   %
-  bp = [ 0;
-         find( diff(vec2row(Q.F_BACKEND_NOMINAL)) > 2*P.FGRID_EDGE_MARGIN );
-         length(Q.F_BACKEND_NOMINAL) ];
-  %
-  for i = 1 : length(bp)-1
+  for i = 1 : size( Q.F_RANGES, 1 )
     % Part of main band
-    frange = Q.F_BACKEND_NOMINAL( [ bp(i)+1 bp(i+1) ] ) + ...
-             P.FGRID_EDGE_MARGIN * [-1 1];
-    fpart  = do_1range( Q, P, R, frange, precs, do_cubic );
+    frange = Q.F_RANGES(i,:);
+    fpart  = do_1range( Q, P, workfolder, frange, precs, do_cubic );
     for j = 1 : length( precs )
       f_opt{j} = [ f_opt{j}; fpart{j} ];
     end
     % Corresponding part in side band
     frange = sort( 2*Q.F_LO_NOMINAL - frange );
-    fpart  = do_1range( Q, P, R, frange, 20*precs, do_cubic );
+    fpart  = do_1range( Q, P, workfolder, frange, 20*precs, do_cubic );
     for j = 1 : length( precs )
       f_opt{j} = [ f_opt{j}; fpart{j} ];
     end
@@ -138,7 +134,7 @@ return
 
 
 
-function f_opt = do_1range( Q, P, R, frange, precs, do_cubic );
+function f_opt = do_1range( Q, P, workfolder, frange, precs, do_cubic );
 
   % Local settings:
   %
@@ -157,42 +153,43 @@ function f_opt = do_1range( Q, P, R, frange, precs, do_cubic );
   C.R_EARTH         = constants( 'EARTH_RADIUS' );
   C.SENSOR_ON       = false;
   C.SPECIES         = arts_tgs_cnvrt( Q.ABS_SPECIES );
+  C.JACOBIAN_DO     = false;
   %
   f_fine = [ frange(1) : P.FGRID_TEST_DF : frange(2)+P.FGRID_TEST_DF/2 ]';
   %
-  xmlStore( fullfile( R.WORK_FOLDER, 'f_grid.xml' ), f_fine, ...
+  xmlStore( fullfile( workfolder, 'f_grid.xml' ), f_fine, ...
                                                         'Vector', 'binary' );
-  xmlStore( fullfile( R.WORK_FOLDER, 'p_grid.xml' ), Q.P_GRID, ...
+  xmlStore( fullfile( workfolder, 'p_grid.xml' ), Q.P_GRID, ...
                                                         'Vector', 'binary' );
   %
-  cfile  = q2_artscfile_full( C, R.WORK_FOLDER );
+  cfile  = q2_artscfile_full( C, workfolder );
   %
   Y = [];
   %
   for i = 1 : length( P.REFSPECTRA_LAT )
     %
-    [L1B,LOG] = l1b_homemade( O, P.REFSPECTRA_ZTAN, P.REFSPECTRA_LAT(i), ...
-                              P.REFSPECTRA_LON(i), P.REFSPECTRA_MJD(i) );
+    LOG = l1b_homemade( Q, P.REFSPECTRA_ZTAN, P.REFSPECTRA_LAT(i), ...
+                        P.REFSPECTRA_LON(i), P.REFSPECTRA_MJD(i) );
     %
-    ATM =  q2_get_atm( LOG, O );
+    ATM =  q2_get_atm( LOG, Q );
     %
-    xmlStore( fullfile( R.WORK_FOLDER, 't_field.xml' ), ATM.T, ...
+    xmlStore( fullfile( workfolder, 't_field.xml' ), ATM.T, ...
                                                         'Tensor3', 'binary' );
-    xmlStore( fullfile( R.WORK_FOLDER, 'z_field.xml' ), ATM.Z, ...
+    xmlStore( fullfile( workfolder, 'z_field.xml' ), ATM.Z, ...
                                                         'Tensor3', 'binary' );
-    xmlStore( fullfile( R.WORK_FOLDER, 'vmr_field.xml' ), ATM.VMR, ...
+    xmlStore( fullfile( workfolder, 'vmr_field.xml' ), ATM.VMR, ...
                                                         'Tensor4', 'binary' );
     %
     za = vec2col( geomztan2za( constants('EARTH_RADIUS'), L.Z_PLAT, ...
                                                         P.REFSPECTRA_ZTAN ) );
     %
-    xmlStore( fullfile( R.WORK_FOLDER, 'sensor_pos.xml' ), ...
+    xmlStore( fullfile( workfolder, 'sensor_pos.xml' ), ...
                            repmat( L.Z_PLAT, size(za) ), 'Matrix', 'binary' );
-    xmlStore( fullfile( R.WORK_FOLDER, 'sensor_los.xml' ), za, ...
+    xmlStore( fullfile( workfolder, 'sensor_los.xml' ), za, ...
                                                          'Matrix', 'binary' );
     %
     status = arts( cfile );
-    y      = xmlLoad( fullfile( R.WORK_FOLDER, 'y.xml' ) );
+    y      = xmlLoad( fullfile( workfolder, 'y.xml' ) );
     y      = reshape( y, length(f_fine), length(za) );
     Y      = [ Y, y ];
   end
@@ -247,7 +244,7 @@ return
 %--------------------------------------------------------------------------
 
 
-function [outfolder,outfile] = create_folderfile( O, precs, do_cubic );
+function [outfolder,outfile] = create_folderfile( Q, precs, do_cubic );
 
   if do_cubic
     lorc = 'cubic';
@@ -257,6 +254,6 @@ function [outfolder,outfile] = create_folderfile( O, precs, do_cubic );
     
   outfolder = fullfile( Q.FOLDER_FGRID, sprintf( '%dmK_%s', precs*1e3, lorc ) );
 
-  outfile = fullfile( outfolder, sprintf( 'fgrid_fmode%02d.xml', Q.FMODE ) );
+  outfile = fullfile( outfolder, sprintf( 'fgrid_fmode%02d.xml', Q.FREQMODE ) );
 return
 %--------------------------------------------------------------------------

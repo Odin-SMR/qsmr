@@ -1,3 +1,13 @@
+2016-02-13  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_precalc/q2_precalc_fgrid.m: Updated to changes in Q. 
+
+	* Mscripts_database/l1b_homemade.m: Revised, but still far from
+	complete. LOG now first output argument.
+
+	* Mscripts_webapi/odin_webapi_vds_demo.m: Scripts had fmode 2
+	hard-coded, despite "setting variable". Now no urls to screen.
+
 2016-02-10  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Updated to changes in L1B frequency part. And some associated
