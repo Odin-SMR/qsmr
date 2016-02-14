@@ -41,7 +41,7 @@
 %        
 % IN    QQ       An array of Q structures
 %       P        A P structure
-%       R        A R structure
+%       workfolder   Folder to use for running ARTS.
 %       precs    Vector of precision limits [K]. 
 % OPT   do_cubic Flag to active cubic interpolation. Default is false.
 

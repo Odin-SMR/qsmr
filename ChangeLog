@@ -1,6 +1,11 @@
+2016-02-14  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_precalc/q2_precalc_antenna.m:
+	* Mscripts_precalc/q2_precalc_abslookup.m: Also updated.
+
 2016-02-13  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
-	* Mscripts_precalc/q2_precalc_fgrid.m: Updated to changes in Q. 
+	* Mscripts_precalc/q2_precalc_fgrid.m: Updated to changes in Q.
 
 	* Mscripts_database/l1b_homemade.m: Revised, but still far from
 	complete. LOG now first output argument.

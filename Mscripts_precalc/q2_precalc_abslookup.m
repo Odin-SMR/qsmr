@@ -4,17 +4,17 @@
 %   of P empty if only the standard SPECTRO_FODLER shall be used. If
 %   P.SPECTRO_FOLDER2 is set, the data in this folder gets top priority.
 %
-% FORMAT   q2_precalc_abslookup(QQ,P,R,precs)
+% FORMAT   q2_precalc_abslookup(QQ,P,workfolder,precs)
 %        
 % IN    QQ      An array of Q structures
 %       P       A P structure
-%       R       A R structure
+%       workfolder   Folder to use for running ARTS.
 %       precs   A vector of precision limits.
 % OPT   do_cubic Flag to use f_grid assuming cubic interpolation. Default is false.
 
 % 2015-05-25   Created by Patrick Eriksson.
 
-function q2_precalc_abslookup(QQ,P,R,precs,varargin)
+function q2_precalc_abslookup(QQ,P,workfolder,precs,varargin)
 %
 [do_cubic] = optargs( varargin, { false } );
 
@@ -43,7 +43,7 @@ for i = 1 : length( QQ )
 
   for j = 1 : length( precs )
   
-    A = do_1fmode( QQ(i), P, R, precs(j), do_cubic );
+    A = do_1fmode( QQ(i), P, workfolder, precs(j), do_cubic );
 
     [outfolder,outfile] = create_folderfile( QQ(i), precs(j), do_cubic );    
     
@@ -61,11 +61,11 @@ return
 %--------------------------------------------------------------------------
 
 
-function A = do_1fmode( Q, P, R, prec, do_cubic )
+function A = do_1fmode( Q, P, workfolder, prec, do_cubic )
 
   % Table is calculated for atmospheric state behind first reference spectrum
-  [L1B,LOG] = l1b_homemade( Q, 30e3, P.REFSPECTRA_LAT(1), ...
-                              P.REFSPECTRA_LON(1), P.REFSPECTRA_MJD(1) );
+  LOG = l1b_homemade( Q, 30e3, P.REFSPECTRA_LAT(1), ...
+                      P.REFSPECTRA_LON(1), P.REFSPECTRA_MJD(1) );
   ATM =  q2_get_atm( LOG, Q );
 
   C.ABSORPTION      = 'CalcTable';
@@ -87,25 +87,25 @@ function A = do_1fmode( Q, P, R, prec, do_cubic )
   end
   %    
   fgridfile = fullfile( Q.FOLDER_FGRID, sprintf( '%dmK_%s', prec*1e3, lorc ), ...
-                        sprintf( 'fgrid_fmode%02d.xml', Q.FMODE ) );
+                        sprintf( 'fgrid_fmode%02d.xml', Q.FREQMODE ) );
   f_grid    = xmlLoad( fgridfile );
   %
-  xmlStore( fullfile( R.WORK_FOLDER, 'f_grid.xml' ), f_grid, ...
+  xmlStore( fullfile( workfolder, 'f_grid.xml' ), f_grid, ...
                                                         'Vector', 'binary' );
-  xmlStore( fullfile( R.WORK_FOLDER, 'p_grid.xml' ), Q.P_GRID, ...
+  xmlStore( fullfile( workfolder, 'p_grid.xml' ), Q.P_GRID, ...
                                                         'Vector', 'binary' );
   %
-  xmlStore( fullfile( R.WORK_FOLDER, 'abs_t.xml' ), ATM.T, ...
+  xmlStore( fullfile( workfolder, 'abs_t.xml' ), ATM.T, ...
                                                          'Vector', 'binary' );
-  xmlStore( fullfile( R.WORK_FOLDER, 'abs_t_pert.xml' ), P.ABS_T_PERT, ...
+  xmlStore( fullfile( workfolder, 'abs_t_pert.xml' ), P.ABS_T_PERT, ...
                                                          'Vector', 'binary' );
-  xmlStore( fullfile( R.WORK_FOLDER, 'abs_vmrs.xml' ), ATM.VMR, ...
+  xmlStore( fullfile( workfolder, 'abs_vmrs.xml' ), ATM.VMR, ...
                                                          'Matrix', 'binary' );
   %
-  cfile  = q2_artscfile_full( C, R.WORK_FOLDER );
+  cfile  = q2_artscfile_full( C, workfolder );
   %
   status = arts( cfile );
-  A      = xmlLoad( fullfile( R.WORK_FOLDER, 'abs_lookup.xml' ) );
+  A      = xmlLoad( fullfile( workfolder, 'abs_lookup.xml' ) );
   
 return
 %--------------------------------------------------------------------------
@@ -123,6 +123,6 @@ function [outfolder,outfile] = create_folderfile( Q, precs, do_cubic );
   end
 
   outfile = fullfile( outfolder, sprintf( 'abslookup_fmode%02d.xml', ...
-                                                               Q.FMODE ) );
+                                                            Q.FREQMODE ) );
 return
 %--------------------------------------------------------------------------

@@ -70,7 +70,7 @@ clear filename fid data ldata dza
 %
 for i = 1 : length( QQ )
 
-  f0 = mean( QQ(i).F_BACKEND_NOMINAL([1 end]) );
+  f0 = mean( [ min(QQ(i).F_RANGES(:)) max(QQ(i).F_RANGES(:)) ] );
   
   for j = 1 : length( P.INTEGRATION_TIMES )
 
@@ -80,7 +80,7 @@ for i = 1 : length( QQ )
     
     outfile = fullfile( outfolder, ...
                         sprintf( 'antenna_fmode%02d_tint%04.0fms.xml', ...
-                        QQ(i).FMODE, P.INTEGRATION_TIMES(j)*1e3 ) );
+                        QQ(i).FREQMODE, P.INTEGRATION_TIMES(j)*1e3 ) );
 
     xmlStore( outfile, G, 'GriddedField4' );
   end
