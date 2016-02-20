@@ -1,4 +1,4 @@
-function [L2,L2d] = q2_inv(LOG,L1B,Q)  
+function [L2,L2I] = q2_inv(LOG,L1B,Q)  
 
 %  
 % Basic checks of data
@@ -7,33 +7,24 @@ q2_check_l1b( L1B, Q );
 
 
 %
-% Crop in tangent altitudes and apply quality criteria
-% (so far we are using default of l1b_filer for quality filter)
+% Crop and scale spectra, as well as applying default quality filters
 %
-assert( prod(size(Q.ZTAN_RANGE)) == 2 );
-%
-[itan,isub] = l1b_filter( L1B, Q.ZTAN_RANGE(1), Q.ZTAN_RANGE(2) );
-%
-if length(itan) < Q.MIN_N_SPECTRA
-  L2  = sprintf( 'Too few spectra left in scan (%d)', length(itan) );
-  L2d = [];
-  return
-end
-%
-L1B = l1b_crop( L1B, itan, isub );
-
-
-%
-% Crop in frequency
-%
-L1B = l1b_fcrop( L1B, Q.F_RANGES, Q.LO_ZREF );
+L1B = l1b_adjust_to_q( L1B, Q, true );
 %
 if size(L1B.Spectrum,1) < Q.MIN_N_FREQS
   L2  = sprintf( 'Too few frequencies left in spectra (%d)', ...
                                             size(L1B.Spectrum,1) );
-  L2d = [];
+  L2I = [];
   return
 end
+%
+if size(L1B.Spectrum,2) < Q.MIN_N_SPECTRA
+  L2  = sprintf( 'Too few spectra left in scan (%d)', ...
+                                            size(L1B.Spectrum,2) );
+  L2I = [];
+  return
+end
+
 
 
 %
@@ -135,7 +126,7 @@ R.t_field = xmlLoad( fullfile( R.workfolder, 't_field.xml' ) );
 %
 % Create L2
 %
-[L2,L2d] = subfun4l2( Q, R, Sx, Se, LOG, L1B, X );
+[L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG, L1B, X );
 
 return
 
@@ -207,9 +198,9 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
       R.i_rel          = [ R.i_rel R.ji{iq}{1}:R.ji{iq}{2} ];
     end
     %
-    vector_name      = sprintf( 'retgrid%d', iq );
+    vector_name      = sprintf( 'retgrid%d', i );
     file_name        = fullfile( R.workfolder, [vector_name,'.xml'] );
-    xmlStore( file_name, Q.ABS_SPECIES(iq).GRID, 'Vector' );
+    xmlStore( file_name, Q.ABS_SPECIES(i).GRID, 'Vector' );
     %
     T{end+1} = sprintf( 'VectorCreate( %s )', vector_name );
     T{end+1} = sprintf( 'ReadXML( %s, "%s" )', vector_name, file_name );
@@ -476,7 +467,7 @@ return
 %--- L2
 %---------------------------------------------------------------------------
 
-function [L2,L2d] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
+function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
 
   %- Init L2
   %
@@ -486,33 +477,33 @@ function [L2,L2d] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
   %
   ntan = length( L1B.Altitude );
   
-  %- Start to fill L2d
+  %- Start to fill L2I
   %
-  L2d = [];
+  L2I = [];
   %
   % Basic identification
-  L2d.FreqMode     = LOG.FreqMode;
-  L2d.InveMode     = Q.INVEMODE;
-  L2d.ScanId       = LOG.ScanID;
+  L2I.FreqMode     = LOG.FreqMode;
+  L2I.InveMode     = Q.INVEMODE;
+  L2I.ScanId       = LOG.ScanID;
   %
   % Data describing what data that actually were used
-  L2d.STW          = L1B.STW;
-  L2d.ChannelsID   = L1B.Frequency.ChannelsID;
+  L2I.STW          = L1B.STW;
+  L2I.ChannelsID   = L1B.Frequency.ChannelsID;
   %
   % Fitting data
-  L2d.LOFreq       = R.LO;    % Note that these are final LO-s
-  L2d.Residual     = X.cost_y(end);
-  L2d.MinLmFactor  = min( X.ga );
-  L2d.FitSpectrum  = reshape( X.yf, size(L1B.Spectrum) );  
+  L2I.LOFreq       = R.LO;    % Note that these are final LO-s
+  L2I.Residual     = X.cost_y(end);
+  L2I.MinLmFactor  = min( X.ga );
+  L2I.FitSpectrum  = reshape( X.yf, size(L1B.Spectrum) );  
   %
   % Instrumental variables.
   % Off-set parameters are set to zero if not retrieved
-  L2d.BlineOffSet  = zeros( 4, ntan );
-  L2d.FreqOffSet   = zeros( 1, ntan );
-  L2d.PointOffSet  = zeros( 1, ntan );
+  L2I.BlineOffSet  = zeros( 4, ntan );
+  L2I.FreqOffSet   = zeros( 1, ntan );
+  L2I.PointOffSet  = zeros( 1, ntan );
   
   
-  %- Loop retrieval quantities and fill L2 and L2d
+  %- Loop retrieval quantities and fill L2 and L2I
   %
   for i = 1 : length( R.jq )
 
@@ -532,15 +523,19 @@ function [L2,L2d] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
         is_gas              = true;
         L2(end+1).Product   = Q.ABS_SPECIES(ig).L2NAME;
         %
-        L2(end).Pressure    = Q.ABS_SPECIES(ig).GRID;
+        % Index of points after removing end points.
+        iout                = 3 : length(ind)-2;
+        ind2                = ind(iout);
+        %
+        L2(end).Pressure    = Q.ABS_SPECIES(ig).GRID(iout);
         L2(end).Altitude    = interpp( R.ATM.P, R.z_field, L2(end).Pressure );
         L2(end).Temperature = interpp( R.ATM.P, R.t_field, L2(end).Pressure );
         L2(end).Apriori     = interpp( R.ATM.P, R.ATM.VMR(ig,:)', L2(end).Pressure );
         %
         if strcmp( R.jq{i}.mode, 'rel' )
-          L2(end).VMR = L2(end).Apriori .* X.x(ind);
+          L2(end).VMR = L2(end).Apriori .* X.x(ind2);
         elseif strcmp( R.jq{i}.mode, 'logrel' )
-          L2(end).VMR = L2(end).Apriori .* exp(X.x(ind));
+          L2(end).VMR = L2(end).Apriori .* exp(X.x(ind2));
         end
       end 
       
@@ -553,19 +548,19 @@ function [L2,L2d] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
      
      case 'Sensor pointing' %-----------------------------------------------------
       %
-      L2d.PointOffSet = X.x(ind);
+      L2I.PointOffSet = X.x(ind);
 
      case 'Frequency'   %---------------------------------------------------------
       %
-      L2d.FreqOffSet = X.x(ind);
+      L2I.FreqOffSet = X.x(ind);
       
      case 'Polynomial baseline fit'   %-------------------------------------------
       %
        if Q.BASELINE.PIECEWISE 
-         L2d.BlineOffSet(R.acpart_active,:) = reshape( X.x(ind), ...
+         L2I.BlineOffSet(R.acpart_active,:) = reshape( X.x(ind), ...
                                       size(R.bline_ilims,2), length(R.ZA_BORESI) );
        else
-         L2d.BlineOffSet(R.acpart_active,:) = X.x(ind);
+         L2I.BlineOffSet(R.acpart_active,:) = X.x(ind);
        end
 
      otherwise   %-----------------------------------------------------------------
@@ -575,24 +570,24 @@ function [L2,L2d] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
     % Common parts of L2
     if is_l2
       %
-      L2(end).FreqMode    = L2d.FreqMode;
-      L2(end).InveMode    = L2d.InveMode;
-      L2(end).ScanId      = L2d.ScanId;
+      L2(end).FreqMode    = L2I.FreqMode;
+      L2(end).InveMode    = L2I.InveMode;
+      L2(end).ScanId      = L2I.ScanId;
       %
       % Geo-positions and time
       L2(end).MJD         = mean( L1B.MJD );
-      L2(end).Lat1D       = NaN;
-      L2(end).Lon1D       = NaN;
+      L2(end).Lat1D       = R.ATM.LAT1D;
+      L2(end).Lon1D       = R.ATM.LON1D;
       L2(end).Latitude    = interp1( L1B.Altitude, L1B.Latitude, ...
                                      L2(end).Altitude, 'pchip', 'extrap' );
       L2(end).Longitude   = interp1( L1B.Altitude, L1B.Longitude, ...
                                      L2(end).Altitude, 'pchip', 'extrap' );
       %
       % Retrieval characteristics
-      lx                   = length(ind);
-      Gpart                = X.G(ind,:);
+      lx                   = length(ind2);
+      Gpart                = X.G(ind2,:);
       Apart                = Gpart * X.J;
-      L2(end).AVK          = Apart(:,ind);
+      L2(end).AVK          = Apart(:,ind2);
       L2(end).ErrorNoise   = diag( Gpart * Se * Gpart' );
       Apart(:,ind)         = 0;
       % Use instead this line to include internal smoothing error
@@ -624,7 +619,7 @@ function [L2,L2d] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
   end 
 
   % Sort fields in alphabetical order
-  L2d = orderfields( L2d );
+  L2I = orderfields( L2I );
   L2  = orderfields( L2 );
   
 return

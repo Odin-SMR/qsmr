@@ -112,7 +112,7 @@ function f_opt = do_1fmode( Q, P, workfolder, precs, do_cubic );
   %
   for i = 1 : size( Q.F_RANGES, 1 )
     % Part of main band
-    frange = Q.F_RANGES(i,:);
+    frange = Q.F_RANGES(i,:) + [ -P.FGRID_EDGE_MARGIN, P.FGRID_EDGE_MARGIN ];
     fpart  = do_1range( Q, P, workfolder, frange, precs, do_cubic );
     for j = 1 : length( precs )
       f_opt{j} = [ f_opt{j}; fpart{j} ];
@@ -144,10 +144,10 @@ function f_opt = do_1range( Q, P, workfolder, frange, precs, do_cubic );
   % Create cfile and needed variables
   %
   C.ABSORPTION      = 'OnTheFly';
-  C.CONTINUA_FILE   = Q.CONTINUA_FILE;
+  C.CONTINUA_FILE   = P.CONTINUA_FILE;
   C.HITRAN_PATH     = P.HITRAN_PATH;
   C.HITRAN_FMIN     = min(frange) - L.F_EXTRA;
-  C.HITRAN_FMAX     = min(frange) + L.F_EXTRA;
+  C.HITRAN_FMAX     = max(frange) + L.F_EXTRA;
   C.PPATH_LMAX      = Q.PPATH_LMAX;
   C.PPATH_LRAYTRACE = Q.PPATH_LRAYTRACE;
   C.R_EARTH         = constants( 'EARTH_RADIUS' );

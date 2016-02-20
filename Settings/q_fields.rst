@@ -13,7 +13,7 @@ Qsmr: definition of settings
 
 :Date:
 
-   2016-XX-XX
+   2016-02-17
 
 :Summary: 
 
@@ -33,6 +33,13 @@ Qsmr: definition of settings
    but some fields are structures. This more complex type is only used for
    retrieval quantities, in order to follow  the Qpack system.
 
+   All fields listed affect inversions, either in the pre-calculation phase or
+   when doing the actual inversion. The settings are applied by various
+   functions and if you are using individual functions of Qsmr you need to
+   figure out what settings that have an effect or not. For example, the fields
+   TB_SCALING_FAC and TB_CONTRAST_FAC are not apllied directly when loading the
+   data, but are applied on the L1B data by a special function. 
+   
 ~~~~~
 
 ABSLOOKUP_OPTION
@@ -59,6 +66,9 @@ ABS_SPECIES
    Correlation length, in meter, to use when creating Sx. LOG_ON: Set to true
    to impose a positive constrain for the species.
 
+   Note that when creating L2 data the two outermost points, at each end, of
+   GRID are removed. 
+
 ABS_T_INTERP_ORDER
    An integer. The polynomial order to apply for temperature interpolation of the
    absorption look-up table. See further the ARTS workspace variable with the
@@ -74,10 +84,6 @@ BASELINE
    A boolean. If set to false, the baseline off-set is assumed to be constant
    over the complete frequency band. If set to true, a baseline off-set is
    fitted for each autocorrelator sub-band pair.
-
-CONTINUA_FILE
-   A string. Full path to file containing description of absorption
-   models/continua, in the format expected by ARTS. 
 
 DZA_GRID_EDGES
    A vector. Complements DZA_MAX_IN_CORE in the specification of the angular
@@ -219,7 +225,8 @@ PPATH_LRAYTRACE
 
 P_GRID
    A vector. The pressure grid to be used. See further the ARTS workspace
-   variable with the same name.
+   variable with the same name. Note that this setting is also used when
+   pre-calculating absorption lookup tables.
 
 SIDEBAND_LEAKAGE
    To be defined ...
@@ -243,6 +250,30 @@ T
    16, 32, 48, 64 and 80 km). CORRLEN: Correlation length, in meter, to use 
    when creating Sx.
 
-ZTAN_RANGE
-   A vector of length 2. The first and last element of this vector give the
-   lower and upper tangent limit for spectra to include in the retrieval.
+TB_CONTRAST_FAC
+   A scalar value. This factor modifies the contrast of each spectrum part. 
+   If this factor is denoted as c, the scaling is 
+     Tb_new = c * ( Tb -Tb_min ) + Tb_min
+   where Tb_min as an estimate of the noise-free minimum value of each
+   spectrum part. This scaling is applied after TB_SCALING_FAC. This contrast
+   scaling is applied on each AC module separately. That is, the complete
+   spectrum is divided into four individual parts when performing this scaling. 
+   To leave the data unchanged, set this field to [] or 1. 
+
+TB_SCALING_FAC
+   A scalar value. The L1B brightness temperature data are scaled with this
+   factor. If this factor is denoted as c, the scaling is Tb_new = c * Tb.
+   For example setting this field to 1.005 will convert an original  Tb-value 
+   of 200 K to 201 K. To leave the data unchanged, set this field to [] or 1. 
+
+ZTAN_LIMIT_BOT
+   A vector of length 4. The lower limit for tangent altitudes to include in
+   the inversion. That is, this setting determines the lower limit when
+   cropping the scan range. The four values give the tangent altitude limit at
+   0, +-30, +-60 and +-90 degrees in latitude. That is, the tangent altitude
+   mask is assumed to be symmetruc around the equator.  
+
+ZTAN_LIMIT_TOP
+   A scalar value. The upper limit for tangent altitudes to include in the
+   inversion. That is, this setting determines the upper limit when cropping
+   the scan range.

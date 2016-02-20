@@ -2,7 +2,7 @@
 %
 %   The function creates LOG and L1B structures matching the input arguments and
 %   various hard-code settings. This L1B structure just contains the fields
-%   used by Qsmr. Several fields are set in an approximative manner.
+%   used by Qsmr. Several fields are set in an approximate manner. 
 %
 %   Most input arguments after *ztan* can either be a scalar or a vector. If
 %   a vector, the length must be the same as for *ztan*. Several fields of
@@ -11,40 +11,41 @@
 %   A basic LOG file can also be obtained. URL fields are filled if ScanID is
 %   not NaN.
 %
-% FORMAT   [LOG,L1B] = l1b_homemade(Q,ztan,lat,lon,mjd[,freqs,inttime])
+% FORMAT   [LOG,L1B] = l1b_homemade(Q,ztans,lat,lon,mjd[,freqs,inttime])
 %
 % OUT   LOG       Simplified LOG structure
 %       L1B       Simplified L1B structure
 % IN    O         O structure containing data for frequency mode of concern.
-%       ztan      Vector of geomtrical tangent altitudes.
+%       ztans     Vector of geometrical tangent altitudes.
 %       lat       Latitude(s).
 %       lon       Longitude(s).
 %       mjd       Modified Julian date(s).
 % OPT   scandid   Scan ID (a scalar value). Default is NaN.
 %       freqs     Frequency vector. Default is [], which flags to use 
-%                 Q.F_BACKEND_NOMINAL.
-%       z_odin    Altitude(s) of Odin.
+%                 Q.F_RANGES.
+%       z_odin    Altitude(s) of Odin. Default is 600 km.
 %       inttime   Integration time(s). Default is 0.872.
+%       df        Channel frequency spacing. Default is 1 MHz,
 
 % 2015-12-20   Patrick Eriksson
 
-function [LOG,L1B] = l1b_homemade(Q,ztan,lat,lon,mjd,varargin)
+function [LOG,L1B] = l1b_homemade(Q,ztans,lat,lon,mjd,varargin)
 %
-[scanid,freqs,z_odin,inttime] = optargs( varargin, { NaN, [], 600e3, 0.872 } );
+[scanid,freqs,z_odin,inttime,df] = optargs( varargin, ...
+                                            { NaN, [], 600e3, 0.872, 1e6 } );
 
 %
 % Hard-coded values
 %
-f_doppler = 11e6;    % Doppler shift. Atm freqs + f_doppler give sat freqs,
-                     % value valid at "RestFreq"
+f_doppler = -12e6;    % Doppler shift. 
 r_earth   = constants( 'EARTH_RADIUS' );
 
 
 %
 % LOG
 %
-LOG.AltEnd       = ztan(end);
-LOG.AltStart     = ztan(1);
+LOG.AltEnd       = ztans(end);
+LOG.AltStart     = ztans(1);
 LOG.DateTime     = mjd2string( mean(mjd) );
 LOG.LatEnd       = lat(end);
 LOG.LatStart     = lat(1);
@@ -52,9 +53,9 @@ LOG.LonEnd       = lon(end);
 LOG.LonStart     = lon(1);
 LOG.MJDEnd       = mjd(end);
 LOG.MJDStart     = mjd(1);
-LOG.NumSpec      = length(ztan);
+LOG.NumSpec      = length(ztans);
 LOG.ScanID       = scanid;
-LOG.SunZD        = NaN;
+LOG.SunZD        = sun_angles( mjd, lat, lon );
 %
 if ~isnan( scanid )
   error( 'URLs not yet set.' );
@@ -65,32 +66,43 @@ end
 
 if nargout > 1
 
-  error( 'Function not updated for L1B part.' );
-    
   %
-  % Start with all frequencies. 
-  %
-  nt = length( ztan );
-  %
+  % Channel frequencies
   %                       
   if isempty(freqs)
-    L1B.Frequency = repmat( vec2col(Q.F_BACKEND_NOMINAL), 1, nt );
+    for i = 1:size(Q.F_RANGES,1)    
+      freqs = [ freqs; [ Q.F_RANGES(i,1):df:Q.F_RANGES(i,2) ]' ];
+    end
   else
-    L1B.Frequency = repmat( vec2col(freqs),               1, nt );  
+    freqs = vec2col( freqs );
   end
+
   %
-  L1B.RestFreq    = vectorfield( mean(L1B.Frequency(:,1)), nt, 'RestFreq' );
-  L1B.SkyFreq     = vectorfield( L1B.RestFreq+f_doppler,   nt, 'SkyFreq' );
-  f_lo            = Q.F_LO_NOMINAL + f_doppler*Q.F_LO_NOMINAL/L1B.RestFreq(1);
-  L1B.LOFreq      = vectorfield( f_lo,                     nt, 'LOFreq' );
-   
+  % Main sizes
+  %
+  nt = length( ztans );
+  nf = length( freqs );  
+  
+  %
+  % Frequency field
+  %
+  L1B.Frequency.AppliedDopplerCorr = vectorfield( f_doppler,      nt, 'f_doppler' );
+  L1B.Frequency.ChannelsID         = repmat( NaN, nf, 1 );
+  L1B.Frequency.IFreqGrid          = vectorfield( freqs-Q.F_LO_NOMINAL, ...
+                                                                  nf, 'IFreqGrid' );  
+  L1B.Frequency.LOFreq             = vectorfield( Q.F_LO_NOMINAL, nt, 'LOFreq' );
+  L1B.Frequency.SubBandIndex       = repmat( -1, 2, 8 );
+  L1B.Frequency.SubBandIndex(:,1)  = [1 nf ];
+  
     
   %
   % L1B
   %
-  L1B.Altitude    = vectorfield( ztan,                 nt, 'ztan'          );
+  L1B.Altitude    = vectorfield( ztans,                nt, 'ztan'          );
+  L1B.Apodization = vectorfield( 1,                    nt, 'Apodization'   );
   L1B.Backend     = vectorfield( Q.BACKEND_NR,         nt, 'Q.BACKEND_NR'  );
-  L1B.FreqMode    = vectorfield( Q.FMODE,              nt, 'Q.FMODE'       );
+  L1B.FreqMode    = vectorfield( Q.FREQMODE,           nt, 'Q.FREQMODE'    );
+  L1B.FreqRes     = vectorfield( df,                   nt, 'df'            );
   L1B.Frontend    = vectorfield( Q.FRONTEND_NR,        nt, 'Q.FRONTEND_NR' );
   % Assume that just radius is extracted from GPSpos!
   L1B.GPSpos      = matrixfield( [0;0;r_earth+z_odin], nt, 'GPSpos'        );

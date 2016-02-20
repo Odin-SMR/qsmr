@@ -9,7 +9,7 @@
 %    between 490 and 580 GHz are handled. 
 %  
 %    The antenna pattern is calculated for the mean of first and last value in
-%    Q.F_BACKEND_NOMINAL.
+%    Q.F_RANGES
 %
 %    The effect of vertical scanning is included. This calculation assumes a
 %    fixed satellite altitude of 600 km and a tangent altitude of 20 km. The

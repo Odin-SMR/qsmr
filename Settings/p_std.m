@@ -64,7 +64,7 @@ P.REFSPECTRA_ZTAN   = 15e3 : 5e3 : 100e3;
 P.FGRID_TEST_DF     = 200e3;
 
 % How much frequency margin to add, to both primary and image band
-P.FGRID_EDGE_MARGIN = 10e6;
+P.FGRID_EDGE_MARGIN = 20e6;
 
 
 
@@ -72,13 +72,19 @@ P.FGRID_EDGE_MARGIN = 10e6;
 %- Absorption lookup tables
 %-------------------------------------------------------------------------------
 
+topfolder            = q2_topfolder;
+
+% File holding description of absorption continua and models
+P.CONTINUA_FILE      = fullfile( topfolder, 'DataFiles', 'Continua', ...
+                                                         'continua_std.arts' );
+
 % Settings determining the set of transitions considered
 P.HITRAN_PATH       = '/home/patrick/Data/HITRAN_2012/HITRAN2012.par';
 P.HITRAN_FMIN       = 180e9;
 P.HITRAN_FMAX       = 1000e9;
 
 % Folder with hand-picked spectroscopy data
-P.SPECTRO_FOLDER    =  fullfile( q2_topfolder, 'DataFiles', 'Spectroscopy' );
+P.SPECTRO_FOLDER    =  fullfile( topfolder, 'DataFiles', 'Spectroscopy' );
 
 % Also allowed to define a second folder. These data will overwrite
 % data from the first folder. This folder can be left undefined.

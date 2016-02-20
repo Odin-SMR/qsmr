@@ -48,9 +48,13 @@ switch upper( Q.T.SOURCE )
   %
   ATM.T = X(:,1); 
   ATM.Z = X(:,2); 
-    
+
+  error( 'Set ATM.lat1d and ATM.lon1d' );
  
  case 'MSIS90'
+  %
+  ATM.LAT1D = lat;
+  ATM.LON1D = lon;
   %
   % Temperature
   M = gf_artsxml( fullfile( Q.FOLDER_ARTSXMLDATA, 'planets', 'Earth', ...
