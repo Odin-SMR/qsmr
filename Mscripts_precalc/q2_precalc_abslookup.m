@@ -69,7 +69,7 @@ function A = do_1fmode( Q, P, workfolder, prec, do_cubic )
   ATM =  q2_get_atm( LOG, Q );
 
   C.ABSORPTION      = 'CalcTable';
-  C.CONTINUA_FILE   = Q.CONTINUA_FILE;
+  C.CONTINUA_FILE   = P.CONTINUA_FILE;
   C.HITRAN_PATH     = P.HITRAN_PATH;
   C.HITRAN_FMIN     = P.HITRAN_FMIN;
   C.HITRAN_FMAX     = P.HITRAN_FMAX;

@@ -1,6 +1,24 @@
-function [f,Y] = test1species( ztans, lat, doy, fmode, species )
+% TEST1SPECIES   Test impact of species in a band
+%
+%   This is a simple help function to estimate impact of a species on a
+%   frequency mode. Pencil beam spectra are calculated for given tangent
+%   altitudes, latitude and DOY. Only the primary band is considered and
+%   only transitions relatively close to the band are considered (see
+%   q2_arts_y for range included). 
+%
+% FORMAT [F,Y] = test1species( ztans, lat, doy, fmode, species )
+%
+% OUT   F   Frequencies matching Y
+%       Y   Simulated spectra.
+% IN    ztans    Vector with tangent altitudes
+%       lat      Latitude
+%       doy      Day of the year
+%       fmode    Frequency mode
+%       species  Species tag string, e.g. 'O3-668'
 
+% 2016-02-20   Patrick Eriksson
 
+function [F,Y] = test1species( ztans, lat, doy, fmode, species )
 
 Q = q_std( fmode );
 
