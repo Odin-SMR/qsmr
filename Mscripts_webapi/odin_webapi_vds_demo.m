@@ -1,115 +1,111 @@
-% A demonstration how to search and extract odin data
-% from the verification dataset (VDS)
+% A demonstration how to search and extract odin/smr 
+% and correlative collocated data from the verification 
+% dataset (VDS)
 %
-% demo is under development
-
-
-% get an overview of freqmodes currently included in VDS
-
-% Backend    Freqmode    Instrument     Species
-%-----------------------------------------------------
-% AC1        2           SMILES         O3, HNO3 
-%                        MLS            O3, HNO3  
-%                        MIPAS          O3, HNO3
-%-----------------------------------------------------
-% AC1        13          SMILES         O3
-%                        MLS            O3, H2O
-%                        MIPAS          O3, H2O
-%-----------------------------------------------------
-% AC1        19          SMILES         O3
-%                        MLS            O3, H2O
-%                        MIPAS          O3, H2O
-%----------------------------------------------------- 
-% AC1        21          SMILES         O3, NO
-%                        MLS            O3, H2O
-%                        MPIAS          O3, H2O
-%-----------------------------------------------------
-% AC2        1           SMILES         O3
-%                        MLS            O3, ClO, N2O
-%                        MIPAS          O3, N2O
-%-----------------------------------------------------
-% AC2        8           SMILES         O3
-%                        MLS            O3, H2O
-%                        MIPAS          O3, H2O
-%-----------------------------------------------------
-% AC2        14          SMILES         O3
-%                        MLS            O3, CO
-%                        MIPAS          O3, CO
-%-----------------------------------------------------
-% AC2        17          SMILES         O3
-%                        MLS            O3, H2O
-%                        MIPAS          O3, H2O
+% 4 type of different requests is demonstrated:
+% 
+% 
+%  1: a request to the root URI to get information
+%     on the VDS content (i.e which odin/smr freqmodes
+%     that is included in the VDS)
 %
+%  2: a request to get available VDS data for a given 
+%     freqmode of odin/smr (i.e which correlative
+%     datasets that matches the given freqmode). 
 %
+%  3: a request to get available vds data for a given 
+%     freqmode and mathcing instrument/species
+%     (i.e. dates for which collocations are available)
+%
+%  4: a request to get actual odin/smr level1b data
+%     and collocated level2 data for a given scan      
 
-% select one freqmode/instrument/species
-clear
+function [scandata, compl2] = odin_webapi_vds_demo()
+
+%some hardcoded settings in this demo
 freqmode = 1;
-instrument = 'MLS';
+instrument = 'osiris';
+instrument = 'smr';
 species = 'O3';
+date = '2011-04-21';
 
+%------------------------------------------------------------------
+% Start by making a request to the root URI of the VDS API 
+%----------------------------------------------------------------
 
 url = 'http://malachite.rss.chalmers.se/rest_api/v4/vds/';
 y0 = webread(url, weboptions('ContentType','json','Timeout',60));
-VDS = y0.VDS;
 
-% get an overview of which instrument/species is included for each  freqmode
-for i1 = 1:length(VDS)
-  url = VDS(i1).URL_collocation;
-  y1 = webread(url, weboptions('ContentType','json','Timeout',60));
-  VDS(i1).comp = y1.VDS;
+% display which frequency modes that are included in the VDS
+% and links to more detailed data
+
+for i = 1:length(y0.VDS)
+
+  display(y0.VDS(i))
+
 end
 
-% select the desired data
-for i = 1:length(VDS)
-  for j = 1:length(VDS(i).comp)
-     if ( VDS(i).FreqMode==freqmode & ...
-          isequal( VDS(i).comp(j).Instrument, lower(instrument) ) & ...
-          isequal( VDS(i).comp(j).Species, species) )
-        i1 = i;
-        i2 = j;
-     end
-  end
+%--------------------------------------------------------------------------
+% select one freqmode and display what VDS data (instrument/species) 
+% that is available for that:
+% available VDS data is here categorised into instrument and species,
+% e.g. one entry can be osiris and O3
+%--------------------------------------------------------------------------
+
+ind = find( [y0.VDS.FreqMode] == freqmode );
+VDS = y0.VDS(ind);
+url = VDS.URL_collocation
+y0 = webread(url, weboptions('ContentType','json','Timeout',60));
+
+for i = 1:length(y0.VDS)
+
+  display(y0.VDS(i))
+
 end
 
-VDS = VDS(i1).comp(i2);
+%------------------------------------------------------------------
+% select one instrument/species and get the data
+% (the result correseponds to dates for which data is available)
+%------------------------------------------------------------------
+
+ind  = find( strcmp({y0.VDS.Instrument}, instrument) & ...
+             strcmp({y0.VDS.Species}, species) );
+VDS = y0.VDS(ind);
+
+y0 = webread(VDS.URL, weboptions('ContentType','json','Timeout',60));
+
+% display for which dates data is availabele
+display({y0.VDS.Date})
 
 
-% get the dates where we have collocations
+%------------------------------------------------------------------
+% select a date and get available scans for this date
+% 
+%------------------------------------------------------------------
 
-url = VDS.URL;
-y2 = webread(url, weboptions('ContentType','json','Timeout',60));
+ind = find( strcmp({y0.VDS.Date}, date) );
 
-% load scaninfo for one of the date
+VDS = y0.VDS(ind);
+y0 = webread(VDS.URL, weboptions('ContentType','json','Timeout',60));
 
-scramble = randperm( length(y2.VDS) );
-i2 = scramble(1);
-VDS = y2.VDS(i2);
-url = VDS.URL;
-y3 = webread(url, weboptions('ContentType','json','Timeout',60));
-VDS = y3.VDS;
+%------------------------------------------------------------------
+% select and get data from all of the scans this day 
+%-----------------------------------------------------------------
 
+for n = 1 : length(y0.VDS)
 
-%select and get two scan from this date
-
-n = 1;
-
-for i3 = 1 : 2
-
-  ldata = VDS(i3).OdinInfo;
-  ldata.URLs = VDS(i3).URLS;
-  logdata(n) = ldata;
-
-  url2odinl1b = logdata(n).URLs.URL_spectra;
-  url2compl2 = eval(['logdata(n).URLs.URL_',lower(instrument),'_',species]);
-
+  url2odinl1b = y0.VDS(n).URLS.URL_spectra;
+  url2compl2 = eval(['y0.VDS(n).URLS.URL_',lower(instrument),'_',species]);
   scandata(n) = get_scan_l1b_data(url2odinl1b);
   compl2(n) = webread(url2compl2, weboptions('ContentType','json','Timeout',60));
-  n = n + 1;
 
 end
 
+%------------------------------------------------------------------
 % plot data
+%------------------------------------------------------------------
+
+
 figure
 set(gcf,'PaperPositionMode','auto')
 hFig = figure(1);
@@ -148,7 +144,7 @@ for i = 1:s0
      title([instrument,': ',species])
      grid on
  
-  elseif isequal(instrument,'SMILES');
+  elseif isequal(lower(instrument),'smiles');
      
      plot(compl2(i).data_fields.L2Value*1e6,compl2(i).geolocation_fields.Altitude)
      xlabel('VMR [ppmv]')
@@ -156,7 +152,7 @@ for i = 1:s0
      title([instrument,': ',species])
      grid on
  
-  elseif isequal(instrument,'MIPAS');
+  elseif isequal(lower(instrument),'mipas');
 
      semilogy(compl2(i).target,compl2(i).pressure)
      set(c1,'ydir','reverse');
@@ -164,6 +160,24 @@ for i = 1:s0
      ylabel('Pressure [hPa]')
      title([instrument,': ',species])
      grid on 
+
+  elseif isequal(lower(instrument),'osiris');
+
+     okind = find(compl2(i).data_fields.O3~=-9999);
+     plot(compl2(i).data_fields.O3(okind)*1e6, compl2(i).geolocation_fields.Altitude(okind))
+     xlabel('VMR [ppmv]')
+     ylabel('Altitude [Km]')
+     title([instrument,': ',species])
+     grid on
+
+  elseif isequal(lower(instrument),'smr');
+    
+     plot(compl2(i).Data.Profiles, compl2(i).Data.Altitudes)
+     xlabel('VMR [ppmv]')
+     ylabel('Altitude [Km]')
+     title([instrument,': ',species])
+     grid on
+
 
   end
 
