@@ -68,17 +68,20 @@ function A = do_1fmode( Q, P, workfolder, prec, do_cubic )
                       P.REFSPECTRA_LON(1), P.REFSPECTRA_MJD(1) );
   ATM =  q2_get_atm( LOG, Q );
 
-  C.ABSORPTION      = 'CalcTable';
-  C.CONTINUA_FILE   = P.CONTINUA_FILE;
-  C.HITRAN_PATH     = P.HITRAN_PATH;
-  C.HITRAN_FMIN     = P.HITRAN_FMIN;
-  C.HITRAN_FMAX     = P.HITRAN_FMAX;
-  C.R_EARTH         = constants( 'EARTH_RADIUS' );
-  C.SPECTRO_FOLDER  = P.SPECTRO_FOLDER;
-  if isfield( P, 'SPECTRO_FOLDER2' )
-    C.SPECTRO_FOLDER2  = P.SPECTRO_FOLDER2;
-  end
-  C.SPECIES         = arts_tgs_cnvrt( Q.ABS_SPECIES );
+  C.ABSORPTION    = 'CalcTable';
+  C.CONTINUA_FILE = P.CONTINUA_FILE;
+  C.SPECTRO_FILE  = P.SPECTRO_FILE;
+  C.SPECTRO_FMIN  = 0;
+  C.SPECTRO_FMAX  = 2e12;
+  %C.HITRAN_PATH     = P.HITRAN_PATH;
+  %C.HITRAN_FMIN     = P.HITRAN_FMIN;
+  %C.HITRAN_FMAX     = P.HITRAN_FMAX;
+  %C.SPECTRO_FOLDER  = P.SPECTRO_FOLDER;
+  %if isfield( P, 'SPECTRO_FOLDER2' )
+  %  C.SPECTRO_FOLDER2  = P.SPECTRO_FOLDER2;
+  %end
+  C.SPECIES       = arts_tgs_cnvrt( Q.ABS_SPECIES );
+  C.R_EARTH       = constants( 'EARTH_RADIUS' );
 
   if do_cubic
     lorc = 'cubic';

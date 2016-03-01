@@ -72,28 +72,31 @@ P.FGRID_EDGE_MARGIN = 20e6;
 %- Absorption lookup tables
 %-------------------------------------------------------------------------------
 
-topfolder            = q2_topfolder;
+topfolder       = q2_topfolder;
 
 % File holding description of absorption continua and models
-P.CONTINUA_FILE      = fullfile( topfolder, 'DataFiles', 'Continua', ...
+P.CONTINUA_FILE = fullfile( topfolder, 'DataFiles', 'Continua', ...
                                                          'continua_std.arts' );
 
 % Settings determining the set of transitions considered
-P.HITRAN_PATH       = '/home/patrick/Data/HITRAN_2012/HITRAN2012.par';
-P.HITRAN_FMIN       = 180e9;
-P.HITRAN_FMAX       = 1000e9;
+%P.HITRAN_PATH       = '/home/patrick/Data/HITRAN_2012/HITRAN2012.par';
+%P.HITRAN_FMIN       = 200e9;
+%P.HITRAN_FMAX       = 1000e9;
+
+% File holding all spectroscopy data
+P.SPECTRO_FILE  = '/home/patrick/Outdata2/Qsmr2/Spectroscopy/smr_linedata.xml';
 
 % Folder with hand-picked spectroscopy data
-P.SPECTRO_FOLDER    =  fullfile( topfolder, 'DataFiles', 'Spectroscopy' );
+%P.SPECTRO_FOLDER    =  fullfile( topfolder, 'DataFiles', 'Spectroscopy' );
 
 % Also allowed to define a second folder. These data will overwrite
 % data from the first folder. This folder can be left undefined.
-if use_spectro2
-  P.SPECTRO_FOLDER2 = '/home/patrick/Outdata2/Qsmr2/Spectroscopy';
-end
+%if use_spectro2
+%  P.SPECTRO_FOLDER2 = '/home/patrick/Outdata2/Qsmr2/Spectroscopy';
+%end
 
 % The set of temperature perturbations
-P.ABS_T_PERT        = symgrid( [0:10:100 120 150] )';
+P.ABS_T_PERT    = symgrid( [0:10:100 120 150] )';
 
 
 

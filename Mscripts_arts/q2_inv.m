@@ -316,24 +316,61 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
   %
   if Q.BASELINE.RETRIEVE
     %  
-    if Q.BASELINE.PIECEWISE 
-      R.bline_ilims  = zeros(2,4);
-      for i = 1 : 4
-        is = L1B.Frequency.SubBandIndex(:,(i-1)*2+[1:2]);
-        is = is(:);
-        if any( is > 0 )
-          R.bline_ilims(1,i) = min( is(is>0) );
-          R.bline_ilims(2,i) = max( is );
+    % Get start and end index for each module
+    bline_ilims   = zeros(2,4);
+    for i = 1 : 4
+      is = L1B.Frequency.SubBandIndex(:,(i-1)*2+[1:2]);
+      is = is(:);
+      if any( is > 0 )
+        bline_ilims(1,i) = min( is(is>0) );
+        bline_ilims(2,i) = max( is );
+      end
+    end
+    %
+    % Find actually active modules
+    iactive = find( bline_ilims(1,:) > 0 );
+    %
+    if strcmp( Q.BASELINE.MODEL, 'common' )
+      %
+      R.bline_chindex{1} = 1 : max(bline_ilims(2,:));
+      R.bline_modules{1} = iactive;
+        
+    elseif strcmp( Q.BASELINE.MODEL, 'module' )
+      %
+      for m = 1 : length(iactive)
+        im = iactive(m);
+        R.bline_chindex{m} = bline_ilims(1,im) : bline_ilims(2,im);
+        R.bline_modules{m} = iactive(m);
+      end
+    
+    elseif strcmp( Q.BASELINE.MODEL, 'adaptive' )
+      %
+      R.bline_chindex{1} = [];
+      R.bline_modules{1} = [];
+      %
+      for m = 1 : length(iactive)
+        im = iactive(m);
+        if diff(bline_ilims(:,im)) > 125
+          R.bline_chindex{1} = [ R.bline_chindex{1}, ...
+                                bline_ilims(1,im):bline_ilims(2,im) ];
+          R.bline_modules{1} = [ R.bline_modules{1}, im ];
+        else
+          R.bline_chindex{end+1} = bline_ilims(1,im):bline_ilims(2,im);
+          R.bline_modules{end+1} = im;
         end
       end
-      i                = find( R.bline_ilims(1,:) > 0 );
-      R.bline_ilims    = R.bline_ilims(:,i);
-      R.acpart_active  = i;
+      %
+      if isempty( R.bline_chindex )
+        error( ['Q.BASELINE.MODEL = ''adaptive'' selected, but no complete ' ...
+                'modules identified.' ] );
+      end
+          
     else
-      R.bline_ilims  = [ 1; size(L1B.Spectrum,1) ];
+      %
+      error( 'Unknown choice for Q.BASELINE.MODEL (%s)', Q.BASELINE.MODEL );  
     end    
     %
-    np               = size(R.bline_ilims,2) * length(R.ZA_BORESI);
+    np               = length(R.bline_chindex) * length(R.ZA_BORESI);
     iq               = length(R.jq) + 1;
     R.jq{iq}.maintag = 'Polynomial baseline fit';
     R.jq{iq}.subtag  = 'Coefficient 0';  
@@ -499,8 +536,8 @@ function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
   % Instrumental variables.
   % Off-set parameters are set to zero if not retrieved
   L2I.BlineOffSet  = zeros( 4, ntan );
-  L2I.FreqOffSet   = zeros( 1, ntan );
-  L2I.PointOffSet  = zeros( 1, ntan );
+  L2I.FreqOffSet   = 0;
+  L2I.PointOffSet  = 0;
   
   
   %- Loop retrieval quantities and fill L2 and L2I
@@ -514,53 +551,54 @@ function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
     switch R.jq{i}.maintag
 
      case 'Absorption species'   %------------------------------------------------
-      %
-      ig      = R.i_asj(i);    % Gas species index
-      %
-      if Q.ABS_SPECIES(ig).RETRIEVE & Q.ABS_SPECIES(ig).L2
-        %
-        is_l2               = true;
-        is_gas              = true;
-        L2(end+1).Product   = Q.ABS_SPECIES(ig).L2NAME;
-        %
-        % Index of points after removing end points.
-        iout                = 3 : length(ind)-2;
-        ind2                = ind(iout);
-        %
-        L2(end).Pressure    = Q.ABS_SPECIES(ig).GRID(iout);
-        L2(end).Altitude    = interpp( R.ATM.P, R.z_field, L2(end).Pressure );
-        L2(end).Temperature = interpp( R.ATM.P, R.t_field, L2(end).Pressure );
-        L2(end).Apriori     = interpp( R.ATM.P, R.ATM.VMR(ig,:)', L2(end).Pressure );
-        %
-        if strcmp( R.jq{i}.mode, 'rel' )
-          L2(end).VMR = L2(end).Apriori .* X.x(ind2);
-        elseif strcmp( R.jq{i}.mode, 'logrel' )
-          L2(end).VMR = L2(end).Apriori .* exp(X.x(ind2));
-        end
-      end 
+       %
+       ig      = R.i_asj(i);    % Gas species index
+       %
+       if Q.ABS_SPECIES(ig).RETRIEVE & Q.ABS_SPECIES(ig).L2
+         %
+         is_l2               = true;
+         is_gas              = true;
+         L2(end+1).Product   = Q.ABS_SPECIES(ig).L2NAME;
+         %
+         % Index of points after removing end points.
+         iout                = 3 : length(ind)-2;
+         ind2                = ind(iout);
+         %
+         L2(end).Pressure    = Q.ABS_SPECIES(ig).GRID(iout);
+         L2(end).Altitude    = interpp( R.ATM.P, R.z_field, L2(end).Pressure );
+         L2(end).Temperature = interpp( R.ATM.P, R.t_field, L2(end).Pressure );
+         L2(end).Apriori     = interpp( R.ATM.P, R.ATM.VMR(ig,:)', L2(end).Pressure );
+         %
+         if strcmp( R.jq{i}.mode, 'rel' )
+           L2(end).VMR = L2(end).Apriori .* X.x(ind2);
+         elseif strcmp( R.jq{i}.mode, 'logrel' )
+           L2(end).VMR = L2(end).Apriori .* exp(X.x(ind2));
+         end
+       end 
       
      case 'Atmospheric temperatures'   %------------------------------------------
-      %
-      if Q.T.RETRIEVE & Q.T.L2
-        is_l2               = true;
-        assert(0);
-      end
+       %
+       if Q.T.RETRIEVE & Q.T.L2
+         is_l2               = true;
+         assert(0);
+       end
      
      case 'Sensor pointing' %-----------------------------------------------------
-      %
-      L2I.PointOffSet = X.x(ind);
+       %
+       L2I.PointOffSet = X.x(ind);
 
      case 'Frequency'   %---------------------------------------------------------
-      %
-      L2I.FreqOffSet = X.x(ind);
+       %
+       L2I.FreqOffSet = X.x(ind);
       
      case 'Polynomial baseline fit'   %-------------------------------------------
-      %
-       if Q.BASELINE.PIECEWISE 
-         L2I.BlineOffSet(R.acpart_active,:) = reshape( X.x(ind), ...
-                                      size(R.bline_ilims,2), length(R.ZA_BORESI) );
-       else
-         L2I.BlineOffSet(R.acpart_active,:) = X.x(ind);
+       %
+       ii = 0;
+       for t = 1 : length(R.ZA_BORESI)
+         for b = 1 : length(R.bline_chindex)
+           ii = ii + 1;
+           L2I.BlineOffSet(R.bline_modules{b},t) = X.x(ind(ii));
+         end
        end
 
      otherwise   %-----------------------------------------------------------------

@@ -21,16 +21,16 @@ if iter == 1
   % Jacobian for baseline fit
   %
   if Q.BASELINE.RETRIEVE    
-    R.Jbl = zeros( size(R.H_TOTAL,1), size(R.bline_ilims,2)*length(R.ZA_BORESI) );
+    R.Jbl = zeros( size(R.H_TOTAL,1), length(R.bline_chindex)*length(R.ZA_BORESI) );
     %
     nf = size( R.H_BACKE{1}, 1 );  % Number of channels
     c  = 0;
     %
     for t = 1 : length(R.ZA_BORESI)
-      for i = 1 : size(R.bline_ilims,2)
+      for i = 1 : length(R.bline_chindex)
         c  = c + 1;
         i0 = (t-1) * nf;
-        R.Jbl(i0+R.bline_ilims(1,i):i0+R.bline_ilims(2,i),c) = 1;
+        R.Jbl(i0+R.bline_chindex{i},c) = 1;
       end
     end
   else
@@ -149,19 +149,22 @@ if do_j
     end
   end  
   
-  % Derive pointing off-set weighting functions
+  
+  
+  % Derive pointing and frequency off-set weighting functions
+  %
+  if Q.POINTING.RETRIEVE  |  Q.FREQUENCY.RETRIEVE
+    nf = size( R.H_BACKE{1}, 2 );  % Length of f_grid
+    ymat = reshape( y, [nf length(R.ZA_PENCIL) ] );
+  end
   %
   if Q.POINTING.RETRIEVE
-    nf = size( R.H_BACKE{1}, 2 );  % Length of f_grid
     dza = 0.001;
-    ymat = reshape( y, [nf length(R.ZA_PENCIL) ] );
     ytmp = interp1( R.ZA_PENCIL, ymat', R.ZA_PENCIL+dza, 'pchip', 'extrap' )'; 
     Jpoi = R.H_TOTAL * ( ytmp(:) - y ) / dza;
   else
     Jpoi = [];
   end
-
-  % Derive frequency off-set weighting functions
   %
   if Q.FREQUENCY.RETRIEVE    
     df   = 5e3;

@@ -15,7 +15,7 @@
 %    same procedure is applied for the image band, but with a weaker precision
 %    demand. The complete procedure is repeated 100 tim.
 %
-%    Hand-picked spectroscopy data are not considered.
+%    //P.SPECTRO_FOLDER2 is not considered.
 %
 %    Some critical settings here are
 %      Q.ABS_SPECIES
@@ -24,6 +24,7 @@
 %      Q.F_LO_NOMINAL
 %      P.FGRID_TEST_DF
 %      P.FGRID_EDGE_MARGIN
+%      //P.SPECTRO_FOLDER
 %
 %    Atmospheric data are hard-coded to be taken from the local version of the
 %    Bdx database (Q.ABS_SPECIES.SOURCE = 'Bdx') and MSIS90 (Q.T_SOURCE =
@@ -145,9 +146,13 @@ function f_opt = do_1range( Q, P, workfolder, frange, precs, do_cubic );
   %
   C.ABSORPTION      = 'OnTheFly';
   C.CONTINUA_FILE   = P.CONTINUA_FILE;
-  C.HITRAN_PATH     = P.HITRAN_PATH;
-  C.HITRAN_FMIN     = min(frange) - L.F_EXTRA;
-  C.HITRAN_FMAX     = max(frange) + L.F_EXTRA;
+  C.SPECTRO_FILE    = P.SPECTRO_FILE;
+  C.SPECTRO_FMIN    = min(frange) - L.F_EXTRA;
+  C.SPECTRO_FMAX    = max(frange) + L.F_EXTRA;
+  %C.HITRAN_PATH     = P.HITRAN_PATH;
+  %C.HITRAN_FMIN     = min(frange) - L.F_EXTRA;
+  %C.HITRAN_FMAX     = max(frange) + L.F_EXTRA;
+  %C.SPECTRO_FOLDER  = P.SPECTRO_FOLDER;
   C.PPATH_LMAX      = Q.PPATH_LMAX;
   C.PPATH_LRAYTRACE = Q.PPATH_LRAYTRACE;
   C.R_EARTH         = constants( 'EARTH_RADIUS' );
@@ -173,6 +178,11 @@ function f_opt = do_1range( Q, P, workfolder, frange, precs, do_cubic );
     %
     ATM =  q2_get_atm( LOG, Q );
     %
+    xmlStore( fullfile( workfolder, 'lat_true.xml' ), P.REFSPECTRA_LAT(i), ...
+                                                        'Vector', 'binary' );
+    xmlStore( fullfile( workfolder, 'lon_true.xml' ), P.REFSPECTRA_LON(i), ...
+                                                        'Vector', 'binary' );
+    %    
     xmlStore( fullfile( workfolder, 't_field.xml' ), ATM.T, ...
                                                         'Tensor3', 'binary' );
     xmlStore( fullfile( workfolder, 'z_field.xml' ), ATM.Z, ...

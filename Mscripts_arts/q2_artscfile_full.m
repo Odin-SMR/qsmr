@@ -14,9 +14,10 @@
 %     ABS_P_INTERP_ORDER 
 %     ABS_T_INTERP_ORDER 
 %     CONTINUA_FILE          full path to a file
-%     HITRAN_PATH            full path to a file
-%     HITRAN_FMIN            reading starts at this frequency
-%     HITRAN_FMAX            reading stops at this frequency
+%     //HITRAN_PATH            full path to a file
+%     //HITRAN_FMIN            reading starts at this frequency
+%     //HITRAN_FMAX            reading stops at this frequency
+%     SPECTROSCOPY_FILE
 %     PPATH_LMAX
 %     PPATH_LRAYTRACE
 %     R_EARTH                Planet radius to apply
@@ -231,6 +232,7 @@ function cfile_abscalc_basics( fid, C, workfolder )
   fprintf( fid, '}\n' );
   fprintf( fid, 'abs_xsec_agenda_checkedCalc\n' );
   %
+  if 0
   fprintf( fid, 'abs_linesReadFromHitran( abs_lines, "%s", %.5e, %.5e )\n', ...
            C.HITRAN_PATH, C.HITRAN_FMIN, C.HITRAN_FMAX );
   fprintf( fid, 'abs_linesArtscat5FromArtscat34\n' );
@@ -250,13 +252,19 @@ function cfile_abscalc_basics( fid, C, workfolder )
     end        
     if ~isempty(spectrofiles)
       for i = 1 : length(spectrofiles)
-        fprintf( fid, 'ReadXML( handpicked, "%s" )\n', spectrofiles{i} );
+        fprintf( fid, 'abs_linesReadFromArts( handpicked, "%s", %.5e, %.5e )\n', ...
+                 spectrofiles{i}, C.HITRAN_FMIN, C.HITRAN_FMAX );
         fprintf( fid, ...
                 'abs_linesReplaceWithLines(replacement_lines=handpicked)\n' );
       end
     end
   end
   %
+  end
+  %
+  fprintf( fid, 'abs_linesReadFromArts( abs_lines, "%s", %.5e, %.5e )\n', ...
+                             C.SPECTRO_FILE, C.SPECTRO_FMIN, C.SPECTRO_FMAX );
+  fprintf( fid, 'WriteXML( "ascii", abs_lines, "abs_lines.xml" )\n' );
   fprintf( fid, 'abs_lines_per_speciesCreateFromLines\n' );
   fprintf( fid, [ 'abs_lineshapeDefine( shape="Voigt_Kuntz6", ' ...
                   'forefactor="VVW", cutoff=-1 )\n' ] );    
