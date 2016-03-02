@@ -1,3 +1,17 @@
+2016-03-02  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_arts/q2_inv.m (subfun4l2): Changed field names
+	following suggestion på Andreas.
+
+	* Mscripts_database/q2_get_atm.m: WebApi now works.
+
+2016-03-01  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Gave up on replacement lines and changed how spectrosocopic data
+	are incorporated.
+
+	* Polishing of setting for fmode 1, and a start on 21.
+
 2016-02-14  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_precalc/q2_precalc_antenna.m:

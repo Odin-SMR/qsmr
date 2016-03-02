@@ -520,8 +520,8 @@ function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
   %
   % Basic identification
   L2I.FreqMode     = LOG.FreqMode;
-  L2I.InveMode     = Q.INVEMODE;
-  L2I.ScanId       = LOG.ScanID;
+  L2I.InvMode      = Q.INVEMODE;
+  L2I.ScanID       = LOG.ScanID;
   %
   % Data describing what data that actually were used
   L2I.STW          = L1B.STW;
@@ -535,9 +535,9 @@ function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
   %
   % Instrumental variables.
   % Off-set parameters are set to zero if not retrieved
-  L2I.BlineOffSet  = zeros( 4, ntan );
-  L2I.FreqOffSet   = 0;
-  L2I.PointOffSet  = 0;
+  L2I.BlineOffset  = zeros( 4, ntan );
+  L2I.FreqOffset   = 0;
+  L2I.PointOffset  = 0;
   
   
   %- Loop retrieval quantities and fill L2 and L2I
@@ -585,11 +585,11 @@ function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
      
      case 'Sensor pointing' %-----------------------------------------------------
        %
-       L2I.PointOffSet = X.x(ind);
+       L2I.PointOffset = X.x(ind);
 
      case 'Frequency'   %---------------------------------------------------------
        %
-       L2I.FreqOffSet = X.x(ind);
+       L2I.FreqOffset = X.x(ind);
       
      case 'Polynomial baseline fit'   %-------------------------------------------
        %
@@ -597,7 +597,7 @@ function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
        for t = 1 : length(R.ZA_BORESI)
          for b = 1 : length(R.bline_chindex)
            ii = ii + 1;
-           L2I.BlineOffSet(R.bline_modules{b},t) = X.x(ind(ii));
+           L2I.BlineOffset(R.bline_modules{b},t) = X.x(ind(ii));
          end
        end
 
@@ -609,8 +609,8 @@ function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
     if is_l2
       %
       L2(end).FreqMode    = L2I.FreqMode;
-      L2(end).InveMode    = L2I.InveMode;
-      L2(end).ScanId      = L2I.ScanId;
+      L2(end).InvMode     = L2I.InvMode;
+      L2(end).ScanID      = L2I.ScanID;
       %
       % Geo-positions and time
       L2(end).MJD         = mean( L1B.MJD );

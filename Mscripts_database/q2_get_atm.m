@@ -38,19 +38,19 @@ ATM.P = Q.P_GRID;
   
 % T and Z field
 %
-switch upper( Q.T.SOURCE )
+switch Q.T.SOURCE
   
  case 'WebApi'
   %
-  PTZ = get_scan_aux_data( LOG.URL_ptz );
+  PTZ = get_scan_aux_data( LOG.URLS.URL_ptz );
   %
-  X = interpp( PTZ.P*100, [ PTZ.T, PTZ.Z ], ATM.P );
+  X = interpp( PTZ.Pressure, [ PTZ.Temperature, PTZ.Altitude ], ATM.P );
   %
-  ATM.T = X(:,1); 
-  ATM.Z = X(:,2); 
+  ATM.T     = X(:,1); 
+  ATM.Z     = X(:,2); 
+  ATM.LAT1D = PTZ.Latitude;
+  ATM.LON1D = PTZ.Longitude;
 
-  error( 'Set ATM.lat1d and ATM.lon1d' );
- 
  case 'MSIS90'
   %
   ATM.LAT1D = lat;
@@ -95,8 +95,8 @@ for i = 1 : length( Q.ABS_SPECIES )
     
    case 'WebApi'
     %
-    VMR = get_scan_aux_data( LOG.(sprintf('URL_apriori_%s',species)) );
-    ATM.VMR(i,:,1,1) = interpp( VMR.pressure, VMR.vmr, ATM.P );    
+    VMR = get_scan_aux_data( LOG.URLS.(sprintf('URL_apriori_%s',species)) );
+    ATM.VMR(i,:,1,1) = interpp( VMR.Pressure, VMR.VMR, ATM.P );    
     
    case 'Bdx'
     %
