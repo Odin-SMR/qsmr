@@ -15,16 +15,16 @@
 %    same procedure is applied for the image band, but with a weaker precision
 %    demand. The complete procedure is repeated 100 tim.
 %
-%    //P.SPECTRO_FOLDER2 is not considered.
 %
 %    Some critical settings here are
 %      Q.ABS_SPECIES
 %      Q.P_GRID
 %      Q.F_RANGES
 %      Q.F_LO_NOMINAL
+%      P.CONTINUA_FILE;
+%      P.SPECTRO_FILE;
 %      P.FGRID_TEST_DF
 %      P.FGRID_EDGE_MARGIN
-%      //P.SPECTRO_FOLDER
 %
 %    Atmospheric data are hard-coded to be taken from the local version of the
 %    Bdx database (Q.ABS_SPECIES.SOURCE = 'Bdx') and MSIS90 (Q.T_SOURCE =
@@ -102,9 +102,9 @@ function f_opt = do_1fmode( Q, P, workfolder, precs, do_cubic );
   %
   assert( size(Q.F_RANGES,2) == 2 );
 
-  %- Hard-coded O settings
+  %- Hard-coded Q settings
   % 
-  Q.T_SOURCE             = 'MSIS90';
+  Q.T.SOURCE             = 'MSIS90';
   [Q.ABS_SPECIES.SOURCE] = deal( 'Bdx' ); 
 
   for j = 1 : length( precs )

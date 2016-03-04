@@ -27,6 +27,8 @@ Q.ABS_SPECIES(1).TAG{1}   = species;
 Q.ABS_SPECIES(1).SOURCE   = 'Bdx';
 Q.ABS_SPECIES(1).RETRIEVE = false;
 
+  Q.T.SOURCE             = 'MSIS90';
+
 
 [LOG,L1B] = l1b_homemade( Q, ztans, lat, 0, date2mjd(2010,1,1)+doy );
 

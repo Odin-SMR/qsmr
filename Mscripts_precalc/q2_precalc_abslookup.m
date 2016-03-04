@@ -1,8 +1,8 @@
 % Q2_PRECALC_ABSLOOKUP
 %
-%   Note that this function considers P.SPECTRO_FOLDER2. Leave this field
-%   of P empty if only the standard SPECTRO_FODLER shall be used. If
-%   P.SPECTRO_FOLDER2 is set, the data in this folder gets top priority.
+%    Atmospheric data are hard-coded to be taken from the local version of the
+%    Bdx database (Q.ABS_SPECIES.SOURCE = 'Bdx') and MSIS90 (Q.T_SOURCE =
+%    'MSIS90').
 %
 % FORMAT   q2_precalc_abslookup(QQ,P,workfolder,precs)
 %        
@@ -63,6 +63,12 @@ return
 
 function A = do_1fmode( Q, P, workfolder, prec, do_cubic )
 
+  %- Hard-coded Q settings
+  % 
+  Q.T.SOURCE             = 'MSIS90';
+  [Q.ABS_SPECIES.SOURCE] = deal( 'Bdx' ); 
+    
+    
   % Table is calculated for atmospheric state behind first reference spectrum
   LOG = l1b_homemade( Q, 30e3, P.REFSPECTRA_LAT(1), ...
                       P.REFSPECTRA_LON(1), P.REFSPECTRA_MJD(1) );

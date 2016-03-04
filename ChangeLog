@@ -1,3 +1,11 @@
+2016-03-03  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_precalc/q2_precalc_fgrid.m (f_opt): Hard-coding
+	of MSIS90 used old field name.
+
+	* Mscripts_precalc/q2_precalc_abslookup.m (do_1fmode): Added
+	hard-coding of MSIS90 and Bdx.
+
 2016-03-02  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_arts/q2_inv.m (subfun4l2): Changed field names

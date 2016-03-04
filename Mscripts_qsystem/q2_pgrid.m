@@ -23,7 +23,7 @@
 
 function p_grid = q2_pgrid( varargin )
 %
-[zmin,zmax,is_pgrid] = optargs( varargin, { 0, 150e3, false } );
+[zmin,zmax,is_pgrid] = optargs( varargin, { 0, 133e3, false } );
 
 
 %- Start and end point of complete grid:

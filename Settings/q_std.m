@@ -41,7 +41,7 @@ Q.FOLDER_WORK        = '/home/patrick/WORKAREA';
 %--- Absorption tables
 %---------------------------------------------------------------------------
 
-Q.ABSLOOKUP_OPTION   = '100mK_linear';
+Q.ABSLOOKUP_OPTION   = '200mK_cubic'; %'100mK_linear';
 Q.F_GRID_NFILL       = 0;
 Q.ABS_P_INTERP_ORDER = 1;
 Q.ABS_T_INTERP_ORDER = 3;
@@ -54,8 +54,10 @@ Q.ABS_T_INTERP_ORDER = 3;
 Q.PPATH_LMAX         = 15e3;
 Q.PPATH_LRAYTRACE    = 20e3;
 
-Q.DZA_MAX_IN_CORE    = 0.01;
-Q.DZA_GRID_EDGES     = [ Q.DZA_MAX_IN_CORE*[1:3 5 8 12 21] ];
+%Q.DZA_MAX_IN_CORE    = 0.01;
+%Q.DZA_GRID_EDGES     = [ Q.DZA_MAX_IN_CORE*[1:3 5 8 12 21] ];
+Q.DZA_MAX_IN_CORE    = 0.02;
+Q.DZA_GRID_EDGES     = [ Q.DZA_MAX_IN_CORE*[1:4 6 12] ];
 
 Q.LO_COMMON          = true;
 Q.LO_ZREF            = 60e3;
@@ -166,10 +168,10 @@ switch freqmode
   Q.ABS_SPECIES(3).L2NAME   = 'O3-501GHz-20to50km';
   Q.ABS_SPECIES(3).UNC_REL  = 0.5;
   Q.ABS_SPECIES(3).UNC_ABS  = 0.5e-6;
-  Q.ABS_SPECIES(3).CORRLEN  = 5e3;
+  Q.ABS_SPECIES(3).CORRLEN  = 15e3;
   Q.ABS_SPECIES(3).LOG_ON   = false;
   %
-  Q.ABS_SPECIES(4).TAG{1}   = 'O3-*-498e9-505e9';
+  Q.ABS_SPECIES(4).TAG{1}   = 'O3-668-498e9-505e9';
   Q.ABS_SPECIES(4).SOURCE   = 'WebApi';
   Q.ABS_SPECIES(4).RETRIEVE = true;
   Q.ABS_SPECIES(4).L2       = true;
@@ -177,7 +179,7 @@ switch freqmode
   Q.ABS_SPECIES(4).L2NAME   = 'O3-dummy-501GHz-20to50km';
   Q.ABS_SPECIES(4).UNC_REL  = 0.5;
   Q.ABS_SPECIES(4).UNC_ABS  = 0.5e-6;
-  Q.ABS_SPECIES(4).CORRLEN  = 5e3;
+  Q.ABS_SPECIES(4).CORRLEN  = 15e3;
   Q.ABS_SPECIES(4).LOG_ON   = false;
   %
   Q.ABS_SPECIES(5).TAG{1}   = 'H2O-*-400e9-650e9';
@@ -211,6 +213,17 @@ switch freqmode
   Q.ABS_SPECIES(10).TAG{1}   = 'H2O2-*-498e9-505e9';
   Q.ABS_SPECIES(10).SOURCE   = 'WebApi';
   Q.ABS_SPECIES(10).RETRIEVE = false;
+  %
+  Q.ABS_SPECIES(11).TAG{1}   = 'O3-667-498e9-505e9';
+  Q.ABS_SPECIES(11).SOURCE   = 'WebApi';
+  Q.ABS_SPECIES(11).RETRIEVE = true;
+  Q.ABS_SPECIES(11).L2       = true;
+  Q.ABS_SPECIES(11).GRID     = q2_pgrid( 10e3, 65e3 );
+  Q.ABS_SPECIES(11).L2NAME   = 'O3-dummy-501GHz-20to50km';
+  Q.ABS_SPECIES(11).UNC_REL  = 0.5;
+  Q.ABS_SPECIES(11).UNC_ABS  = 0.5e-6;
+  Q.ABS_SPECIES(11).CORRLEN  = 15e3;
+  Q.ABS_SPECIES(11).LOG_ON   = false;
   %-------------------------------------------------------------------------
 
     
@@ -264,7 +277,13 @@ switch freqmode
     error( 'Inversion modes of freqmode %d is: ''stnd''.', freqmode ); 
   end
   %
-  Q.P_GRID                  = q2_pgrid( [], 120e3, true ); 
+  Q.STOP_DX            = 1;
+  Q.GA_START           = 100;
+  Q.GA_FACTOR_NOT_OK   = 20;
+  Q.GA_FACTOR_OK       = 100;
+  Q.GA_MAX             = 1e5;
+  %
+  Q.P_GRID                  = q2_pgrid( [], 133e3, true ); 
   %
   Q.BACKEND_NR              = 1;
   Q.FRONTEND_NR             = 4;
@@ -272,18 +291,18 @@ switch freqmode
   Q.SIDEBAND_LEAKAGE        = 0.02;  %
   %
   Q.F_RANGES                = [ 551.13e9 551.58e9; 551.72e9 552.17e9 ];
-  Q.ZTAN_LIMIT_TOP          = 110e3;
-  Q.ZTAN_LIMIT_BOT          = [ 25e3 25e3 25e3 25e3 ];
+  Q.ZTAN_LIMIT_TOP          = 150e3;
+  Q.ZTAN_LIMIT_BOT          = [ 30e3 30e3 30e3 30e3 ];
   %
   Q.T.L2                    = false;
-  Q.T.GRID                  = q2_pgrid( 20e3, 120e3 );
+  Q.T.GRID                  = q2_pgrid( 20e3, 130e3 );
   %
   Q.ABS_SPECIES(1).TAG{1}   = 'NO-*-541e9-562e9';
   Q.ABS_SPECIES(1).SOURCE   = 'WebApi';
   Q.ABS_SPECIES(1).RETRIEVE = true;
   Q.ABS_SPECIES(1).L2       = true;
   Q.ABS_SPECIES(1).L2NAME   = 'NO-551GHz-25to100km';
-  Q.ABS_SPECIES(1).GRID     = q2_pgrid( 20e3, 120e3 );
+  Q.ABS_SPECIES(1).GRID     = q2_pgrid( 20e3, 130e3 );
   Q.ABS_SPECIES(1).UNC_REL  = 2;
   Q.ABS_SPECIES(1).UNC_ABS  = 2e-8;
   Q.ABS_SPECIES(1).CORRLEN  = 20e3;

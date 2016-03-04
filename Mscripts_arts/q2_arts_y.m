@@ -112,9 +112,9 @@ else
   P                 = p_std;
   f                 = l1b_frequency( L1B, 1 );
   C.CONTINUA_FILE   = P.CONTINUA_FILE;
-  C.HITRAN_PATH     = P.HITRAN_PATH;
-  C.HITRAN_FMIN     = min(f) - 10e9;
-  C.HITRAN_FMAX     = max(f) + 10e9;
+  C.SPECTRO_FILE    = P.SPECTRO_FILE;
+  C.SPECTRO_FMIN    = min(f) - 10e9;
+  C.SPECTRO_FMAX    = max(f) + 10e9;
   %
   xmlStore( fullfile( R.workfolder, 'f_grid.xml' ), f, ...
                                                         'Vector', 'binary' );
