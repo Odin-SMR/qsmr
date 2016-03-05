@@ -1,3 +1,8 @@
+2016-03-05  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_qsystem/q2_pgrid.m: Changed how grid spacing is selected
+	and things did not really work in the thermosphere.
+
 2016-03-03  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_precalc/q2_precalc_fgrid.m (f_opt): Hard-coding

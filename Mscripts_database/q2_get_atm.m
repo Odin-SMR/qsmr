@@ -60,6 +60,9 @@ switch Q.T.SOURCE
   M = gf_artsxml( fullfile( Q.FOLDER_ARTSXMLDATA, 'planets', 'Earth', ...
                             'MSIS90', 'climatology', 'msis90.t.xml' ), ...
                             'Temperature', 't_field' );
+  if ATM.P(end) < M.GRID1(end)
+    error( 'Your pressure grid extends above the coverage of MSIS90 data at hand.' );
+  end
   G = atmdata_regrid( M, { ATM.P, lat, lon, mjd } );
   ATM.T = G.DATA;
   % Altitudes

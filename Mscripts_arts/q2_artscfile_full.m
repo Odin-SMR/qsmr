@@ -192,7 +192,7 @@ function cfile_abs( fid, C, workfolder )
     fprintf( fid, '  Ignore(rtp_los)\n' );
     fprintf( fid, '  Ignore(rtp_temperature_nlte)\n' );
     fprintf( fid, '  propmat_clearskyInit\n' );
-    fprintf( fid, '  propmat_clearskyAddFromLookup\n' );
+    fprintf( fid, '  propmat_clearskyAddFromLookup(extpolfac=3)\n' );
     fprintf( fid, '}\n' );
     fprintf( fid, 'propmat_clearsky_agenda_checkedCalc\n' );
       
