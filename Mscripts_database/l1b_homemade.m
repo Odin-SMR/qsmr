@@ -38,7 +38,7 @@ function [LOG,L1B] = l1b_homemade(Q,ztans,lat,lon,mjd,varargin)
 % Hard-coded values
 %
 f_doppler = -12e6;    % Doppler shift. 
-r_earth   = constants( 'EARTH_RADIUS' );
+r_earth   = earth_radius;
 
 
 %

@@ -1,0 +1,14 @@
+This folder contains all functions copied from Atmlab.
+
+Note that the full atmlab/arts/xml atmlab/time folders are copied.
+
+Please note that some functions are slightly modified. These are the main
+changes
+
+* All dependency of Atmlab's constants function is removed.
+* Input checks are removed in some functions.
+* Some (not used) parts of arts_sx have been removed
+* Screen width and verbosity (for oem) hard-coded in out.m.
+
+That is, don't just copy functions back to Atmlab. If some improvement shall be
+introduced in Atmlab, just copy the lines of code changed.

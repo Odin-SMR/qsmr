@@ -126,7 +126,7 @@ if any( strcmp( part, { 'antenna', 'all' } ) )  |  do_total
     %
     if ~do_total
       cfile  = q2_artscfile_sensor( C, R.workfolder );
-      status = arts( cfile );
+      result = q2_arts( ['-r000 ',cfile] );
       Hpart  = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
       %
       for j = 1 : length(ind)
@@ -225,7 +225,7 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
     %
     if ~do_total
       cfile  = q2_artscfile_sensor( C, R.workfolder );
-      status = arts( cfile );
+      result = q2_arts( ['-r000 ',cfile] );
       H1     = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
     end
 
@@ -241,9 +241,9 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
     xmlStore( fullfile( R.workfolder, 'f_backend.xml' ), ...
                               abs( f_backend - R.LO(i) ), 'Vector', 'binary' );
     if ~do_total
-      cfile    = q2_artscfile_sensor( C, R.workfolder );
-      status   = arts( cfile );
-      H2       = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
+      cfile  = q2_artscfile_sensor( C, R.workfolder );
+      result = q2_arts( ['-r000 ',cfile] );
+      H2     = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
       %
       R.H_BACKE{i} = H2 * H1;
     end
@@ -260,6 +260,6 @@ if do_total
   C.PART = 'total';
   %
   cfile     = q2_artscfile_sensor( C, R.workfolder );
-  status    = arts( cfile );
+  result    = q2_arts( ['-r000 ',cfile] );
   R.H_TOTAL = xmlLoad( fullfile( R.workfolder, 'sensor_response.xml' ) );
 end

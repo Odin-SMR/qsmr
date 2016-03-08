@@ -87,7 +87,7 @@ function A = do_1fmode( Q, P, workfolder, prec, do_cubic )
   %  C.SPECTRO_FOLDER2  = P.SPECTRO_FOLDER2;
   %end
   C.SPECIES       = arts_tgs_cnvrt( Q.ABS_SPECIES );
-  C.R_EARTH       = constants( 'EARTH_RADIUS' );
+  C.R_EARTH       = earth_radius;
 
   if do_cubic
     lorc = 'cubic';

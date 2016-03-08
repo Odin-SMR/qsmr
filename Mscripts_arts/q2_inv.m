@@ -646,6 +646,11 @@ function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
           L2(end).ErrorNoise = L2(end).ErrorNoise .* L2(end).Apriori;
           L2(end).ErrorTotal = L2(end).ErrorTotal .* L2(end).Apriori;
         end
+        %
+        L2(end).Apriori    = Q.ABS_SPECIES(ig).ISOFAC * L2(end).Apriori;
+        L2(end).ErrorNoise = Q.ABS_SPECIES(ig).ISOFAC * L2(end).ErrorNoise;
+        L2(end).ErrorTotal = Q.ABS_SPECIES(ig).ISOFAC * L2(end).ErrorTotal;
+        L2(end).VMR        = Q.ABS_SPECIES(ig).ISOFAC * L2(end).VMR;
       end
       %
       % Calculate measurement respons, now when scalings done

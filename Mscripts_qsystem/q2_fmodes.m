@@ -8,4 +8,4 @@
 
 function fmodes = q2_fmodes
 
-fmodes = [ 1 2 ];
+fmodes = [ 1 21 ];

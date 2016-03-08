@@ -18,7 +18,7 @@ function [mjd,lat,lon,z] = q2_calc_scan_pos( LOG )
 
 mjd = mean( LOG.MJDStart + LOG.MJDEnd );
 
-r = constants( 'EARTH_RADIUS' );
+r   = earth_radius;
 
 [x1,y1,z1] = geocentric2cart( r+LOG.AltStart, LOG.LatStart, LOG.LonStart );
 [x2,y2,z2] = geocentric2cart( r+LOG.AltEnd,   LOG.LatEnd,   LOG.LonEnd );

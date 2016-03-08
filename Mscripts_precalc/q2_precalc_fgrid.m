@@ -155,7 +155,7 @@ function f_opt = do_1range( Q, P, workfolder, frange, precs, do_cubic );
   %C.SPECTRO_FOLDER  = P.SPECTRO_FOLDER;
   C.PPATH_LMAX      = Q.PPATH_LMAX;
   C.PPATH_LRAYTRACE = Q.PPATH_LRAYTRACE;
-  C.R_EARTH         = constants( 'EARTH_RADIUS' );
+  C.R_EARTH         = earth_radius;
   C.SENSOR_ON       = false;
   C.SPECIES         = arts_tgs_cnvrt( Q.ABS_SPECIES );
   C.JACOBIAN_DO     = false;
@@ -190,8 +190,7 @@ function f_opt = do_1range( Q, P, workfolder, frange, precs, do_cubic );
     xmlStore( fullfile( workfolder, 'vmr_field.xml' ), ATM.VMR, ...
                                                         'Tensor4', 'binary' );
     %
-    za = vec2col( geomztan2za( constants('EARTH_RADIUS'), L.Z_PLAT, ...
-                                                        P.REFSPECTRA_ZTAN ) );
+    za = vec2col( geomztan2za( earth_radius, L.Z_PLAT, P.REFSPECTRA_ZTAN ) );
     %
     xmlStore( fullfile( workfolder, 'sensor_pos.xml' ), ...
                            repmat( L.Z_PLAT, size(za) ), 'Matrix', 'binary' );

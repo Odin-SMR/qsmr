@@ -84,7 +84,7 @@ Q.GA_MAX             = 1e4;
 %---------------------------------------------------------------------------
 
 Q.NOISE_CORRMODEL    = 'empi';  % 'none', 'empi' 'expo'
-Q.NOISE_SCALEFAC     = 1.1;
+Q.NOISE_SCALEFAC     = 1.0;
 
 Q.BASELINE.RETRIEVE  = true;
 Q.BASELINE.MODEL     = 'adaptive';  % 'common', 'module', 'adaptive'
@@ -96,7 +96,6 @@ Q.POINTING.UNC       = 0.01;
 Q.FREQUENCY.RETRIEVE = true;
 Q.FREQUENCY.UNC      = 1e6;
 
-Q.T.SOURCE           = 'MSIS90';
 Q.T.SOURCE           = 'WebApi';
 Q.T.RETRIEVE         = true;
 Q.T.UNC              = [ 3 3 9 15 15 ];
@@ -139,10 +138,11 @@ switch freqmode
   Q.T.GRID                  = q2_pgrid( 10e3, 65e3, 4 );
   %
   Q.ABS_SPECIES(1).TAG{1}   = 'ClO-*-498e9-505e9';
+  Q.ABS_SPECIES(1).ISOFAC   = 1;
   Q.ABS_SPECIES(1).SOURCE   = 'WebApi';
   Q.ABS_SPECIES(1).RETRIEVE = true;
   Q.ABS_SPECIES(1).L2       = true;
-  Q.ABS_SPECIES(1).L2NAME   = 'ClO-501GHz-20to50km';
+  Q.ABS_SPECIES(1).L2NAME   = 'ClO / 501 GHz / 20 to 50 km';
   Q.ABS_SPECIES(1).GRID     = q2_pgrid( 10e3, 65e3, 4 );
   Q.ABS_SPECIES(1).UNC_REL  = 0.5;
   Q.ABS_SPECIES(1).UNC_ABS  = 2.5e-10;
@@ -150,10 +150,11 @@ switch freqmode
   Q.ABS_SPECIES(1).LOG_ON   = false;
   %
   Q.ABS_SPECIES(2).TAG{1}   = 'N2O-*-491e9-512e9';
+  Q.ABS_SPECIES(2).ISOFAC   = 1;
   Q.ABS_SPECIES(2).SOURCE   = 'WebApi';
   Q.ABS_SPECIES(2).RETRIEVE = true;
   Q.ABS_SPECIES(2).L2       = true;
-  Q.ABS_SPECIES(2).L2NAME   = 'N2O-502GHz-20-50km';
+  Q.ABS_SPECIES(2).L2NAME   = 'N2O / 502 GHz / 20 to 50 km';
   Q.ABS_SPECIES(2).GRID     = q2_pgrid( 10e3, 65e3, 8 );
   Q.ABS_SPECIES(2).UNC_REL  = 0.25;
   Q.ABS_SPECIES(2).UNC_ABS  = 20e-9;
@@ -161,34 +162,38 @@ switch freqmode
   Q.ABS_SPECIES(2).LOG_ON   = false;
   %
   Q.ABS_SPECIES(3).TAG{1}   = 'O3-666-491e9-512e9';
+  Q.ABS_SPECIES(3).ISOFAC   = 1;
   Q.ABS_SPECIES(3).SOURCE   = 'WebApi';
   Q.ABS_SPECIES(3).RETRIEVE = true;
   Q.ABS_SPECIES(3).L2       = true;
   Q.ABS_SPECIES(3).GRID     = q2_pgrid( 10e3, 65e3, 8 );
-  Q.ABS_SPECIES(3).L2NAME   = 'O3-501GHz-20to50km';
+  Q.ABS_SPECIES(3).L2NAME   = 'O3 / 501 GHz / 20 to 50 km';
   Q.ABS_SPECIES(3).UNC_REL  = 0.5;
   Q.ABS_SPECIES(3).UNC_ABS  = 0.5e-6;
   Q.ABS_SPECIES(3).CORRLEN  = 15e3;
   Q.ABS_SPECIES(3).LOG_ON   = false;
   %
   Q.ABS_SPECIES(4).TAG{1}   = 'O3-668-498e9-505e9';
+  Q.ABS_SPECIES(4).ISOFAC   = 1;
   Q.ABS_SPECIES(4).SOURCE   = 'WebApi';
   Q.ABS_SPECIES(4).RETRIEVE = true;
   Q.ABS_SPECIES(4).L2       = true;
   Q.ABS_SPECIES(4).GRID     = q2_pgrid( 10e3, 65e3, 4 );
-  Q.ABS_SPECIES(4).L2NAME   = 'O3-dummy-501GHz-20to50km';
+  Q.ABS_SPECIES(4).L2NAME   = 'O3-dummy / 501 GHz';
   Q.ABS_SPECIES(4).UNC_REL  = 0.5;
   Q.ABS_SPECIES(4).UNC_ABS  = 0.5e-6;
   Q.ABS_SPECIES(4).CORRLEN  = 15e3;
-  Q.ABS_SPECIES(4).LOG_ON   = false;
+  Q.ABS_SPECIES(4).LOG_ON   = true;
   %
   Q.ABS_SPECIES(5).TAG{1}   = 'H2O-*-400e9-650e9';
+  Q.ABS_SPECIES(5).ISOFAC   = 1;
   Q.ABS_SPECIES(5).TAG{2}   = 'H2O-ForeignContStandardType';
   Q.ABS_SPECIES(5).TAG{3}   = 'H2O-SelfContStandardType';
   Q.ABS_SPECIES(5).SOURCE   = 'WebApi';
   Q.ABS_SPECIES(5).RETRIEVE = true;
   Q.ABS_SPECIES(5).L2       = true;
   Q.ABS_SPECIES(5).GRID     = q2_pgrid( 10e3, 30e3, 4 );
+  Q.ABS_SPECIES(5).L2NAME   = 'H2O-dummy / 501 GHz';
   Q.ABS_SPECIES(5).UNC_REL  = 0.5;
   Q.ABS_SPECIES(5).UNC_ABS  = 1e-6;
   Q.ABS_SPECIES(5).CORRLEN  = 5e3;
@@ -215,15 +220,16 @@ switch freqmode
   Q.ABS_SPECIES(10).RETRIEVE = false;
   %
   Q.ABS_SPECIES(11).TAG{1}   = 'O3-667-498e9-505e9';
+  Q.ABS_SPECIES(11).ISOFAC   = 1;
   Q.ABS_SPECIES(11).SOURCE   = 'WebApi';
   Q.ABS_SPECIES(11).RETRIEVE = true;
   Q.ABS_SPECIES(11).L2       = true;
   Q.ABS_SPECIES(11).GRID     = q2_pgrid( 10e3, 65e3, 4 );
-  Q.ABS_SPECIES(11).L2NAME   = 'O3-dummy-501GHz-20to50km';
+  Q.ABS_SPECIES(11).L2NAME   = 'O3-dummy / 501 GHz';
   Q.ABS_SPECIES(11).UNC_REL  = 0.5;
   Q.ABS_SPECIES(11).UNC_ABS  = 0.5e-6;
   Q.ABS_SPECIES(11).CORRLEN  = 15e3;
-  Q.ABS_SPECIES(11).LOG_ON   = false;
+  Q.ABS_SPECIES(11).LOG_ON   = true;
   %-------------------------------------------------------------------------
 
     
@@ -296,35 +302,39 @@ switch freqmode
   %
   Q.T.L2                    = false;
   Q.T.GRID                  = q2_pgrid( 20e3, 150e3, 4 );
+  Q.T.SOURCE                = 'MSIS90';
   %
   Q.ABS_SPECIES(1).TAG{1}   = 'NO-*-541e9-562e9';
-  Q.ABS_SPECIES(1).SOURCE   = 'WebApi';
+  Q.ABS_SPECIES(1).ISOFAC   = 1;
+  Q.ABS_SPECIES(1).SOURCE   = 'Bdx';
   Q.ABS_SPECIES(1).RETRIEVE = true;
   Q.ABS_SPECIES(1).L2       = true;
-  Q.ABS_SPECIES(1).L2NAME   = 'NO-551GHz-25to100km';
+  Q.ABS_SPECIES(1).L2NAME   = 'NO / 551 GHz / 25 to 100 km';
   Q.ABS_SPECIES(1).GRID     = q2_pgrid( 15e3, 150e3, 4 );
-  Q.ABS_SPECIES(1).UNC_REL  = 2;
-  Q.ABS_SPECIES(1).UNC_ABS  = 2e-8;
-  Q.ABS_SPECIES(1).CORRLEN  = 20e3;
-  Q.ABS_SPECIES(1).LOG_ON   = true;
+  Q.ABS_SPECIES(1).UNC_REL  = 1;
+  Q.ABS_SPECIES(1).UNC_ABS  = 1e-8;
+  Q.ABS_SPECIES(1).CORRLEN  = 10e3;
+  Q.ABS_SPECIES(1).LOG_ON   = false;
   %
   Q.ABS_SPECIES(2).TAG{1}   = 'O3-*-541e9-562e9';
-  Q.ABS_SPECIES(2).SOURCE   = 'WebApi';
+  Q.ABS_SPECIES(2).ISOFAC   = 1;
+  Q.ABS_SPECIES(2).SOURCE   = 'Bdx';
   Q.ABS_SPECIES(2).RETRIEVE = true;
   Q.ABS_SPECIES(2).L2       = true;
   Q.ABS_SPECIES(2).GRID     = q2_pgrid( 15e3, 100e3, 4 );
-  Q.ABS_SPECIES(2).L2NAME   = 'O3-551GHz-25to90km';
+  Q.ABS_SPECIES(2).L2NAME   = 'O3 / 551 GHz / 25 to 90 km';
   Q.ABS_SPECIES(2).UNC_REL  = 0.5;
   Q.ABS_SPECIES(2).UNC_ABS  = 1e-6;
   Q.ABS_SPECIES(2).CORRLEN  = 5e3;
   Q.ABS_SPECIES(2).LOG_ON   = false;
   %
   Q.ABS_SPECIES(3).TAG{1}   = 'H2O-171-541e9-562e9';
-  Q.ABS_SPECIES(3).SOURCE   = 'WebApi';
+  Q.ABS_SPECIES(3).ISOFAC   = 3.71884e-04;
+  Q.ABS_SPECIES(3).SOURCE   = 'Bdx';
   Q.ABS_SPECIES(3).RETRIEVE = true;
   Q.ABS_SPECIES(3).L2       = true;
   Q.ABS_SPECIES(3).GRID     = q2_pgrid( 15e3, 100e3, 4 );
-  Q.ABS_SPECIES(3).L2NAME   = 'H2O/17-552GHz-25to90km';
+  Q.ABS_SPECIES(3).L2NAME   = 'H2O-17 / 552 GHz / 25 to 90km';
   Q.ABS_SPECIES(3).UNC_REL  = 0.5;
   Q.ABS_SPECIES(3).UNC_ABS  = 1e-6;
   Q.ABS_SPECIES(3).CORRLEN  = 5e3;
@@ -333,25 +343,27 @@ switch freqmode
   Q.ABS_SPECIES(4).TAG{1}   = 'H2O-161-450e9-700e9';
   Q.ABS_SPECIES(4).TAG{2}   = 'H2O-ForeignContStandardType';
   Q.ABS_SPECIES(4).TAG{3}   = 'H2O-SelfContStandardType';
-  Q.ABS_SPECIES(4).SOURCE   = 'WebApi';
+  Q.ABS_SPECIES(4).ISOFAC   = 1;
+  Q.ABS_SPECIES(4).SOURCE   = 'Bdx';
   Q.ABS_SPECIES(4).RETRIEVE = true;
   Q.ABS_SPECIES(4).L2       = false;
   Q.ABS_SPECIES(4).GRID     = q2_pgrid( 20e3, 35e3, 4 );
+  Q.ABS_SPECIES(4).L2NAME   = 'H2O-dummy / 552 GHz';
   Q.ABS_SPECIES(4).UNC_REL  = 0.5;
   Q.ABS_SPECIES(4).UNC_ABS  = 0.5e-6;
   Q.ABS_SPECIES(4).CORRLEN  = 5e3;
-  Q.ABS_SPECIES(4).LOG_ON   = false;
+  Q.ABS_SPECIES(4).LOG_ON   = true;
   %
   Q.ABS_SPECIES(5).TAG{1}   = 'N2-SelfContMPM93';
-  Q.ABS_SPECIES(5).SOURCE   = 'WebApi';
+  Q.ABS_SPECIES(5).SOURCE   = 'Bdx';
   Q.ABS_SPECIES(5).RETRIEVE = false;
   %
   Q.ABS_SPECIES(6).TAG{1}   = 'O2-*-450e9-700e9';
-  Q.ABS_SPECIES(6).SOURCE   = 'WebApi';
+  Q.ABS_SPECIES(6).SOURCE   = 'Bdx';
   Q.ABS_SPECIES(6).RETRIEVE = false;
   %
   Q.ABS_SPECIES(7).TAG{1}   = 'HNO3-*-548e9-555e9';
-  Q.ABS_SPECIES(7).SOURCE   = 'WebApi';
+  Q.ABS_SPECIES(7).SOURCE   = 'Bdx';
   Q.ABS_SPECIES(7).RETRIEVE = false;
   %-------------------------------------------------------------------------
   

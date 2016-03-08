@@ -19,6 +19,9 @@ topfolder = fileparts( fileparts( which( mfilename ) ) );
 %
 addpath( fullfile( topfolder, 'Settings' ) );
 addpath( fullfile( topfolder, 'Mscripts_arts' ) );
+addpath( fullfile( topfolder, 'Mscripts_atmlab' ) );
+addpath( fullfile( topfolder, 'Mscripts_atmlab', 'xml' ) );
+addpath( fullfile( topfolder, 'Mscripts_atmlab', 'time' ) );
 addpath( fullfile( topfolder, 'Mscripts_database' ) );
 addpath( fullfile( topfolder, 'Mscripts_external' ) );
 addpath( fullfile( topfolder, 'Mscripts_qsystem' ) );

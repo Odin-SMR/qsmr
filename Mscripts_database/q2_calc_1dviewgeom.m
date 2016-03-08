@@ -16,7 +16,7 @@ function [r_earth,z_odin,za] = q2_calc_1dviewgeom( L1B )
 
 % So far we use a spherical Earth  
   
-r_earth = constants( 'EARTH_RADIUS' );
+r_earth = earth_radius;
 
 r_odin = mean( sqrt( sum( L1B.GPSpos.^2, 1 ) ) );
 

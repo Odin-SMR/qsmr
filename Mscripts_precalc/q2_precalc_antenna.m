@@ -106,7 +106,7 @@ function G = calc_in_subfun( flab, dza_in, D, f0, tint )
   
   %- Scanning speed is 750 m/s. Convert to an approximate angle.
   %
-  R  = constants( 'EARTH_RADIUS' );
+  R  = earth_radius;
   zp = 600e3;
   %
   v = geomztan2za( R, zp, 20e3 ) - geomztan2za( R, zp, 20e3+750 );

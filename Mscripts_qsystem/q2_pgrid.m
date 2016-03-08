@@ -32,7 +32,7 @@ assert( any( npd == [2,4,8,16,32] ) );
 %- Start and end point of a complete grid with some margin on top
 %
 logp1  = 5;        % 1000 hPa
-logp2  = -3;       % Somewhere above 150 km
+logp2  = -3.5;     % Somewhere above 150 km
 
 
 %- Create the maximum grid

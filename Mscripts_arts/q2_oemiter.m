@@ -129,8 +129,8 @@ else
   do_j  = 0;
   cfile = R.cfile_y;
 end
-%
-arts( cfile );
+%a
+result = q2_arts( ['-r000 ',cfile] );
 %
 y = xmlLoad( fullfile( R.workfolder, 'y.xml' ) );
 %
