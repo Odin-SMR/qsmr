@@ -35,7 +35,7 @@ function q2_precalc_antenna(QQ,P)
 %
 topfolder = q2_topfolder;
 %
-infolder  = fullfile( topfolder, 'DataFiles', 'Antenna' );
+infolder  = fullfile( topfolder, 'DataFiles', 'Input', 'Antenna' );
 
 
 % Read lab data files
