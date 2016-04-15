@@ -252,8 +252,8 @@ T
 
 TB_CONTRAST_FAC
    A scalar value. This factor modifies the contrast of each spectrum part. 
-   If this factor is denoted as c, the scaling is 
-     Tb_new = c * ( Tb -Tb_min ) + Tb_min
+   If this factor is denoted as c, the scaling is:
+   Tb_new = c * ( Tb -Tb_min ) + Tb_min,
    where Tb_min as an estimate of the noise-free minimum value of each
    spectrum part. This scaling is applied after TB_SCALING_FAC. This contrast
    scaling is applied on each AC module separately. That is, the complete
