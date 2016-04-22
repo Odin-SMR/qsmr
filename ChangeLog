@@ -1,3 +1,6 @@
+2016-04-22  Joakim Möller <joakim.moller@molflow.com>
+    * arts4smr -> arts
+
 2016-04-15  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Settings/q_fields.rst (Qsmr): A small correction.

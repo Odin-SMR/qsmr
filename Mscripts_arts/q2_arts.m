@@ -15,7 +15,7 @@
 function result = q2_arts( argstring )
   
   
-[status,result] = system( ['arts4smr ',argstring] );
+[status,result] = system( ['arts ',argstring] );
 
 
 if status
