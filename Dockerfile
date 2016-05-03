@@ -19,8 +19,8 @@ run set -x && \
         --non-interactive \
         --trust-server-cert \
         -q -r9798 \
-        https://arts.mi.uni-hamburg.de/svn/rt/arts/trunk/ arts 
-run cd arts/build && \
+        https://arts.mi.uni-hamburg.de/svn/rt/arts/trunk/ arts && \
+    cd arts/build && \
     cmake .. && \
     make arts && \
     make install && \
