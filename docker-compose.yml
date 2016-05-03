@@ -4,4 +4,4 @@ qsmr:
     volumes:
     - /home/patrick/Outdata2/QsmrAbsLookups:/home/patrick/Outdata2/QsmrAbsLookups
     - ./:/src
-    command: /opt/matlab/bin/matlab -nojvm -nodisplay -nosplash -r "system('rm -Rf /opt/matlab/sys/os'); run('Mscripts_qsystem/q2_init.m'); LOG = get_scan_log('http://malachite.rss.chalmers.se/rest_api/v4/freqmode_info/2015-04-01/AC2/1/'); L1B = get_scan_l1b_data(LOG.Info(1).URLS.URL_spectra); [L2,L2I] = q2_inv( LOG.Info(1), L1B, q_std(1)); quit;"
+    command: /opt/matlab/bin/matlab -nojvm -nodisplay -nosplash -r "run('Mscripts_qsystem/q2_init.m'); LOG = get_scan_log('http://malachite.rss.chalmers.se/rest_api/v4/freqmode_info/2015-04-01/AC2/1/'); L1B = get_scan_l1b_data(LOG.Info(1).URLS.URL_spectra); [L2,L2I] = q2_inv( LOG.Info(1), L1B, q_std(1)); quit;"
