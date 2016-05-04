@@ -1,4 +1,4 @@
-from docker2.molflow.com/odin_redo/odin_matlab:2015b
+from docker2.molflow.com/odin_redo/odin_matlab:2015a
 run set -x && \
     apt-get update && \
     apt-get install -y \
@@ -10,6 +10,7 @@ run set -x && \
         liblapack-dev \
         libatlas3gf-base \
         libatlas-dev \
+        libiomp5 \
         zlib1g \
         zlib1g-dev \
         subversion \

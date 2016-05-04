@@ -1,5 +1,5 @@
 qsmr:
-    image: docker2.molflow.com/odin_redo/qsmr:latest
+    image: docker2.molflow.com/odin_redo/qsmr:m2015a
     working_dir: /src
     volumes:
     - /home/patrick/Outdata2/QsmrAbsLookups:/home/patrick/Outdata2/QsmrAbsLookups
