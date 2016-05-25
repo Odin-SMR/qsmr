@@ -79,7 +79,6 @@ Q.GA_MAX             = 1e4;
 %---------------------------------------------------------------------------
 
 Q.NOISE_CORRMODEL    = 'empi';  % 'none', 'empi' 'expo'
-Q.NOISE_SCALEFAC     = 1.0;
 
 Q.BASELINE.RETRIEVE  = true;
 Q.BASELINE.MODEL     = 'adaptive';  % 'common', 'module', 'adaptive'

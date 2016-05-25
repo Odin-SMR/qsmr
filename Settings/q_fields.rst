@@ -198,11 +198,6 @@ MIN_N_SPECTRA
    inversion. This number refers to the number of spectra after altitude
    cropping and quality filtering.
 
-NOISE_SCALEFAC
-   A scalar value. A tuning parameter to adjust the values in Se. The thermal
-   noise standard deviation obtained by the L1B data is multiplicated with this
-   factor.
-
 NOISE_CORRMODEL
   A string. Model of correlations inside Se. Only correlation between adjecent
   channels of each spectrum is modelled. The options are as follows. 'none':

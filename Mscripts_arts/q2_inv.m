@@ -475,7 +475,7 @@ function [Se,Seinv] = subfun4se( Q, L1B )
   for t = 1 : ntan
 
     % Standard deviation of thermal noise for t:th spectrum 
-    thn = L1B.TrecSpectrum'  .* ( Q.NOISE_SCALEFAC / ...
+    thn = L1B.TrecSpectrum'  .* ( 1 / ...
                                   sqrt(L1B.FreqRes(1)*L1B.EffTime(t)) );
 
     % Se

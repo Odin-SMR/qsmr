@@ -1,6 +1,6 @@
 % Q2_ARTS   Executes ARTS
 %
-%    The ARTS executable is assumed to be called arts4smr. The executable
+%    The ARTS executable is assumed to be called arts. The executable
 %    must be in the general search path. 
 %
 %    A Matlab error is issued if any ARTS or system error occur.

@@ -1,3 +1,11 @@
+2016-05-25  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Settings/q_fields.rst:
+	* Settings/q_std.m:
+	* Mscripts_arts/q2_inv.m (subfun4se): Removed Q.NOISE_SCALEFAC.
+
+	* Mscripts_arts/q2_arts.m: Corrected header after change below.
+
 2016-04-22  Joakim Möller <joakim.moller@molflow.com>
     * arts4smr -> arts
 
