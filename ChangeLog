@@ -1,8 +1,17 @@
 2016-05-27  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
+	* Mscripts_database/l1b_filter.m: Crashed when itan got empty,
+	when setting isub. 
+
+	* Mscripts_precalc/q2_precalc_abslookup.m:
+	* Mscripts_precalc/q2_precalc_fgrid.m: Had not been updated to
+	call q2_arts.
+
+2016-05-27  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
 	* Settings/q_std.m: Abs lookups now expected to be at /QsmrAbsLookups
 
-	* docker-compose.yml: Defined two options, intercative and inv_demo. 
+	* docker-compose.yml: Defined two options, intercative and inv_demo.
 
 2016-05-25  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 

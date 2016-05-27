@@ -39,6 +39,14 @@ L1B = l1b_crop( L1B, itan, isub );
 
 
 %
+% Bail out of no spectrum data left
+%
+if any( size(L1B.Spectrum) == 0 )
+  return
+end
+
+
+%
 % Crop in frequency
 %
 L1B = l1b_fcrop( L1B, Q.F_RANGES, Q.LO_ZREF );

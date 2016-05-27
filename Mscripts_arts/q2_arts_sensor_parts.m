@@ -85,6 +85,10 @@ if any( strcmp( part, { 'antenna', 'all' } ) )  |  do_total
   antfiles = whichfiles( sprintf('antenna_fmode%02d*ms.xml',fmode), ...
                                                             Q.FOLDER_ANTENNA );
   %
+  if isempty(antfiles)
+    error( 'Could not find any antenna files. Q.FOLDER_ANTENNA correct?' );
+  end
+  %
   tint0 = zeros( size( antfiles ) );
   %
   for i = 1 : length(tint0)
