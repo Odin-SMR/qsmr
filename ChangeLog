@@ -1,3 +1,9 @@
+2016-05-27  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Settings/q_std.m: Abs lookups now expected to be at /QsmrAbsLookups
+
+	* docker-compose.yml: Defined two options, intercative and inv_demo. 
+
 2016-05-25  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Settings/q_fields.rst:

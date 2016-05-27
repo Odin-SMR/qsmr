@@ -1,5 +1,7 @@
 function Q = q_dev(varargin)
 
+% For the moment, this is Patrick's playground
+
 Q = q_std( varargin{:} );
 
 datadir              = '/home/patrick/Outdata2/Qsmr2';
