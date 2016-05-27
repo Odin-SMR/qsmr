@@ -1,7 +1,13 @@
 2016-05-27  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
+	* Mscripts_database/l1b_filter.m: Changed defualt for lag0_max to 2.
+
+	* Settings/q_meso.m (q_meso): Started on fmode 21.
+
+2016-05-27  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
 	* Mscripts_database/l1b_filter.m: Crashed when itan got empty,
-	when setting isub. 
+	when setting isub.
 
 	* Mscripts_precalc/q2_precalc_abslookup.m:
 	* Mscripts_precalc/q2_precalc_fgrid.m: Had not been updated to

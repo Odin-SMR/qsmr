@@ -63,7 +63,7 @@ Q.TB_CONTRAST_FAC    = 1.03;
 %---------------------------------------------------------------------------
 
 Q.STOP_DX            = 0.5;
-Q.GA_START           = 0;
+Q.GA_START           = 1;
 Q.GA_FACTOR_NOT_OK   = 10;
 Q.GA_FACTOR_OK       = 10;
 Q.GA_MAX             = 1e4;
@@ -127,13 +127,58 @@ switch freqmode
   Q.ABS_SPECIES(1).RETRIEVE = true;
   Q.ABS_SPECIES(1).L2       = true;
   Q.ABS_SPECIES(1).L2NAME   = 'O3 / 545 GHz / 45 to 95 km';
-  Q.ABS_SPECIES(1).GRID     = q2_pgrid( 40e3, 100e3, 8 );
+  Q.ABS_SPECIES(1).GRID     = q2_pgrid( 40e3, 100e3, 4 );
   Q.ABS_SPECIES(1).UNC_REL  = 0.5;
   Q.ABS_SPECIES(1).UNC_ABS  = 1e-6;
   Q.ABS_SPECIES(1).CORRLEN  = 10e3;
-  Q.ABS_SPECIES(1).LOG_ON   = true;
+  Q.ABS_SPECIES(1).LOG_ON   = false;
   %
   [Q.ABS_SPECIES.ISOFAC]     = deal( 1 );  
+  [Q.ABS_SPECIES.SOURCE]     = deal( 'WebApi' );
+  %-------------------------------------------------------------------------
+
+  
+ case 21
+  %
+  Q.GA_START                 = 100;
+  %
+  Q.P_GRID                   = q2_pgrid( [], 150e3 ); 
+  %
+  Q.BACKEND_NR               = 1;
+  Q.FRONTEND_NR              = 4;
+  Q.F_LO_NOMINAL             = 547.753e9;
+  Q.SIDEBAND_LEAKAGE         = 0.02;  %
+  %
+  Q.F_RANGES                 = [ 551.13e9 551.58e9; ];
+  Q.ZTAN_LIMIT_TOP           = 150e3;
+  Q.ZTAN_LIMIT_BOT           = [ 40e3 40e3 40e3 40e3 ];
+  %
+  Q.T.L2                     = false;
+  Q.T.GRID                   = q2_pgrid( 40e3, 150e3, 4 );
+  Q.T.SOURCE                 = 'WebApi';
+  %
+  Q.ABS_SPECIES(1).TAG{1}    = 'NO-*-541e9-562e9';
+  Q.ABS_SPECIES(1).ISOFAC    = 1;
+  Q.ABS_SPECIES(1).RETRIEVE  = true;
+  Q.ABS_SPECIES(1).L2        = true;
+  Q.ABS_SPECIES(1).L2NAME    = 'NO / 551 GHz / 45 to 115 km';
+  Q.ABS_SPECIES(1).GRID      = q2_pgrid( 40e3, 140e3, 4 );
+  Q.ABS_SPECIES(1).UNC_REL   = 1;
+  Q.ABS_SPECIES(1).UNC_ABS   = 1e-8;
+  Q.ABS_SPECIES(1).CORRLEN   = 10e3;
+  Q.ABS_SPECIES(1).LOG_ON    = true;
+  %
+  Q.ABS_SPECIES(2).TAG{1}    = 'O3-*-541e9-562e9';
+  Q.ABS_SPECIES(2).ISOFAC    = 1;
+  Q.ABS_SPECIES(2).RETRIEVE  = true;
+  Q.ABS_SPECIES(2).L2        = true;
+  Q.ABS_SPECIES(2).GRID      = q2_pgrid( 40e3, 100e3, 4 );
+  Q.ABS_SPECIES(2).L2NAME    = 'O3 / 551 GHz / 45 to 90 km';
+  Q.ABS_SPECIES(2).UNC_REL   = 0.5;
+  Q.ABS_SPECIES(2).UNC_ABS   = 1e-6;
+  Q.ABS_SPECIES(2).CORRLEN   = 10e3;
+  Q.ABS_SPECIES(2).LOG_ON    = false;
+  %
   [Q.ABS_SPECIES.SOURCE]     = deal( 'WebApi' );
   %-------------------------------------------------------------------------
   
