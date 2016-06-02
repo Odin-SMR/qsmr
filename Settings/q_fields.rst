@@ -37,7 +37,7 @@ Qsmr: definition of settings
    when doing the actual inversion. The settings are applied by various
    functions and if you are using individual functions of Qsmr you need to
    figure out what settings that have an effect or not. For example, the fields
-   TB_SCALING_FAC and TB_CONTRAST_FAC are not apllied directly when loading the
+   TB_SCALING_FAC and TB_CONTRAST_FAC are not applied directly when loading the
    data, but are applied on the L1B data by a special function. 
    
 ~~~~~
@@ -104,19 +104,20 @@ FOLDER_ABSLOOKUP
 FOLDER_ANTENNA
    A string. Full path to folder containing antenna pattern response files.
 
-FOLDER_ARTSXMLDATA
-   A string. Full path to top folder of arts-xml-data. A correct settings is
-   only needed when using the MSIS90 climatology.
-
 FOLDER_BACKEND
    A string. Full path to folder containing backend channel response files.
 
 FOLDER_BDX
    A string. Full path to folder containing files of the Bordeaux a priori
-   database. Files having .amt format are expected.   
+   database. Files having .mat format are expected.   
 
 FOLDER_FGRID
    A string. Full path to folder containing frequency grids.   
+
+FOLDER_MSIS90
+   A string. Full path to folder holding the MSIS90 climatology (version taken
+   from arts-xml-data). Only needed of temperature data taken from MSIS90,
+   which is the case for some pre-calculations.
 
 FOLDER_WORK
    A string. Full path to a folder where temporary files and/or folders can 
@@ -124,8 +125,8 @@ FOLDER_WORK
    all files are placed in this folder, and the folder is removed when the
    calculations are done. Otherwise, temporary files are placed directly in the 
    specified folder, and these are left when the calculations are done. This
-   option is usefull for debugging, but note that just a single Qsmr process can
-   use a folder for debugging. If several Qsmr processes are given the same dubugging
+   option is useful for debugging, but note that just a single Qsmr process can
+   use a folder for debugging. If several Qsmr processes are given the same debugging
    folder, files will be overwritten.
 
 FREQMODE
@@ -141,7 +142,7 @@ FRONTEND_NR
    An integer. Index of expected frontend. Index coding described in L1B ATBD.
 
 F_RANGES
-   A matrix, having two colmns. This matrix specifies the frequency ranges to
+   A matrix, having two columns. This matrix specifies the frequency ranges to
    include in the retrieval, where the first and second column give the lower
    and upper frequency limit, respectively. Each row specifies a new frequency
    range to include.
@@ -175,7 +176,7 @@ GA_START
    be >= 0.
 
 INVEMODE
-   A string. A short string maning the inversion set-up used.
+   A string. A short string naming the inversion set-up used.
 
 LO_COMMON
    A boolean. If true, the initial value of LO frequencies are set to be
@@ -199,11 +200,11 @@ MIN_N_SPECTRA
    cropping and quality filtering.
 
 NOISE_CORRMODEL
-  A string. Model of correlations inside Se. Only correlation between adjecent
+  A string. Model of correlations inside Se. Only correlation between adjacent
   channels of each spectrum is modelled. The options are as follows. 'none':
-  this generates a pure diagonal Se. 'empi': Uses emperically derived values
+  this generates a pure diagonal Se. 'empi': Uses empirically derived values
   making Se a five-diagonal matrix. 'expo': Exponentially decreasing
-  correlation, approximating the emperically derived values.
+  correlation, approximating the empirically derived values.
 
 POINTING
    A structure. Definition of pointing off-set retrieval. The fields of the
@@ -232,6 +233,10 @@ STOP_DX
    normalisation with the length of x is applied. This means that STOP_DX
    should in general be in the order of 0.01 (and not change of the state
    vector is expanded).
+
+REFRACTION_DO
+   A boolean. Determines if refraction is considered or not by the forward
+   model. Set to true to include refraction.
 
 T
    A structure. Definition of atmospheric temperature profile. The fields of
@@ -266,9 +271,15 @@ ZTAN_LIMIT_BOT
    the inversion. That is, this setting determines the lower limit when
    cropping the scan range. The four values give the tangent altitude limit at
    0, +-30, +-60 and +-90 degrees in latitude. That is, the tangent altitude
-   mask is assumed to be symmetruc around the equator.  
+   mask is assumed to be symmetric around the equator.  
 
 ZTAN_LIMIT_TOP
    A scalar value. The upper limit for tangent altitudes to include in the
    inversion. That is, this setting determines the upper limit when cropping
    the scan range.
+
+ZTAN_MIN_RANGE 
+   A vector of length two. This field specifies the minimum altitude coverage of a
+   scan to start an inversion. The order between lower and upper limit is free.
+   The scan must have at least one tangent altude below and above the given
+   limits. This check is done after applying ZTAN_LIMIT_BOT/TOP.

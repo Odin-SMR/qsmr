@@ -14,17 +14,14 @@
 %     ABS_P_INTERP_ORDER 
 %     ABS_T_INTERP_ORDER 
 %     CONTINUA_FILE          full path to a file
-%     //HITRAN_PATH            full path to a file
-%     //HITRAN_FMIN            reading starts at this frequency
-%     //HITRAN_FMAX            reading stops at this frequency
-%     SPECTROSCOPY_FILE
+%     SPECTRO_FILE
+%     SPECTRO_FMIN           reading starts at this frequency
+%     SPECTRO_FMAX           reading stops at this frequency
+%     REFRACTION_DO
 %     PPATH_LMAX
 %     PPATH_LRAYTRACE
 %     R_EARTH                Planet radius to apply
 %     SPECIES                '"ClO',"O3"'
-%     SPECTRO_FOLDER         Folder holding hand-picked spectroscopic data
-%     SPECTRO_FOLDER2        Secondary folder holding hand-picked
-%                            spectroscopic data. Only used if defined.
 %
 %   The options for C.ABSORPTION are 'CalcTable', 'LoadTable' and 'OnTheFly'.
 %   Not all fields are used simultaneously. The required set depends on
@@ -105,12 +102,6 @@ function cfile_start( fid, C )
   fprintf( fid, '  Ignore( ppath )\n' );
   fprintf( fid, '  VectorSet( geo_pos, [] )\n' );
   fprintf( fid, '}\n' );
-  fprintf( fid, 'AgendaSet( refr_index_air_agenda ){\n' );
-  fprintf( fid, '  Ignore( f_grid )\n' );
-  fprintf( fid, '  NumericSet( refr_index_air, 1.0 )\n' );
-  fprintf( fid, '  NumericSet( refr_index_air_group, 1.0 )\n' );
-  fprintf( fid, '  refr_index_airMicrowavesEarth\n' );
-  fprintf( fid, '}\n' );
   fprintf( fid, 'AgendaSet( surface_rtprop_agenda ){\n' );
   fprintf( fid, '  Ignore( rtp_los )\n' );
   fprintf( fid, '  InterpAtmFieldToPosition( out=surface_skin_t, field=t_field )\n' );
@@ -131,9 +122,25 @@ function cfile_start( fid, C )
   fprintf( fid, '  Ignore( rte_pos2 )\n' );
   fprintf( fid, '  ppathStepByStep\n' );
   fprintf( fid, '}\n' );
-  fprintf( fid, 'AgendaSet( ppath_step_agenda ){\n' );
-  fprintf( fid, '    ppath_stepRefractionBasic\n' );
-  fprintf( fid, '}\n' );
+  if C.REFRACTION_DO
+    fprintf( fid, 'AgendaSet( refr_index_air_agenda ){\n' );
+    fprintf( fid, '  Ignore( f_grid )\n' );
+    fprintf( fid, '  NumericSet( refr_index_air, 1.0 )\n' );
+    fprintf( fid, '  NumericSet( refr_index_air_group, 1.0 )\n' );
+    fprintf( fid, '  refr_index_airMicrowavesEarth\n' );
+    fprintf( fid, '}\n' );
+    fprintf( fid, 'AgendaSet( ppath_step_agenda ){\n' );
+    fprintf( fid, '    ppath_stepRefractionBasic\n' );
+    fprintf( fid, '}\n' );
+  else
+    fprintf( fid, 'AgendaSet( ppath_step_agenda ){\n' );
+    fprintf( fid, '    Ignore( t_field )\n' );
+    fprintf( fid, '    Ignore( vmr_field )\n' );
+    fprintf( fid, '    Ignore( f_grid )\n' );
+    fprintf( fid, '    Ignore( ppath_lraytrace )\n' );
+    fprintf( fid, '    ppath_stepGeometric\n' );
+    fprintf( fid, '}\n' );    
+  end
   fprintf( fid, '#\n' );
   fprintf( fid, 'NumericSet( molarmass_dry_air, 28.966 )\n' );
   fprintf( fid, 'AgendaSet( g0_agenda ){\n' );
@@ -231,36 +238,6 @@ function cfile_abscalc_basics( fid, C, workfolder )
   fprintf( fid, '  abs_xsec_per_speciesAddConts\n' );
   fprintf( fid, '}\n' );
   fprintf( fid, 'abs_xsec_agenda_checkedCalc\n' );
-  %
-  if 0
-  fprintf( fid, 'abs_linesReadFromHitran( abs_lines, "%s", %.5e, %.5e )\n', ...
-           C.HITRAN_PATH, C.HITRAN_FMIN, C.HITRAN_FMAX );
-  fprintf( fid, 'abs_linesArtscat5FromArtscat34\n' );
-  %
-  % Add hand-picked data:
-  fprintf( fid, 'ArrayOfLineRecordCreate(handpicked)\n' );
-  for z = 1:2
-    if z == 1
-      fname = 'SPECTRO_FOLDER';
-    else
-      fname = 'SPECTRO_FOLDER2';
-    end
-    if isfield( C, fname )
-      spectrofiles = whichfiles( '*.xml', C.(fname) );
-    else
-      spectrofiles = [];
-    end        
-    if ~isempty(spectrofiles)
-      for i = 1 : length(spectrofiles)
-        fprintf( fid, 'abs_linesReadFromArts( handpicked, "%s", %.5e, %.5e )\n', ...
-                 spectrofiles{i}, C.HITRAN_FMIN, C.HITRAN_FMAX );
-        fprintf( fid, ...
-                'abs_linesReplaceWithLines(replacement_lines=handpicked)\n' );
-      end
-    end
-  end
-  %
-  end
   %
   fprintf( fid, 'abs_linesReadFromArts( abs_lines, "%s", %.5e, %.5e )\n', ...
                              C.SPECTRO_FILE, C.SPECTRO_FMIN, C.SPECTRO_FMAX );

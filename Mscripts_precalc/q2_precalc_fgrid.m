@@ -21,8 +21,8 @@
 %      Q.P_GRID
 %      Q.F_RANGES
 %      Q.F_LO_NOMINAL
-%      P.CONTINUA_FILE;
-%      P.SPECTRO_FILE;
+%      P.CONTINUA_FILE
+%      P.SPECTRO_FILE
 %      P.FGRID_TEST_DF
 %      P.FGRID_EDGE_MARGIN
 %
@@ -149,10 +149,7 @@ function f_opt = do_1range( Q, P, workfolder, frange, precs, do_cubic );
   C.SPECTRO_FILE    = P.SPECTRO_FILE;
   C.SPECTRO_FMIN    = min(frange) - L.F_EXTRA;
   C.SPECTRO_FMAX    = max(frange) + L.F_EXTRA;
-  %C.HITRAN_PATH     = P.HITRAN_PATH;
-  %C.HITRAN_FMIN     = min(frange) - L.F_EXTRA;
-  %C.HITRAN_FMAX     = max(frange) + L.F_EXTRA;
-  %C.SPECTRO_FOLDER  = P.SPECTRO_FOLDER;
+  C.REFRACTION_DO   = false;
   C.PPATH_LMAX      = Q.PPATH_LMAX;
   C.PPATH_LRAYTRACE = Q.PPATH_LRAYTRACE;
   C.R_EARTH         = earth_radius;

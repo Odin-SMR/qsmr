@@ -20,7 +20,7 @@ Q.INVEMODE           = invemode;
 
 Q.FOLDER_WORK        = '/tmp';
 
-Q.FOLDER_ABSLOOKUP   = '/QsmrAbsLookups';  
+Q.FOLDER_ABSLOOKUP   = '~/Data/QsmrData';  
 
 topfolder            = q2_topfolder;
 Q.FOLDER_ANTENNA     = fullfile( topfolder, 'DataFiles', 'Antenna' );  

@@ -1,3 +1,27 @@
+2016-06-02  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_precalc/q2_precalc_fgrid.m: C.REFRACTION_DO hard-coded
+	to false.
+
+	* Mscripts_arts/q2_arts_y.m:
+	* Mscripts_arts/q2_inv.m (subfun4retqs):
+	* Settings/q_fields.rst:
+	* Mscripts_arts/q2_artscfile_full.m: Added REFRACTION_DO
+
+	* Mscripts_precalc/q2_precalc_abslookup.m:
+	* Mscripts_precalc/q2_precalc_fgrid.m:
+	* Mscripts_arts/q2_artscfile_full.m: Removed all obselete code
+	around SPECTRO_FOLDER.
+
+	* Mscripts_database/q2_get_atm.m (q2_get_atm): Adopted to change
+	of folders below.
+
+	* Settings/q_fields.rst: Replaced FOLDER_ARTSXMLDATA with
+	FOLDER_MSIS90. Run spell check.
+
+	* Mscripts_arts/q2_inv.m (subfun4l2): L2 was not set for
+	temperature retrievals.
+
 2016-05-27  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_database/l1b_filter.m: Changed defualt for lag0_max to 2.

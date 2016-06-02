@@ -4,13 +4,12 @@ function Q = q_dev(varargin)
 
 Q = q_meso( varargin{:} );
 
-datadir              = '/home/patrick/Outdata2/Qsmr2';
+datadir              = '/home/patrick/Data/QsmrData';
 Q.FOLDER_ABSLOOKUP   = fullfile( datadir, 'AbsLookup' );  
 Q.FOLDER_BDX         = fullfile( datadir, 'SpeciesApriori', 'Bdx' );  
 Q.FOLDER_FGRID       = fullfile( datadir, 'Fgrid' );  
+Q.FOLDER_MSIS90      = fullfile( datadir, 'TemperatureApriori','MSIS90' );  
 
-Q.ABSLOOKUP_OPTION   = '200mK_linear'; %'100mK_linear';
-
-Q.FOLDER_ARTSXMLDATA = '/home/patrick/SVN/ARTS/arts-xml-data';
+Q.ABSLOOKUP_OPTION   = '200mK_linear'; 
 
 Q.FOLDER_WORK        = '/home/patrick/WORKAREA';

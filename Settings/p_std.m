@@ -1,15 +1,11 @@
 % P_STD   Precalculation settings, standard set
 %
-%    Note that the pre-calculations use settings in both P and O. See
+%    Note that the pre-calculations use settings in both P and Q. See
 %    comments (and code) in the pre-calculation functions.
 %
 % FORMAT P = p_std
 
-function P = p_std(use_spectro2)
-%
-if nargin == 0
-  use_spectro2 = false;
-end
+function P = p_std
 
   
 %-------------------------------------------------------------------------------
@@ -78,22 +74,8 @@ topfolder       = q2_topfolder;
 P.CONTINUA_FILE = fullfile( topfolder, 'DataFiles', 'Continua', ...
                                                          'continua_std.arts' );
 
-% Settings determining the set of transitions considered
-%P.HITRAN_PATH       = '/home/patrick/Data/HITRAN_2012/HITRAN2012.par';
-%P.HITRAN_FMIN       = 200e9;
-%P.HITRAN_FMAX       = 1000e9;
-
 % File holding all spectroscopy data
-P.SPECTRO_FILE  = '/home/patrick/Outdata2/Qsmr2/Spectroscopy/smr_linedata.xml';
-
-% Folder with hand-picked spectroscopy data
-%P.SPECTRO_FOLDER    =  fullfile( topfolder, 'DataFiles', 'Spectroscopy' );
-
-% Also allowed to define a second folder. These data will overwrite
-% data from the first folder. This folder can be left undefined.
-%if use_spectro2
-%  P.SPECTRO_FOLDER2 = '/home/patrick/Outdata2/Qsmr2/Spectroscopy';
-%end
+P.SPECTRO_FILE  = '~/Data/QsmrData/Spectroscopy/smr_linedata.xml';
 
 % The set of temperature perturbations
 P.ABS_T_PERT    = symgrid( [0:10:100 120 150] )';

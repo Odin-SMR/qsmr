@@ -88,6 +88,7 @@ xmlStore( fullfile( R.workfolder, 'sensor_los.xml' ), za, 'Matrix', 'binary' );
 %
 % Set structure defining cfile
 %
+C.REFRACTION_DO      = Q.REFRACTION_DO;
 C.PPATH_LMAX         = Q.PPATH_LMAX;
 C.PPATH_LRAYTRACE    = Q.PPATH_LRAYTRACE;
 C.SPECIES            = arts_tgs_cnvrt( Q.ABS_SPECIES );

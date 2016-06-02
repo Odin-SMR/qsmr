@@ -10,12 +10,20 @@ Q.INVEMODE           = 'mesospheric';
 
 
 %---------------------------------------------------------------------------
-%--- Work folder and folders holding pre-calculated data
+%--- Work and data folders
 %---------------------------------------------------------------------------
 
 Q.FOLDER_WORK        = '/tmp';
 
-Q.FOLDER_ABSLOOKUP   = '/QsmrAbsLookups';  
+if exist('/myhome')
+  datadir              = '/QsmrData';    
+else
+  datadir              = '~/Data/QsmrData';
+end
+Q.FOLDER_ABSLOOKUP   = fullfile( datadir, 'AbsLookup' );  
+Q.FOLDER_BDX         = fullfile( datadir, 'SpeciesApriori', 'Bdx' );  
+Q.FOLDER_FGRID       = fullfile( datadir, 'Fgrid' );  
+Q.FOLDER_MSIS90      = fullfile( datadir, 'TemperatureApriori', 'MSIS90' );  
 
 topfolder            = q2_topfolder;
 Q.FOLDER_ANTENNA     = fullfile( topfolder, 'DataFiles', 'Antenna' );  
@@ -23,19 +31,11 @@ Q.FOLDER_BACKEND     = fullfile( topfolder, 'DataFiles', 'Backend' );
 
 
 %---------------------------------------------------------------------------
-%--- NaNs for folders only used for development
-%---------------------------------------------------------------------------
-
-Q.FOLDER_ARTSXMLDATA = NaN;
-Q.FOLDER_BDX         = NaN;  
-Q.FOLDER_FGRID       = NaN;  
-
-
-%---------------------------------------------------------------------------
 %--- Absorption tables
 %---------------------------------------------------------------------------
 
-Q.ABSLOOKUP_OPTION   = [];
+%Q.ABSLOOKUP_OPTION   = [];
+Q.ABSLOOKUP_OPTION   = '200mK_linear';
 Q.F_GRID_NFILL       = 0;
 Q.ABS_P_INTERP_ORDER = 1;
 Q.ABS_T_INTERP_ORDER = 3;
@@ -45,6 +45,7 @@ Q.ABS_T_INTERP_ORDER = 3;
 %--- RT and sensor
 %---------------------------------------------------------------------------
 
+Q.REFRACTION_DO      = false;  
 Q.PPATH_LMAX         = 15e3;
 Q.PPATH_LRAYTRACE    = 20e3;
 
@@ -118,6 +119,7 @@ switch freqmode
   Q.F_RANGES                = 544.857e9 + 75e6*[-1 1];
   Q.ZTAN_LIMIT_TOP          = 105e3;
   Q.ZTAN_LIMIT_BOT          = [ 40e3 40e3 40e3 40e3 ];
+  Q.ZTAN_MIN_RANGE          = [ 45e3 70e3 ];
   %
   Q.T.L2                    = false;
   Q.T.GRID                  = q2_pgrid( 40e3, 100e3, 8 );
@@ -140,7 +142,7 @@ switch freqmode
   
  case 21
   %
-  Q.GA_START                 = 100;
+  Q.GA_START                 = 10;
   %
   Q.P_GRID                   = q2_pgrid( [], 150e3 ); 
   %
@@ -152,8 +154,9 @@ switch freqmode
   Q.F_RANGES                 = [ 551.13e9 551.58e9; ];
   Q.ZTAN_LIMIT_TOP           = 150e3;
   Q.ZTAN_LIMIT_BOT           = [ 40e3 40e3 40e3 40e3 ];
+  Q.ZTAN_MIN_RANGE           = [ 45e3 80e3 ];
   %
-  Q.T.L2                     = false;
+  Q.T.L2                     = true;
   Q.T.GRID                   = q2_pgrid( 40e3, 150e3, 4 );
   Q.T.SOURCE                 = 'WebApi';
   %
@@ -162,7 +165,7 @@ switch freqmode
   Q.ABS_SPECIES(1).RETRIEVE  = true;
   Q.ABS_SPECIES(1).L2        = true;
   Q.ABS_SPECIES(1).L2NAME    = 'NO / 551 GHz / 45 to 115 km';
-  Q.ABS_SPECIES(1).GRID      = q2_pgrid( 40e3, 140e3, 4 );
+  Q.ABS_SPECIES(1).GRID      = q2_pgrid( 40e3, 150e3, 4 );
   Q.ABS_SPECIES(1).UNC_REL   = 1;
   Q.ABS_SPECIES(1).UNC_ABS   = 1e-8;
   Q.ABS_SPECIES(1).CORRLEN   = 10e3;
@@ -172,7 +175,7 @@ switch freqmode
   Q.ABS_SPECIES(2).ISOFAC    = 1;
   Q.ABS_SPECIES(2).RETRIEVE  = true;
   Q.ABS_SPECIES(2).L2        = true;
-  Q.ABS_SPECIES(2).GRID      = q2_pgrid( 40e3, 100e3, 4 );
+  Q.ABS_SPECIES(2).GRID      = q2_pgrid( 40e3, 110e3, 4 );
   Q.ABS_SPECIES(2).L2NAME    = 'O3 / 551 GHz / 45 to 90 km';
   Q.ABS_SPECIES(2).UNC_REL   = 0.5;
   Q.ABS_SPECIES(2).UNC_ABS   = 1e-6;

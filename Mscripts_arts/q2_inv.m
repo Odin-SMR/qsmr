@@ -24,6 +24,22 @@ if size(L1B.Spectrum,2) < Q.MIN_N_SPECTRA
   L2I = [];
   return
 end
+%
+if min(L1B.Altitude) > min(Q.ZTAN_MIN_RANGE)
+  L2  = sprintf( ...
+      'Scan does not cover lower end the required range (%0.1f vs. %0.1f km)', ...
+                                  min(L1B.Altitude)/1e3, min(Q.ZTAN_MIN_RANGE)/1e3 );
+  L2I = [];
+  return
+end
+%
+if max(L1B.Altitude) < max(Q.ZTAN_MIN_RANGE)
+  L2  = sprintf( ...
+      'Scan does not reach upper end of the required range (%0.1f vs. %0.1f km)', ...
+                                  max(L1B.Altitude)/1e3, max(Q.ZTAN_MIN_RANGE)/1e3 );
+  L2I = [];
+  return
+end
 
 
 
@@ -149,6 +165,7 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
                               sprintf( 'abslookup_fmode%02d.xml', Q.FREQMODE ) );
   C.ABS_P_INTERP_ORDER = Q.ABS_P_INTERP_ORDER;
   C.ABS_T_INTERP_ORDER = Q.ABS_T_INTERP_ORDER;
+  C.REFRACTION_DO      = Q.REFRACTION_DO;
   C.PPATH_LMAX         = Q.PPATH_LMAX;
   C.PPATH_LRAYTRACE    = Q.PPATH_LRAYTRACE;
   C.SPECIES            = arts_tgs_cnvrt( Q.ABS_SPECIES );
@@ -561,7 +578,7 @@ function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
          L2(end+1).Product   = Q.ABS_SPECIES(ig).L2NAME;
          %
          % Index of points after removing end points.
-         iout                = 3 : length(ind)-2;
+         iout                = 2 : length(ind)-1;
          ind2                = ind(iout);
          %
          L2(end).Pressure    = Q.ABS_SPECIES(ig).GRID(iout);
@@ -579,8 +596,21 @@ function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
      case 'Atmospheric temperatures'   %------------------------------------------
        %
        if Q.T.RETRIEVE & Q.T.L2
+         %
          is_l2               = true;
-         assert(0);
+         is_gas              = false;
+         L2(end+1).Product   = 'Temperature';
+         %
+         % Index of points after removing end points.
+         iout                = 2 : length(ind)-1;
+         ind2                = ind(iout);
+         %
+         L2(end).Pressure    = Q.T.GRID(iout);
+         L2(end).Altitude    = interpp( R.ATM.P, R.z_field, L2(end).Pressure );
+         L2(end).Temperature = interpp( R.ATM.P, R.t_field, L2(end).Pressure );
+         L2(end).Apriori     = interpp( R.ATM.P, R.ATM.T,   L2(end).Pressure );
+         %
+         L2(end).VMR         = NaN;
        end
      
      case 'Sensor pointing' %-----------------------------------------------------
