@@ -13,3 +13,5 @@ Q.FOLDER_MSIS90      = fullfile( datadir, 'TemperatureApriori','MSIS90' );
 Q.ABSLOOKUP_OPTION   = '200mK_linear'; 
 
 Q.FOLDER_WORK        = '/home/patrick/WORKAREA';
+
+Q.T.L2               = true;

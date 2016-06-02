@@ -232,22 +232,18 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
     R.xa_vmr{i} = interpp( R.ATM.P, R.ATM.VMR(i,:)', Q.ABS_SPECIES(i).GRID );
     std         = min( 1e3, max( Q.ABS_SPECIES(i).UNC_REL, ...
                                  Q.ABS_SPECIES(i).UNC_ABS./R.xa_vmr{i} ) );
+    if Q.ABS_SPECIES(i).CORRLEN <= 0
+      error( ['Q.ABS_SPECIES.CORRLEN must be > 0. If you want a diagonal SX ' ...
+              'just set the correlation length to a very small value (e.g. ' ...
+              '0.1).'] );
+    end
     lc          = Q.ABS_SPECIES(i).CORRLEN/15.5e3;
     cco         = 0.001;
     %
-    if 0
-      % This version calculates the inverse purely numerically, in arts_sx:
-      Q.ABS_SPECIES(i).SX = covmat1d_from_cfun( Q.ABS_SPECIES(i).GRID, ...
-                                                [ Q.ABS_SPECIES(i).GRID, std ], ...
-                                                'exp', lc, cco, @log10 );
-    else
-      % This version uses analytical expression for the inverse, but works
-      % only for constant spacing:
-      dz       = abs( diff( log10( Q.ABS_SPECIES(i).GRID ) ) );
-      assert( max(abs(dz-dz(1))) < 1e-9 );
-      [Q.ABS_SPECIES(i).SX,Q.ABS_SPECIES(i).SXINV] = ...
+    dz       = abs( diff( log10( Q.ABS_SPECIES(i).GRID ) ) );
+    assert( max(abs(dz-dz(1))) < 1e-9 );
+    [Q.ABS_SPECIES(i).SX,Q.ABS_SPECIES(i).SXINV] = ...
                                covmat1d_markov( length(std), std, dz(1), lc, cco );
-    end
   end
   %
   clear vector_name file_name std lc cco dz
@@ -275,6 +271,11 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
                                                                         vector_name );
     T{end+1} = '   hse = "on" )';
     %
+    if Q.T.CORRLEN <= 0
+      error( ['Q.T.CORRLEN must be > 0. If you want a diagonal SX ' ...
+              'just set the correlation length to a very small value (e.g. ' ...
+              '0.1).'] );
+    end
     dz       = abs( diff( log10( Q.T.GRID ) ) );
     assert( max(abs(dz-dz(1))) < 1e-9 );
     std      = interpp( [100e2 10e2 1e2 10 1]', vec2col(Q.T.UNC), Q.T.GRID );

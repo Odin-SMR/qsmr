@@ -1,5 +1,11 @@
 2016-06-02  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
+	* Mscripts_arts/q2_inv.m (subfun4retqs): CORRLEN values now
+	checked to be > 0. Error message includes hint to obtain a
+	diagonal SX.
+
+2016-06-02  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
 	* Mscripts_precalc/q2_precalc_fgrid.m: C.REFRACTION_DO hard-coded
 	to false.
 
