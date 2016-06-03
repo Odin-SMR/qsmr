@@ -15,12 +15,18 @@ Q.INVEMODE           = invemode;
 
 
 %---------------------------------------------------------------------------
-%--- Work folder and folders holding pre-calculated data
+%--- Work and data folders
 %---------------------------------------------------------------------------
 
-Q.FOLDER_WORK        = '/tmp';
-
-Q.FOLDER_ABSLOOKUP   = '~/Data/QsmrData';  
+if exist('/myhome')
+  datadir              = '/QsmrData';    
+else
+  datadir              = '~/Data/QsmrData';
+end
+Q.FOLDER_ABSLOOKUP   = fullfile( datadir, 'AbsLookup' );  
+Q.FOLDER_BDX         = fullfile( datadir, 'SpeciesApriori', 'Bdx' );  
+Q.FOLDER_FGRID       = fullfile( datadir, 'Fgrid' );  
+Q.FOLDER_MSIS90      = fullfile( datadir, 'TemperatureApriori', 'MSIS90' );  
 
 topfolder            = q2_topfolder;
 Q.FOLDER_ANTENNA     = fullfile( topfolder, 'DataFiles', 'Antenna' );  
@@ -28,19 +34,11 @@ Q.FOLDER_BACKEND     = fullfile( topfolder, 'DataFiles', 'Backend' );
 
 
 %---------------------------------------------------------------------------
-%--- NaNs for folders only used for development
-%---------------------------------------------------------------------------
-
-Q.FOLDER_ARTSXMLDATA = NaN;
-Q.FOLDER_BDX         = NaN;  
-Q.FOLDER_FGRID       = NaN;  
-
-
-%---------------------------------------------------------------------------
 %--- Absorption tables
 %---------------------------------------------------------------------------
 
-Q.ABSLOOKUP_OPTION   = [];
+%Q.ABSLOOKUP_OPTION   = [];
+Q.ABSLOOKUP_OPTION   = '200mK_linear';
 Q.F_GRID_NFILL       = 0;
 Q.ABS_P_INTERP_ORDER = 1;
 Q.ABS_T_INTERP_ORDER = 3;
@@ -50,6 +48,7 @@ Q.ABS_T_INTERP_ORDER = 3;
 %--- RT and sensor
 %---------------------------------------------------------------------------
 
+Q.REFRACTION_DO      = false;  
 Q.PPATH_LMAX         = 15e3;
 Q.PPATH_LRAYTRACE    = 20e3;
 
@@ -127,6 +126,7 @@ switch freqmode
   Q.F_RANGES                = [ 501.16e9 501.60e9; 501.96e9 502.40e9 ];
   Q.ZTAN_LIMIT_TOP          = 60e3;
   Q.ZTAN_LIMIT_BOT          = [ 20e3 17e3 13e3 13e3 ];
+  Q.ZTAN_MIN_RANGE          = [ 25e3 40e3 ];
   %
   Q.T.L2                    = false;
   Q.T.GRID                  = q2_pgrid( 10e3, 65e3, 4 );
@@ -215,6 +215,8 @@ switch freqmode
     
  case 2
   %
+  error( 'Fmode 2 not yet fully defined' );
+  %
   Q.FRONTEND_NR             = 4;
   Q.F_LO_NOMINAL            = 548.500e9;
   Q.SIDEBAND_LEAKAGE        = 0.04;
@@ -282,6 +284,7 @@ switch freqmode
   Q.F_RANGES                 = [ 551.13e9 551.58e9; 551.72e9 552.17e9 ];
   Q.ZTAN_LIMIT_TOP           = 150e3;
   Q.ZTAN_LIMIT_BOT           = [ 30e3 30e3 30e3 30e3 ];
+  Q.ZTAN_MIN_RANGE           = [ 40e3 75e3 ];
   %
   Q.T.L2                     = false;
   Q.T.GRID                   = q2_pgrid( 20e3, 150e3, 4 );

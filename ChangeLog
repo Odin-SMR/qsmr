@@ -1,3 +1,7 @@
+2016-06-03  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Settings/q_std.m: Updated to hold recently added fields. 
+
 2016-06-02  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_arts/q2_inv.m (subfun4retqs): CORRLEN values now
