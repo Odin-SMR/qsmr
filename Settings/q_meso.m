@@ -20,9 +20,9 @@ if exist('/myhome')
 else
   datadir              = '~/Data/QsmrData';
 end
-Q.FOLDER_ABSLOOKUP   = fullfile( datadir, 'AbsLookup' );  
+Q.FOLDER_ABSLOOKUP   = fullfile( datadir, 'AbsLookup', Q.INVEMODE );  
 Q.FOLDER_BDX         = fullfile( datadir, 'SpeciesApriori', 'Bdx' );  
-Q.FOLDER_FGRID       = fullfile( datadir, 'Fgrid' );  
+Q.FOLDER_FGRID       = fullfile( datadir, 'Fgrid', Q.INVEMODE );  
 Q.FOLDER_MSIS90      = fullfile( datadir, 'TemperatureApriori', 'MSIS90' );  
 
 topfolder            = q2_topfolder;
@@ -35,7 +35,7 @@ Q.FOLDER_BACKEND     = fullfile( topfolder, 'DataFiles', 'Backend' );
 %---------------------------------------------------------------------------
 
 %Q.ABSLOOKUP_OPTION   = [];
-Q.ABSLOOKUP_OPTION   = '200mK_linear';
+Q.ABSLOOKUP_OPTION   = '100mK_linear';
 Q.F_GRID_NFILL       = 0;
 Q.ABS_P_INTERP_ORDER = 1;
 Q.ABS_T_INTERP_ORDER = 3;

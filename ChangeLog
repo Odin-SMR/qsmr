@@ -1,6 +1,11 @@
+2016-06-06  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Changes to have different folders for f_grids-a and abs_lookup-s
+	for stnd and meso inversions. 
+
 2016-06-03  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
-	* Settings/q_std.m: Updated to hold recently added fields. 
+	* Settings/q_std.m: Updated to hold recently added fields.
 
 2016-06-02  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
