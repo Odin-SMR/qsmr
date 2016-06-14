@@ -29,7 +29,7 @@ Q.FOLDER_BDX         = fullfile( datadir, 'SpeciesApriori', 'Bdx' );
 Q.FOLDER_FGRID       = fullfile( datadir, 'Fgrid', Q.INVEMODE );  
 Q.FOLDER_MSIS90      = fullfile( datadir, 'TemperatureApriori', 'MSIS90' );  
 
-topfolder            = q2_topfolder;
+topfolder            = pwd;
 Q.FOLDER_ANTENNA     = fullfile( topfolder, 'DataFiles', 'Antenna' );  
 Q.FOLDER_BACKEND     = fullfile( topfolder, 'DataFiles', 'Backend' );  
 
