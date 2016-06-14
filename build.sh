@@ -17,3 +17,5 @@ ${MATLAB_ROOT}/bin/mcc \
 	-R -nojvm \
 	-R -nodisplay \
 	runscript
+
+tar -czf qsmr.tar.gz readme.txt run_runscript.sh runscript
