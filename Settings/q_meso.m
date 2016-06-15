@@ -10,15 +10,15 @@ Q.INVEMODE           = 'meso';
 
 
 %---------------------------------------------------------------------------
-%--- Work and data folders
+%--- Different paths
 %---------------------------------------------------------------------------
 
+Q.ARTS               = 'arts';
 Q.FOLDER_WORK        = '/tmp';
-
 if exist('/myhome')
-  datadir              = '/QsmrData';    
+  datadir            = '/QsmrData';    
 else
-  datadir              = '~/Data/QsmrData';
+  datadir            = '~/Data/QsmrData';
 end
 Q.FOLDER_ABSLOOKUP   = fullfile( datadir, 'AbsLookup', Q.INVEMODE );  
 Q.FOLDER_BDX         = fullfile( datadir, 'SpeciesApriori', 'Bdx' );  

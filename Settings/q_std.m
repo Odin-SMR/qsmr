@@ -15,21 +15,23 @@ Q.INVEMODE           = invemode;
 
 
 %---------------------------------------------------------------------------
-%--- Work and data folders
+%--- Different paths
 %---------------------------------------------------------------------------
+
+Q.ARTS               = 'arts';
 Q.FOLDER_WORK        = '/tmp';
 
 if exist('/myhome')
-  datadir              = '/QsmrData';    
+  datadir            = '/QsmrData';    
 else
-  datadir              = '~/Data/QsmrData';
+  datadir            = '~/Data/QsmrData';
 end
 Q.FOLDER_ABSLOOKUP   = fullfile( datadir, 'AbsLookup', Q.INVEMODE );  
 Q.FOLDER_BDX         = fullfile( datadir, 'SpeciesApriori', 'Bdx' );  
 Q.FOLDER_FGRID       = fullfile( datadir, 'Fgrid', Q.INVEMODE );  
 Q.FOLDER_MSIS90      = fullfile( datadir, 'TemperatureApriori', 'MSIS90' );  
 
-topfolder            = pwd;
+topfolder            = q2_topfolder;
 Q.FOLDER_ANTENNA     = fullfile( topfolder, 'DataFiles', 'Antenna' );  
 Q.FOLDER_BACKEND     = fullfile( topfolder, 'DataFiles', 'Backend' );  
 

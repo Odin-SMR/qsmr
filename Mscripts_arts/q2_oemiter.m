@@ -130,7 +130,7 @@ else
   cfile = R.cfile_y;
 end
 %a
-result = q2_arts( ['-r000 ',cfile] );
+result = q2_arts( Q, ['-r000 ',cfile] );
 %
 y = xmlLoad( fullfile( R.workfolder, 'y.xml' ) );
 %

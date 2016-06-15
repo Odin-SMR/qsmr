@@ -1,7 +1,22 @@
+2016-06-15  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Settings/q_std.m:
+	* Settings/q_meso.m: Setting of Q.ARTS added.
+
+	* Settings/q_fields.rst (Qsmr): Added description of flield ARTS.
+
+	* Mscripts_precalc/q2_precalc_fgrid.m (f_opt):
+	* Mscripts_precalc/q2_precalc_abslookup.m (do_1fmode):
+	* Mscripts_arts/q2_oemiter.m:
+	* Mscripts_arts/q2_arts_y.m:
+	* Mscripts_arts/q2_arts_sensor_parts.m: Adopted call of q2_arts.
+
+	* Mscripts_arts/q2_arts.m: Now takes Q as input and uses Q.ARTS.
+
 2016-06-06  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Changes to have different folders for f_grids-a and abs_lookup-s
-	for stnd and meso inversions. 
+	for stnd and meso inversions.
 
 2016-06-03  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 

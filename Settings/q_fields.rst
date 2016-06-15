@@ -74,6 +74,9 @@ ABS_T_INTERP_ORDER
    absorption look-up table. See further the ARTS workspace variable with the
    same name.
 
+ARTS
+   A string. Name or path of the ARTS executable to use.
+
 BACKEND_NR
    An integer. Index of expected backend. Index coding described in L1B ATBD.
 

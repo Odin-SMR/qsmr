@@ -107,7 +107,7 @@ function A = do_1fmode( Q, P, workfolder, prec, do_cubic )
   %
   cfile  = q2_artscfile_full( C, workfolder );
   %
-  status = q2_arts( cfile );
+  status = q2_arts( Q, cfile );
   A      = xmlLoad( fullfile( workfolder, 'abs_lookup.xml' ) );
   
 return

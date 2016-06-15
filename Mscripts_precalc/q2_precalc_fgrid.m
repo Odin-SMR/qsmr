@@ -194,7 +194,7 @@ function f_opt = do_1range( Q, P, workfolder, frange, precs, do_cubic );
     xmlStore( fullfile( workfolder, 'sensor_los.xml' ), za, ...
                                                          'Matrix', 'binary' );
     %
-    status = q2_arts( cfile );
+    status = q2_arts( Q, cfile );
     y      = xmlLoad( fullfile( workfolder, 'y.xml' ) );
     y      = reshape( y, length(f_fine), length(za) );
     Y      = [ Y, y ];
