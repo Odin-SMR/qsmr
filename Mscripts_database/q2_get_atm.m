@@ -97,7 +97,13 @@ for i = 1 : length( Q.ABS_SPECIES )
    case 'WebApi'
     %
     VMR = get_scan_aux_data( LOG.URLS.(sprintf('URL_apriori_%s',species)) );
+    if isempty(VMR.VMR)
+      error( 'WebApi returned empty VMR field.' );
+    end
     ATM.VMR(i,:,1,1) = interpp( VMR.Pressure, VMR.VMR, ATM.P );    
+    if any(isnan(ATM.VMR(i,:,1,1)))
+      error( 'WebApi returned VMR data that resulted in NaN(s).' );
+    end
     
    case 'Bdx'
     %

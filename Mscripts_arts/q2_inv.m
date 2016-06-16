@@ -1,5 +1,12 @@
 function [L2,L2I] = q2_inv(LOG,L1B,Q)  
 
+
+%
+% Put the complete main function inside try/catch in order to not stop batch
+% processing and to include an error message in L2 
+%
+try
+    
 %  
 % Basic checks of data
 %
@@ -12,35 +19,24 @@ q2_check_l1b( L1B, Q );
 L1B = l1b_adjust_to_q( L1B, Q, true );
 %
 if size(L1B.Spectrum,1) < Q.MIN_N_FREQS
-  L2  = sprintf( 'Too few frequencies left in spectra (%d)', ...
-                                            size(L1B.Spectrum,1) );
-  L2I = [];
-  return
+  error( 'Too few frequencies left in spectra (%d)', size(L1B.Spectrum,1) );
 end
 %
 if size(L1B.Spectrum,2) < Q.MIN_N_SPECTRA
-  L2  = sprintf( 'Too few spectra left in scan (%d)', ...
-                                            size(L1B.Spectrum,2) );
-  L2I = [];
-  return
+  error( 'Too few spectra left in scan (%d)', size(L1B.Spectrum,2) );
 end
 %
 if min(L1B.Altitude) > min(Q.ZTAN_MIN_RANGE)
-  L2  = sprintf( ...
+  error( ...
       'Scan does not cover lower end the required range (%0.1f vs. %0.1f km)', ...
                                   min(L1B.Altitude)/1e3, min(Q.ZTAN_MIN_RANGE)/1e3 );
-  L2I = [];
-  return
 end
 %
 if max(L1B.Altitude) < max(Q.ZTAN_MIN_RANGE)
-  L2  = sprintf( ...
+  error( ...
       'Scan does not reach upper end of the required range (%0.1f vs. %0.1f km)', ...
                                   max(L1B.Altitude)/1e3, max(Q.ZTAN_MIN_RANGE)/1e3 );
-  L2I = [];
-  return
 end
-
 
 
 %
@@ -143,6 +139,15 @@ R.t_field = xmlLoad( fullfile( R.workfolder, 't_field.xml' ) );
 % Create L2
 %
 [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG, L1B, X );
+
+
+%
+% Catch errors
+%
+catch ME
+  L2  = ME.message;
+  L2I = [];
+end
 
 return
 
