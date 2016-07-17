@@ -7,7 +7,7 @@ Q = q_meso( varargin{:} );
 datadir              = '/home/patrick/Data/QsmrData';
 Q.FOLDER_ABSLOOKUP   = fullfile( datadir, 'AbsLookup', Q.INVEMODE );  
 Q.FOLDER_BDX         = fullfile( datadir, 'SpeciesApriori', 'Bdx' );  
-Q.FOLDER_FGRID       = fullfile( datadir, 'Fgrid' );  
+Q.FOLDER_FGRID       = fullfile( datadir, 'Fgrid', Q.INVEMODE );  
 Q.FOLDER_MSIS90      = fullfile( datadir, 'TemperatureApriori','MSIS90' );  
 
 Q.ABSLOOKUP_OPTION   = '500mK_cubic'; 

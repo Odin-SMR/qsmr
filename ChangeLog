@@ -1,8 +1,13 @@
+2016-07-17  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* notes.txt: Extended with a description on how to generate lookup
+	tables.
+
 2016-06-16  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_arts/q2_inv.m: Put try/catch around the complete
 	function. That is, the function should now not break if there is
-	an error, but instead returning L2 with an error message. 
+	an error, but instead returning L2 with an error message.
 
 	* Mscripts_database/q2_get_atm.m (q2_get_atm): Added some checks
 	on VMR data returned by WebApi.

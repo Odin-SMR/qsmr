@@ -17,3 +17,60 @@ For automatic check of Q, do
 ---
 Q = q_std(1);    
 q2_check_q( Q );
+
+
+
+To create alternative absorption lookup tables
+---
+
+All tests should be done on files outside Dropbox. Make a copy of QsmrData.
+For example:
+
+cd ~/Data
+cp -r ~/Dropbox/QsmrData QsmrDataTest
+
+Remove all existing lookop table files:
+
+rm QsmrDataTest/AbsLookup/*/*/*.xml*
+
+Edit QsmrDataTest/Spectroscopy/smr_linedata.xml to introduce your changes. Let
+us use the ozone transition in fmode 2 as example. It is found on line 176538
+in smr_linedata.xml. Let us set the air broadening width to 27000 Hz/Pa as example:
+
+@ O3-666 544857.4870e6 0 3.5261e-16 300 2.99004787373028e-22 27000 33729.4253264249 0.76 0.76 296 0 -1 -0.01 0.1 0.1 0.1 -1 -1.83534124844233e-12
+
+The format is denoted as ARTSCAT-3. For a description of this spectroscopic
+format, see page 20 of
+
+http://www.radiativetransfer.org/misc/arts-doc-stable/uguide/arts_theory.pdf
+
+In the Q-file you will use (I will call it q_test.m below), set
+Q.FOLDER_ABSLOOKUP to the new location, e.g.:
+
+Q.FOLDER_ABSLOOKUP   = fullfile( '/home/patrick/Data/QsmrDataTest/AbsLookup', Q.INVEMODE );  
+
+The small function below then generates the lookup table matching
+Q.ABSLOOKUP_OPTION   = '500mK_cubic'; 
+
+function run_precalcs
+
+Q = q_test( 2 );
+
+[workfolder,rm_wfolder] = q2_create_workfolder( Q );
+%
+if rm_wfolder
+  cu = onCleanup( @()q2_delete_workfolder( workfolder ) );
+end
+
+P = p_std;
+P.SPECTRO_FILE  = '~/Data/QsmrDataTest/Spectroscopy/smr_linedata.xml';
+
+q2_precalc_abslookup( Q, P, workfolder, 500e-3, 1 );
+
+return
+
+That is all! You can now make retrievals with the new lookup table. Just make
+sure that you your settings in Q actually picks out the lookup table.
+
+If you also want to generate a new f_grid, you need to remove the existing ones
+and include a call of q2_precalc_fgrid in the function above.
