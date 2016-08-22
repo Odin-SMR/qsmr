@@ -2,7 +2,7 @@ function Q = q_docker(fmode)
 
 Q = q_std( fmode );
 
-Q.ARTS               = 'arts';
+Q.ARTS               = 'LD_LIBRARY_PATH="" arts';
 Q.FOLDER_WORK        = '/tmp';
 
 datadir            = '/QsmrData';
