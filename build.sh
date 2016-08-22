@@ -19,3 +19,4 @@ ${MATLAB_ROOT}/bin/mcc \
 	runscript
 
 tar -czf qsmr.tar.gz readme.txt run_runscript.sh runscript
+tar -czf qsmr_data.tar.gz DataFiles

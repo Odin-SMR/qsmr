@@ -21,11 +21,7 @@ Q.INVEMODE           = invemode;
 Q.ARTS               = 'arts';
 Q.FOLDER_WORK        = '/tmp';
 
-if exist('/myhome')
-  datadir            = '/QsmrData';    
-else
-  datadir            = '~/Data/QsmrData';
-end
+datadir            = '~/Data/QsmrData';
 Q.FOLDER_ABSLOOKUP   = fullfile( datadir, 'AbsLookup', Q.INVEMODE );  
 Q.FOLDER_BDX         = fullfile( datadir, 'SpeciesApriori', 'Bdx' );  
 Q.FOLDER_FGRID       = fullfile( datadir, 'Fgrid', Q.INVEMODE );  

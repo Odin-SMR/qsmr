@@ -12,7 +12,7 @@ function []=runscript(url)
       freqmode = cellfun(@str2num, urlparts(end-1))
    end
 
-   [L2,L2I] = q2_inv( LOG.Info, L1B, q_std(freqmode))
+   [L2,L2I] = q2_inv( LOG.Info, L1B, q_docker(freqmode))
    save('l2.mat', '-ascii', 'L2')
    save('l2i.mat', '-ascii', 'L2I')
 return
