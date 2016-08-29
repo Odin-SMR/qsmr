@@ -1,3 +1,4 @@
+set -e
 echo $LD_LIBRARY_PATH
 MATLAB_ROOT=/opt/MATLAB/R2015b
 ${MATLAB_ROOT}/bin/mcc \
