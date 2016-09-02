@@ -1,3 +1,14 @@
+2016-08-29  Jimmy Petersson  <jimmy@molflow.com>
+
+	* Settings/q_docker.m: Reset LD_LIBRARY_PATH when calling arts.
+	* runscript.m: Add support for data delivery to odin api.
+
+2016-08-22  Jimmy Petersson  <jimmy@molflow.com>
+
+	* runscript.m: Let runscript take the odin api url as an argument.
+	* Settings/q_docker.m: Modify the standard settings so that all
+	data can be found in the docker container.
+
 2016-07-17  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* notes.txt: Extended with a description on how to generate lookup
