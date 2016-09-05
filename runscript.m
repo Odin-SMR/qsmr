@@ -7,15 +7,7 @@ function []=runscript(source_url, target_url, target_username, target_password)
    LOG = get_scan_log(source_url)
    L1B = get_scan_l1b_data(LOG.Info.URLS.URL_spectra)
 
-   % Extract freq mode from url
-   urlparts = strsplit(source_url, '/')
-   if isequal(urlparts(end), {''})
-      freqmode = cellfun(@str2num, urlparts(end-2))
-   else
-      freqmode = cellfun(@str2num, urlparts(end-1))
-   end
-
-   [L2,L2I] = q2_inv( LOG.Info, L1B, q_docker(freqmode))
+   [L2,L2I] = q2_inv( LOG.Info, L1B, q_docker(LOG.Info.FreqMode))
 
    if nargin < 2
       save('L2.mat', 'L2')
