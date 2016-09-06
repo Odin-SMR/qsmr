@@ -17,5 +17,6 @@ function []=runscript(source_url, target_url, target_username, target_password)
                             target_username, 'Password', target_password)
        data = struct('L2', L2, 'L2I', L2I)
        response = webwrite(target_url, data, options)
+       % TODO: Exit with failure if webwrite failed
    end
-return
+exit(0)
