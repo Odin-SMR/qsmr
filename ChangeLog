@@ -1,3 +1,11 @@
+2016-09-06  Jimmy Petersson  <jimmy@molflow.com>
+
+	* runscript.m: Call exit when runscript is done.
+
+2016-09-05  Jimmy Petersson  <jimmy@molflow.com>
+
+	* runscript.m: Get FreqMode from log data instead of from api url.
+
 2016-08-29  Jimmy Petersson  <jimmy@molflow.com>
 
 	* Settings/q_docker.m: Reset LD_LIBRARY_PATH when calling arts.
