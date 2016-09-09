@@ -12,7 +12,7 @@ function dim = daysinmonth(varargin)
 %   URL:         http://home.online.no/~pjacklam
 
    nargsin = nargin;
-   error(nargchk(0, 2, nargsin));
+   %error(nargchk(0, 2, nargsin));
    if nargsin
       argv = {1 1};
       argv(1:nargsin) = varargin;

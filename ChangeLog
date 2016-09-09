@@ -1,3 +1,13 @@
+2016-09-09  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Settings/q_fields.rst: Revised and updated.
+
+	* Mscripts_atmlab/time/: All files recopied from Atmlab. Many of
+	these functions used nargchk and Matlab 2016a gives a warning
+	about this function, that it will be removed. For this reason,
+	the checks inside these functions have been commented out in
+	Atmlab and copied to move these changes Qsmr. 
+
 2016-09-06  Jimmy Petersson  <jimmy@molflow.com>
 
 	* runscript.m: Call exit when runscript is done.

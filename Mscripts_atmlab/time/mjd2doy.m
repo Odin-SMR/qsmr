@@ -14,6 +14,8 @@
 % 2006-03-31   Created by Patrick Eriksson.
 
 function d = mjd2doy(mjd)
+                                                                            %&%
+rqre_datatype( mjd, @isnumeric );                                           %&%
 
 %make sure the data is double
 mjd = double(mjd);
@@ -22,7 +24,7 @@ mjd = double(mjd);
 
 %= *dayofyear* does not handle column vectors
 %
-if length(year) > 1 & size(year,1) > 1
+if dimens(year) < 2  & length(year) > 1
   year   = vec2row( year );
   month  = vec2row( month );
   day    = vec2row( day );

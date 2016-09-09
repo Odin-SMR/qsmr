@@ -24,7 +24,7 @@ function [year, month, day, hour, minute, second] = jd2date(jd)
 %   URL:         http://home.online.no/~pjacklam
 
    nargsin = nargin;
-   error(nargchk(1, 1, nargsin));
+   %error(nargchk(1, 1, nargsin));
 
    % Adding 0.5 to JD and taking FLOOR ensures that the date is correct.
    % Here are some sample values:

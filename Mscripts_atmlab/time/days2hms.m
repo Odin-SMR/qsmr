@@ -14,7 +14,7 @@ function [hour, minute, second] = days2hms(days)
 %   E-mail:      pjacklam@online.no
 %   URL:         http://home.online.no/~pjacklam
 
-   error(nargchk(1, 1, nargin));
+%error(nargchk(1, 1, nargin));
 
    second = 86400 * days;
    hour   = fix(second/3600);           % get number of hours

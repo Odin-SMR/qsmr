@@ -11,6 +11,6 @@ function mjd = jd2mjd(jd)
 %   E-mail:      pjacklam@online.no
 %   URL:         http://home.online.no/~pjacklam
 
-   error(nargchk(1, 1, nargin));
+%error(nargchk(1, 1, nargin));
 
    mjd = jd - 2400000.5;

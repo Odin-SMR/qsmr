@@ -24,7 +24,7 @@ function [year, month, day, hour, minute, second] = mjd2date(mjd)
 %   URL:         http://home.online.no/~pjacklam
 
    nargsin = nargin;
-   error(nargchk(1, 1, nargsin));
+   %error(nargchk(1, 1, nargsin));
 
    % We could have got everything by just using
    %

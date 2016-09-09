@@ -24,7 +24,7 @@ function [year, month, day, hour, minute, second] = jd2jdate(jday)
 %   URL:         http://home.online.no/~pjacklam
 
    nargsin = nargin;
-   error(nargchk(1, 1, nargsin));
+   %error(nargchk(1, 1, nargsin));
 
    ijday = floor(jday);                 % integer part
    fjday = jday - ijday;                % fraction part

@@ -14,6 +14,9 @@
 function s = mjd2string( mjd, onlyday )
 %
 if nargin < 2,  onlyday = false; end
+                                                    %&%
+rqre_datatype( mjd, @istensor0 );                   %&%
+rqre_datatype( onlyday, @isboolean );               %&%
   
   
 [year,month,day,h,m,s] = mjd2date( mjd );

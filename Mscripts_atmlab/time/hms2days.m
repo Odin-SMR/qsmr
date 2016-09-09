@@ -14,7 +14,7 @@ function days = hms2days(HOUR, MINUTE, SECOND)
 %   E-mail:      pjacklam@online.no
 %   URL:         http://home.online.no/~pjacklam
 
-   error(nargchk(1, 3, nargin));
+%error(nargchk(1, 3, nargin));
    argv = {0 0 0};
    argv(1:nargsin) = varargin;
    [hour, minute, second] = deal(argv{:});

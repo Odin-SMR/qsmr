@@ -12,7 +12,7 @@ function t = isdate(varargin)
 %   URL:         http://home.online.no/~pjacklam
 
    nargsin = nargin;
-   error(nargchk(1, 3, nargsin));
+   %error(nargchk(1, 3, nargsin));
    argv = {1 1 1};
    argv(1:nargsin) = varargin;
    [year, month, day] = deal(argv{:});

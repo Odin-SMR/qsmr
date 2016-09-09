@@ -12,7 +12,7 @@ function [month, day] = easterday(year)
 %   URL:         http://home.online.no/~pjacklam
 
    nargsin = nargin;
-   error(nargchk(0, 1, nargsin));
+   %error(nargchk(0, 1, nargsin));
    if ~nargsin
       clk = clock;
       year = clk(1);

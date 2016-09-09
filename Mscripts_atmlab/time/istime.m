@@ -10,7 +10,7 @@ function t = istime(varargin)
 %   URL:         http://home.online.no/~pjacklam
 
    nargsin = nargin;
-   error(nargchk(1, 3, nargsin));
+   %error(nargchk(1, 3, nargsin));
    argv = {0 0 0};
    argv(1:nargsin) = varargin;
    [hour, minute, second] = deal(argv{:});

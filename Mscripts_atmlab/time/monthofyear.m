@@ -20,7 +20,7 @@ function ym = monthofyear( varargin )
 %              the month can be 13.
 
    nargsin = nargin;
-   error(nargchk(0, 6, nargsin));
+   %error(nargchk(0, 6, nargsin));
    if nargsin
       argv = {1 1 1 0 0 0};
       argv(1:nargsin) = varargin;

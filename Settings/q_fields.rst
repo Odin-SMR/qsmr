@@ -9,21 +9,21 @@ Qsmr: definition of settings
 
 :Version: 
         
-   0.1 
+   0.2
 
 :Date:
 
-   2016-02-17
+   2016-09-09
 
 :Summary: 
 
-   This document contains a brief description of the inversion settings
-   considered by the Qsmr system. These settings are packed into a structure
-   denoted as Q. This structure must contain an exact set of fields; all fields
-   must be present and no additional ones are allowed. The defined fields are
-   described below, in alphabetical order.
+   This document contains a brief description of the settings considered by the
+   Qsmr retrieval system. These settings are packed into a structure denoted
+   as Q. This structure must contain an exact set of fields; all fields must be
+   present and no additional ones are allowed. The defined fields are described
+   below, in alphabetical order.
 
-   The Qsmr settings operates also with three other structures. For the various
+   Qsmr operates also with two other structures. For the various
    pre-calculations a structure denoted as P is used. The fields of P are
    defined and are shortly described in the file p_std.m. The structure R works
    as repository for internal variables and data. That is, no fields of R is
@@ -31,20 +31,21 @@ Qsmr: definition of settings
 
    Most fields of Q are of simple types such scalar value, vector or string,
    but some fields are structures. This more complex type is only used for
-   retrieval quantities, in order to follow  the Qpack system.
+   retrieval quantities, in order to allow simple communication with some
+   functions copied from Qarts.
 
-   All fields listed affect inversions, either in the pre-calculation phase or
-   when doing the actual inversion. The settings are applied by various
+   All fields listed affect the inversions, either in the pre-calculation phase
+   or when doing the actual inversion. The settings are applied by various
    functions and if you are using individual functions of Qsmr you need to
    figure out what settings that have an effect or not. For example, the fields
    TB_SCALING_FAC and TB_CONTRAST_FAC are not applied directly when loading the
-   data, but are applied on the L1B data by a special function. 
+   data, but are applied on the L1B data by a special function.
    
 ~~~~~
 
 ABSLOOKUP_OPTION
-   A string. This string gives the name of the folder containing the absorption
-   look-up tables to use.
+   A string. This string gives the name of the sub-folder containing the
+   absorption look-up table to use.
 
 ABS_P_INTERP_ORDER
    An integer. The polynomial order to apply for pressure interpolation of the
@@ -57,17 +58,16 @@ ABS_SPECIES
    species following the ARTS format, e.g. O3-\*-501e9-503e9. SOURCE: A string
    describing from where temperature a priori shall be taken. Handled options
    are 'WebApi' and 'Bdx'. RETRIEVE: A boolean, flagging if the species shall
-   be retrieved or not. All fields below are ignore if RETRIEVE is false. L2: A
-   boolean, flagging if the species is part of L2 data of the frequency mode.
+   be retrieved or not. All fields below are ignored if RETRIEVE is false. L2: A
+   boolean, flagging if the species is part of the L2 data of the frequency mode.
    GRID: Retrieval grid to use for the species. UNC_REL and UNC_ABS: Minimum
    relative and absolute uncertainty (1 std dev), respectively. The absolute
    and relative values are compared using the a priori profile and the largest
-   of the two is selected (with a max at 1e6 in relative value). CORRLEN:
+   of the two is selected (but not exceeding 1e3 in relative value). CORRLEN:
    Correlation length, in meter, to use when creating Sx. LOG_ON: Set to true
    to impose a positive constrain for the species.
 
-   Note that when creating L2 data the two outermost points, at each end, of
-   GRID are removed. 
+   Note that when creating L2 data the outermost points of GRID are removed. 
 
 ABS_T_INTERP_ORDER
    An integer. The polynomial order to apply for temperature interpolation of the
@@ -83,10 +83,13 @@ BACKEND_NR
 BASELINE
    A structure. Definition of baseline off-set retrieval. The fields of the
    structure are as follows. RETRIEVE: A boolean, flagging if baseline off-set
-   shall be retrieved or not. UNC: A priori uncertainty (1 std dev). PIECEWISE:
-   A boolean. If set to false, the baseline off-set is assumed to be constant
-   over the complete frequency band. If set to true, a baseline off-set is
-   fitted for each autocorrelator sub-band pair.
+   shall be retrieved or not. UNC: A priori uncertainty (1 std dev). MODEL:
+   A string. If set to 'common' a single off-set is retrieved for each
+   spectrum. If set to 'module' an off-set for each active AC module is
+   retrieved, i.e. up to four off-set per spectrum are derived. If set to
+   'adaptive' then all modules contributing with more than 125 channels are
+   grouped and a common off-set for these modules is retrieved, while separate
+   off-sets are retrieved for remaining modules (<= 125 channels).
 
 DZA_GRID_EDGES
    A vector. Complements DZA_MAX_IN_CORE in the specification of the angular
@@ -115,7 +118,7 @@ FOLDER_BDX
    database. Files having .mat format are expected.   
 
 FOLDER_FGRID
-   A string. Full path to folder containing frequency grids.   
+   A string. Full path to folder containing frequency grid files.   
 
 FOLDER_MSIS90
    A string. Full path to folder holding the MSIS90 climatology (version taken
@@ -130,7 +133,7 @@ FOLDER_WORK
    specified folder, and these are left when the calculations are done. This
    option is useful for debugging, but note that just a single Qsmr process can
    use a folder for debugging. If several Qsmr processes are given the same debugging
-   folder, files will be overwritten.
+   folder, files will be overwritten and the calculations will crash or be incorrect.
 
 FREQMODE
    An integer. The frequency mode. See L1B ATBD for definition of existing
@@ -170,8 +173,8 @@ GA_FACTOR_OK
 
 GA_MAX          
    A scalar value. Maximum value for gamma factor for the Marquardt-Levenberg
-   method. The stops if this value is reached and cost value is still not
-   decreased. This value must be > 0.
+   method. The inversion is halted and flagged as unsuccessful if this value is
+   reached. This value must be > 0.
 
 GA_START
    A scalar value. Start value for gamma factor for the Marquardt-Levenberg
@@ -183,7 +186,7 @@ INVEMODE
 
 LO_COMMON
    A boolean. If true, the initial value of LO frequencies are set to be
-   constant over the scan. This value is set following LO_ZREF If false, the 
+   constant over the scan. This value is set following LO_ZREF. If false, the 
    L1B value for each altitude is used.
 
 LO_ZREF
@@ -193,8 +196,8 @@ LO_ZREF
    from the L1B data of the spectrum closest to this altitude.
 
 MIN_N_FREQS
-   A scalar value. The required number of frequencies of each spectrum to start
-   an inversion. This number refers to the number of spectra after frequency
+   A scalar value. The required number of frequencies (i.e. channels) of spectra
+   to start an inversion. This number refers to the number of spectra after frequency
    cropping and quality filtering.
 
 MIN_N_SPECTRA
@@ -228,14 +231,15 @@ P_GRID
    pre-calculating absorption lookup tables.
 
 SIDEBAND_LEAKAGE
-   To be defined ...
+   A scalar. Relative contribution of the sideband. So far the sideband leakage
+   is assumed to be flat over each frequency band.
 
 STOP_DX
    OEM stop criterion. The iteration is halted when the change in x 
    is < stop_dx. Eq. 5.29 in the book by Rodgers is followed, but a
    normalisation with the length of x is applied. This means that STOP_DX
-   should in general be in the order of 0.01 (and not change of the state
-   vector is expanded).
+   should in general be in the order of 0.01 (and not change with the
+   length of the state vector).
 
 REFRACTION_DO
    A boolean. Determines if refraction is considered or not by the forward

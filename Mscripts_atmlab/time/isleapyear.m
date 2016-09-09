@@ -18,7 +18,7 @@ function t = isleapyear(year)
 %   E-mail:      pjacklam@online.no
 %   URL:         http://home.online.no/~pjacklam
 
-   error(nargchk(0, 1, nargin));
+%error(nargchk(0, 1, nargin));
 
    if nargin == 0               % If no input argument...
       clk = clock;              % ...get current date and time...
