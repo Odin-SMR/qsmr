@@ -1,5 +1,10 @@
 2016-09-09  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
+	* Mscripts_arts/q2_inv.m (subfun4l2): Removed scaling to vmr/vmr
+	of species AVKs. That is, these AVK are now of %/% type.
+
+2016-09-09  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
 	* Settings/q_fields.rst: Revised and updated.
 
 	* Mscripts_atmlab/time/: All files recopied from Atmlab. Many of
