@@ -13,10 +13,16 @@ function []=runscript(source_url, target_url, target_username, target_password)
       save('L2.mat', 'L2')
       save('L2I.mat', 'L2I')
    else
-       options = weboptions('MediaType','application/json', 'Username', ...
-                            target_username, 'Password', target_password)
+       if nargin < 3
+           options = weboptions('MediaType','application/json')
+       else
+           options = weboptions('MediaType','application/json', 'Username', ...
+                                target_username, 'Password', ...
+                                target_password)
+       end
        data = struct('L2', L2, 'L2I', L2I)
        response = webwrite(target_url, data, options)
        % TODO: Exit with failure if webwrite failed
    end
+   fclose('all')
 exit(0)
