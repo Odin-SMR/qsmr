@@ -59,14 +59,14 @@ Q.LO_COMMON          = true;
 Q.LO_ZREF            = 60e3;
 
 Q.TB_SCALING_FAC     = 1.0025;
-Q.TB_CONTRAST_FAC    = 1.03;
+Q.TB_CONTRAST_FAC    = [];
 
 
 %---------------------------------------------------------------------------
 %--- OEM settings
 %---------------------------------------------------------------------------
 
-Q.STOP_DX            = 1;
+Q.STOP_DX            = 0.5;
 Q.GA_START           = 1;
 Q.GA_FACTOR_NOT_OK   = 10;
 Q.GA_FACTOR_OK       = 10;
@@ -77,7 +77,7 @@ Q.GA_MAX             = 1e4;
 %--- Common retrieval settings
 %---------------------------------------------------------------------------
 
-Q.NOISE_CORRMODEL    = 'empi';  % 'none', 'empi' 'expo'
+Q.NOISE_CORRMODEL    = 'expo';  % 'none', 'empi' 'expo'
 
 Q.BASELINE.RETRIEVE  = true;
 Q.BASELINE.MODEL     = 'adaptive';  % 'common', 'module', 'adaptive'
@@ -128,6 +128,8 @@ switch freqmode
   Q.ZTAN_LIMIT_BOT          = [ 20e3 17e3 13e3 13e3 ];
   Q.ZTAN_MIN_RANGE          = [ 25e3 40e3 ];
   %
+  Q.POINTING.RETRIEVE       = false;
+  %
   Q.T.L2                    = false;
   Q.T.GRID                  = q2_pgrid( 10e3, 65e3, 4 );
   %
@@ -158,55 +160,55 @@ switch freqmode
   Q.ABS_SPECIES(3).L2NAME   = 'O3 / 501 GHz / 20 to 50 km';
   Q.ABS_SPECIES(3).UNC_REL  = 0.5;
   Q.ABS_SPECIES(3).UNC_ABS  = 0.5e-6;
-  Q.ABS_SPECIES(3).CORRLEN  = 15e3;
+  Q.ABS_SPECIES(3).CORRLEN  = 5e3;
   Q.ABS_SPECIES(3).LOG_ON   = false;
   %
   Q.ABS_SPECIES(4).TAG{1}   = 'O3-668-498e9-505e9';
   Q.ABS_SPECIES(4).RETRIEVE = true;
-  Q.ABS_SPECIES(4).L2       = true;
+  Q.ABS_SPECIES(4).L2       = false;
   Q.ABS_SPECIES(4).GRID     = q2_pgrid( 10e3, 65e3, 4 );
   Q.ABS_SPECIES(4).L2NAME   = 'O3-dummy / 501 GHz';
   Q.ABS_SPECIES(4).UNC_REL  = 0.5;
   Q.ABS_SPECIES(4).UNC_ABS  = 0.5e-6;
-  Q.ABS_SPECIES(4).CORRLEN  = 15e3;
+  Q.ABS_SPECIES(4).CORRLEN  = 10e3;
   Q.ABS_SPECIES(4).LOG_ON   = true;
   %
-  Q.ABS_SPECIES(5).TAG{1}   = 'H2O-*-400e9-650e9';
-  Q.ABS_SPECIES(5).TAG{2}   = 'H2O-ForeignContStandardType';
-  Q.ABS_SPECIES(5).TAG{3}   = 'H2O-SelfContStandardType';
+  Q.ABS_SPECIES(5).TAG{1}   = 'O3-667-498e9-505e9';
   Q.ABS_SPECIES(5).RETRIEVE = true;
-  Q.ABS_SPECIES(5).L2       = true;
-  Q.ABS_SPECIES(5).GRID     = q2_pgrid( 10e3, 30e3, 4 );
-  Q.ABS_SPECIES(5).L2NAME   = 'H2O-dummy / 501 GHz';
+  Q.ABS_SPECIES(5).L2       = false;
+  Q.ABS_SPECIES(5).GRID     = q2_pgrid( 10e3, 65e3, 4 );
+  Q.ABS_SPECIES(5).L2NAME   = 'O3-dummy / 501 GHz';
   Q.ABS_SPECIES(5).UNC_REL  = 0.5;
-  Q.ABS_SPECIES(5).UNC_ABS  = 1e-6;
-  Q.ABS_SPECIES(5).CORRLEN  = 5e3;
+  Q.ABS_SPECIES(5).UNC_ABS  = 0.5e-6;
+  Q.ABS_SPECIES(5).CORRLEN  = 10e3;
   Q.ABS_SPECIES(5).LOG_ON   = true;
   %
-  Q.ABS_SPECIES(6).TAG{1}   = 'N2-SelfContMPM93';
-  Q.ABS_SPECIES(6).RETRIEVE = false;
+  Q.ABS_SPECIES(6).TAG{1}   = 'H2O-*-400e9-650e9';
+  Q.ABS_SPECIES(6).TAG{2}   = 'H2O-ForeignContStandardType';
+  Q.ABS_SPECIES(6).TAG{3}   = 'H2O-SelfContStandardType';
+  Q.ABS_SPECIES(6).RETRIEVE = true;
+  Q.ABS_SPECIES(6).L2       = false;
+  Q.ABS_SPECIES(6).GRID     = q2_pgrid( 10e3, 30e3, 4 );
+  Q.ABS_SPECIES(6).L2NAME   = 'H2O-dummy / 501 GHz';
+  Q.ABS_SPECIES(6).UNC_REL  = 0.5;
+  Q.ABS_SPECIES(6).UNC_ABS  = 2e-6;
+  Q.ABS_SPECIES(6).CORRLEN  = 10e3;
+  Q.ABS_SPECIES(6).LOG_ON   = true;
   %
-  Q.ABS_SPECIES(7).TAG{1}   = 'O2-*-400e9-650e9';
+  Q.ABS_SPECIES(7).TAG{1}   = 'N2-SelfContMPM93';
   Q.ABS_SPECIES(7).RETRIEVE = false;
   %
-  Q.ABS_SPECIES(8).TAG{1}   = 'HNO3-*-498e9-505e9';
+  Q.ABS_SPECIES(8).TAG{1}   = 'O2-*-400e9-650e9';
   Q.ABS_SPECIES(8).RETRIEVE = false;
   %
-  Q.ABS_SPECIES(9).TAG{1}   = 'CH3Cl-*-498e9-505e9';
+  Q.ABS_SPECIES(9).TAG{1}   = 'HNO3-*-498e9-505e9';
   Q.ABS_SPECIES(9).RETRIEVE = false;
   %
-  Q.ABS_SPECIES(10).TAG{1}   = 'H2O2-*-498e9-505e9';
+  Q.ABS_SPECIES(10).TAG{1}   = 'CH3Cl-*-498e9-505e9';
   Q.ABS_SPECIES(10).RETRIEVE = false;
   %
-  Q.ABS_SPECIES(11).TAG{1}   = 'O3-667-498e9-505e9';
-  Q.ABS_SPECIES(11).RETRIEVE = true;
-  Q.ABS_SPECIES(11).L2       = true;
-  Q.ABS_SPECIES(11).GRID     = q2_pgrid( 10e3, 65e3, 4 );
-  Q.ABS_SPECIES(11).L2NAME   = 'O3-dummy / 501 GHz';
-  Q.ABS_SPECIES(11).UNC_REL  = 0.5;
-  Q.ABS_SPECIES(11).UNC_ABS  = 0.5e-6;
-  Q.ABS_SPECIES(11).CORRLEN  = 15e3;
-  Q.ABS_SPECIES(11).LOG_ON   = true;
+  Q.ABS_SPECIES(11).TAG{1}   = 'H2O2-*-498e9-505e9';
+  Q.ABS_SPECIES(11).RETRIEVE = false;
   %
   [Q.ABS_SPECIES.ISOFAC]     = deal( 1 );  
   [Q.ABS_SPECIES.SOURCE]     = deal( 'WebApi' );

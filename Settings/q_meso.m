@@ -56,7 +56,7 @@ Q.LO_COMMON          = true;
 Q.LO_ZREF            = 60e3;
 
 Q.TB_SCALING_FAC     = 1.0025;
-Q.TB_CONTRAST_FAC    = 1.03;
+Q.TB_CONTRAST_FAC    = [];
 
 
 %---------------------------------------------------------------------------
