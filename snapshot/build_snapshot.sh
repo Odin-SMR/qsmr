@@ -66,36 +66,33 @@ EOF
 
 generate_start_script() {
     local project_name=$1
-    cat >"$(snapshot_dir $project_name)/start_worker.sh" <<EOF
+    local file_name
+    file_name=$(snapshot_dir $project_name)/start_worker.sh
+    cat >"$file_name" <<EOF
 docker load -i docker_image
 
-cat >".env" <<FEO
-COMPOSE_PROJECT_NAME=$project_name
-HOST_NAME=\$(hostname)
-FEO
+export COMPOSE_PROJECT_NAME=$project_name
+export HOST_NAME=\$(hostname)
 
 docker-compose up -d
 EOF
-}
-
-add_jobs() {
-    # TODO
-    echo "add_jobs is not implemented"
+    chmod +x "$file_name"
 }
 
 main() {
     local project_name=$1
-    local uservice_username=$2
-    local uservice_password=$3
-    local uservice_url=$4
-    local odin_api_url=$5
-    local jobs_file=$6
+    local config_file=$2
+    local jobs_file=$3
+    local freq_mode=$4
 
-    if [[ -z $jobs_file ]]; then
-        echo "Missing argument"
-        echo "Usage: ./build_snapshot projectname username password jobapi_url odinapi_url /path/to/jobs.txt"
-        exit 1
-    fi
+    # Verify project name and config
+    ./add_jobs.py $project_name $config_file
+
+    source $config_file
+    local uservice_username=$JOB_API_USERNAME
+    local uservice_password=$JOB_API_PASSWORD
+    local uservice_url=$JOB_API_ROOT
+    local odin_api_url=$ODIN_API_ROOT
 
     mkdir -p $(snapshot_dir $project_name)
 
@@ -119,11 +116,14 @@ main() {
     echo ""
     # TODO:
     echo "The level2 data can be accessed here:"
-    echo "${odin_api_url}/v4/level2/<freqmode>/<scanid>"
-    echo ""
-    echo "Adding jobs from $jobs_file"
-    add_jobs $project_name $uservice_url $odin_api_url $uservice_username \
-             $uservice_password $jobs_file    
+    echo "${odin_api_url}/v4/level2/$project_name/<freqmode>/<scanid>"
+
+    if [[ -n $jobs_file ]]; then
+        echo ""
+        echo "Adding jobs from $jobs_file"
+        ./add_jobs.py $project_name $config_file --freq-mode $freq_mode \
+                      --jobs-file $jobs_file
+    fi
 }
 
 main "$@"
