@@ -1,7 +1,12 @@
+2016-09-23  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_atmlab/shift_longitudes.m: Added from Atmlab, with
+	asserts removed. 
+
 2016-09-16  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Settings/q_std.m: Revision of fmode 1. Small changes for species
-	retrieval settings.
+	retrieval settings. Deactivated pointing retrieval for this fmode.
 
 	* Settings/q_std.m:
 	* Settings/q_meso.m: General changes are Q.TB_CONTRAST_FAC = [];,

@@ -13,7 +13,7 @@
 
 function ltime = mjd2localtime( mjd, lon )
                                                                             %&%
-rqre_element_math( mjd, lon )                                               %&%
+%rqre_element_math( mjd, lon )                                               %&%
 
   
 lon = shift_longitudes( lon, 0, 360 );
