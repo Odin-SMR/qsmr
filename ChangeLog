@@ -1,7 +1,14 @@
 2016-09-23  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
+	* Mscripts_arts/q2_inv.m (subfun4retqs): Species retrieval grid
+	now named with iq, and not i as before. This to aviod a naming
+	clash with temperature grid, that could happen before for some
+	situations.
+
+2016-09-23  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
 	* Mscripts_atmlab/shift_longitudes.m: Added from Atmlab, with
-	asserts removed. 
+	asserts removed.
 
 2016-09-16  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 

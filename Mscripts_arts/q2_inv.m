@@ -220,7 +220,7 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
       R.i_rel          = [ R.i_rel R.ji{iq}{1}:R.ji{iq}{2} ];
     end
     %
-    vector_name      = sprintf( 'retgrid%d', i );
+    vector_name      = sprintf( 'retgrid%d', iq );
     file_name        = fullfile( R.workfolder, [vector_name,'.xml'] );
     xmlStore( file_name, Q.ABS_SPECIES(i).GRID, 'Vector' );
     %
