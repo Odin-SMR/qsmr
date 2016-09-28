@@ -114,7 +114,6 @@ main() {
     echo "The status of the project can be seen here:"
     echo "${uservice_url}/v4/${project_name}"
     echo ""
-    # TODO:
     echo "The level2 data can be accessed here:"
     echo "${odin_api_url}/v4/level2/$project_name/<freqmode>/<scanid>"
 

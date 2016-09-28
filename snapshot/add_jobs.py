@@ -157,7 +157,8 @@ class AddQsmrJobs(object):
             if i < skip:
                 continue
             try:
-                status_code = self.add_job(scanid, freqmode)
+                response = self.add_job(scanid, freqmode)
+                status_code = response.status_code
                 if status_code == 401:
                     print('Fetching new token')
                     self.get_token()
@@ -172,12 +173,12 @@ class AddQsmrJobs(object):
             if not (i+1) % 10:
                 print_status(i+1, status_codes)
         print_status(i+1, status_codes)
-        print('All jobs done')
+        print('Done')
         return True
 
     def add_jobs_from_file(self, filename, freqmode, skip=0):
         with open(filename) as inp:
-            scanids = (line.strip() for line in inp if line.strip())
+            scanids = (int(line.strip()) for line in inp if line.strip())
             return self.add_jobs(scanids, freqmode, skip=skip)
 
 

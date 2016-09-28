@@ -13,6 +13,11 @@ class BaseTest(unittest.TestCase):
             out.write(cfg)
 
 
+class ResponseMock(object):
+    def __init__(self, status_code):
+        self.status_code = status_code
+
+
 class TestConfigValidation(BaseTest):
 
     def test_missing_value(self):
@@ -98,7 +103,7 @@ class BaseTestAddJobs(BaseTest):
     def _get_mock_post_method(self):
         def mock_post_method(self, job):
             mock_post_method.jobs.append(job)
-            return 201
+            return ResponseMock(201)
         mock_post_method.jobs = []
         return mock_post_method
 
@@ -138,10 +143,10 @@ class TestRenewToken(BaseTestAddJobs):
         def mock_post_method(self, job):
             if not mock_post_method.called:
                 mock_post_method.called = True
-                return 401
+                return ResponseMock(401)
             else:
                 mock_post_method.jobs.append(job)
-                return 201
+                return ResponseMock(201)
         mock_post_method.jobs = []
         mock_post_method.called = False
         return mock_post_method
@@ -164,7 +169,7 @@ class TestFailure(BaseTestAddJobs):
                 raise Exception('Failed!')
             else:
                 mock_post_method.jobs.append(job)
-                return 201
+                return ResponseMock(201)
         mock_post_method.jobs = []
         mock_post_method.called = False
         return mock_post_method
