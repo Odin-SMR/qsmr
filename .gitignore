@@ -2,3 +2,7 @@
 Settings/q_fields.pdf
 matlab.settings
 history.m
+*.pyc
+snapshot/qsmr_snapshot*
+qsmr.tar.gz
+qsmr_data.tar.gz

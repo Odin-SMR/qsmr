@@ -111,6 +111,7 @@ class AddQsmrJobs(object):
         self.job_api_user = job_api_user
         self.job_api_password = job_api_password
         self.odin_secret = odin_secret
+        self.session = requests.Session()
         self.token = None
 
     def make_job_data(self, scanid, freqmode):
@@ -130,13 +131,13 @@ class AddQsmrJobs(object):
         return self._post_job(job)
 
     def _post_job(self, job):
-        return requests.post(
+        return self.session.post(
             self.job_api_root + '/v4/{}/jobs'.format(self.project),
             headers={'Content-Type': "application/json"},
             json=job, auth=(self.token, ''))
 
     def get_token(self):
-        r = requests.get(
+        r = self.session.get(
             self.job_api_root + '/token',
             auth=(self.job_api_user, self.job_api_password)
         )
