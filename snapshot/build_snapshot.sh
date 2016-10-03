@@ -18,7 +18,7 @@ image_name() {
 
 snapshot_dir() {
     local project_name=$1
-    echo "qsmr_snapshot_${project_name}_$(today)"
+    echo "./qsmr_snapshot_${project_name}_$(today)"
 }
 
 get_image_id() {
@@ -37,8 +37,13 @@ remove_image() {
 
 build_docker_image() {
     local project_name=$1
+    local qsmr_data_path=$2
+    rm -rf docker/QsmrData
+    mkdir -p docker/QsmrData
+    cp -r $qsmr_data_path/* docker/QsmrData/
     docker build -t "$(image_name $project_name)" docker/
-    docker save -o "$(snapshot_dir $project_name)/docker_image" \
+    echo "Saving image to file"
+    docker save -o "$(snapshot_dir $project_name)/docker_image_$project_name" \
            $(image_name $project_name)
     remove_image $project_name
 }
@@ -48,6 +53,8 @@ generate_docker_compose() {
     local uservice_url=$2
     local uservice_username=$3
     local uservice_password=$4
+    local qsmr_config=$5
+    local qsmr_invemode=$6
     
     cat >"$(snapshot_dir $project_name)/docker-compose.yml" <<EOF
 uworker:
@@ -61,6 +68,8 @@ uworker:
     - UWORKER_JOB_API_PASSWORD=$uservice_password
     - UWORKER_EXTERNAL_API_USERNAME=notused
     - UWORKER_EXTERNAL_API_PASSWORD=notused
+    - QSMR_CONFIG=$qsmr_config
+    - QSMR_INVEMODE=$qsmr_invemode
 EOF
 }
 
@@ -69,7 +78,8 @@ generate_start_script() {
     local file_name
     file_name=$(snapshot_dir $project_name)/start_worker.sh
     cat >"$file_name" <<EOF
-docker load -i docker_image
+echo "Loading image from file"
+docker load -i docker_image_$project_name
 
 export COMPOSE_PROJECT_NAME=$project_name
 export HOST_NAME=\$(hostname)
@@ -80,15 +90,21 @@ EOF
 }
 
 main() {
-    local project_name=$1
-    local config_file=$2
+    local project_config=$1
+    local api_config=$2
     local jobs_file=$3
     local freq_mode=$4
 
-    # Verify project name and config
-    ./add_jobs.py $project_name $config_file
+    source $project_config
+    local project_name=$PROJECT_NAME
+    local qsmr_config=$QSMR_CONFIG
+    local qsmr_invemode=$QSMR_INVEMODE
+    local qsmr_data_path=$QSMR_DATA_PATH
 
-    source $config_file
+    # Verify project name and config
+    ./add_jobs.py $project_name $api_config
+
+    source $api_config
     local uservice_username=$JOB_API_USERNAME
     local uservice_password=$JOB_API_PASSWORD
     local uservice_url=$JOB_API_ROOT
@@ -97,15 +113,15 @@ main() {
     mkdir -p $(snapshot_dir $project_name)
 
     build_qsmr_snapshot
-    build_docker_image $project_name
+    build_docker_image $project_name $qsmr_data_path
     generate_docker_compose $project_name $uservice_url $uservice_username \
-                            $uservice_password 
+                            $uservice_password $qsmr_config $qsmr_invemode
     generate_start_script $project_name
 
     echo ""
     echo ""
     echo "========= Snapshot built ========="
-    echo "Copy the files in ./$(snapshot_dir $project_name) to a machine that"
+    echo "Copy the files in $(snapshot_dir $project_name) to a machine that"
     echo "has docker and docker-compose installed."
     echo ""
     echo "Start the worker with:"
@@ -120,7 +136,7 @@ main() {
     if [[ -n $jobs_file ]]; then
         echo ""
         echo "Adding jobs from $jobs_file"
-        ./add_jobs.py $project_name $config_file --freq-mode $freq_mode \
+        ./add_jobs.py $project_name $api_config --freq-mode $freq_mode \
                       --jobs-file $jobs_file
     fi
 }

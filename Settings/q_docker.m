@@ -1,6 +1,15 @@
 function Q = q_docker(fmode)
 
-Q = q_std( fmode );
+config = getenv('QSMR_CONFIG');
+invemode = getenv('QSMR_INVEMODE');
+
+if strcmp(config, ''), config = 'q_std'; end
+if strcmp(invemode, ''), invemode = 'stnd'; end
+
+disp(sprintf('Using config %s with freqmode %d and invmode %s', ...
+             config, fmode, invemode));
+
+Q = eval(sprintf('%s(%d,''%s'')', config, fmode, invemode));
 
 Q.ARTS               = 'LD_LIBRARY_PATH="" arts';
 Q.FOLDER_WORK        = '/tmp';

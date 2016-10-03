@@ -149,7 +149,7 @@ class AddQsmrJobs(object):
         self.get_token()
 
         def print_status(nr_processed, status_codes):
-            print('Processed %s' % (nr_processed + skip))
+            print('%d jobs added (skipped %d)' % (nr_processed, skip))
             for k in sorted(status_codes.keys()):
                 print('  Status code %s: %d' % (k, len(status_codes[k])))
 
@@ -185,7 +185,10 @@ class AddQsmrJobs(object):
 
 def load_config(config_file):
     with open(config_file) as inp:
-        return dict(row.strip().split('=') for row in inp if row.strip())
+        conf = dict(row.strip().split('=') for row in inp if row.strip())
+    for k, v in conf.items():
+        conf[k] = v.strip('"')
+    return conf
 
 
 def validate_config(config):

@@ -1,23 +1,9 @@
 from docker2.molflow.com/devops/arts:9979
 
-# Fetch Qsmr data
-run set -x && \
-    apt-get update -qq && \
-    apt-get upgrade -qq && \
-	apt-get install -y -qq \
-        wget \
-        unzip \
-        --no-install-recommends && \
-    cd / && \
-    wget --no-verbose --user=odin --password=hugin http://fukushima.molflow.com/QsmrData.zip && \
-    unzip -q QsmrData.zip && \
-    rm QsmrData.zip && \
-    apt-get remove -q -y wget unzip && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Copy Qsmr data
+copy QsmrData /QsmrData/
 
-# Fetch artifacts built by qsmr/build.sh
+# Copy artifacts built by qsmr/build.sh
 
 copy qsmr.tar.gz /qsmr/qsmr.tar.gz
 copy qsmr_data.tar.gz /qsmr/qsmr_data.tar.gz
