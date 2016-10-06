@@ -10,19 +10,19 @@ Q.INVEMODE           = 'meso';
 
 
 %---------------------------------------------------------------------------
-%--- Different paths
+%--- Work and data folders
 %---------------------------------------------------------------------------
 
-Q.ARTS               = 'arts';
 Q.FOLDER_WORK        = '/tmp';
+
 if exist('/myhome')
-  datadir            = '/QsmrData';    
+  datadir              = '/QsmrData';    
 else
-  datadir            = '~/Data/QsmrData';
+  datadir              = '~/Data/QsmrData';
 end
-Q.FOLDER_ABSLOOKUP   = fullfile( datadir, 'AbsLookup', Q.INVEMODE );  
+Q.FOLDER_ABSLOOKUP   = fullfile( datadir, 'AbsLookup' );  
 Q.FOLDER_BDX         = fullfile( datadir, 'SpeciesApriori', 'Bdx' );  
-Q.FOLDER_FGRID       = fullfile( datadir, 'Fgrid', Q.INVEMODE );  
+Q.FOLDER_FGRID       = fullfile( datadir, 'Fgrid' );  
 Q.FOLDER_MSIS90      = fullfile( datadir, 'TemperatureApriori', 'MSIS90' );  
 
 topfolder            = q2_topfolder;
@@ -35,7 +35,7 @@ Q.FOLDER_BACKEND     = fullfile( topfolder, 'DataFiles', 'Backend' );
 %---------------------------------------------------------------------------
 
 %Q.ABSLOOKUP_OPTION   = [];
-Q.ABSLOOKUP_OPTION   = '100mK_linear';
+Q.ABSLOOKUP_OPTION   = '200mK_linear';
 Q.F_GRID_NFILL       = 0;
 Q.ABS_P_INTERP_ORDER = 1;
 Q.ABS_T_INTERP_ORDER = 3;
@@ -63,7 +63,8 @@ Q.TB_CONTRAST_FAC    = [];
 %--- OEM settings
 %---------------------------------------------------------------------------
 
-Q.STOP_DX            = 0.5;
+Q.STOP_DX            = 0.2;
+%Q.GA_START           = 10;
 Q.GA_START           = 1;
 Q.GA_FACTOR_NOT_OK   = 10;
 Q.GA_FACTOR_OK       = 10;
@@ -74,7 +75,7 @@ Q.GA_MAX             = 1e4;
 %--- Common retrieval settings
 %---------------------------------------------------------------------------
 
-Q.NOISE_CORRMODEL    = 'empi';  % 'none', 'empi' 'expo'
+Q.NOISE_CORRMODEL    = 'expo';  % 'none', 'empi' 'expo'
 
 Q.BASELINE.RETRIEVE  = true;
 Q.BASELINE.MODEL     = 'adaptive';  % 'common', 'module', 'adaptive'
@@ -97,7 +98,9 @@ Q.T.CORRLEN          = 8e3;
 %---------------------------------------------------------------------------
 
 Q.MIN_N_SPECTRA      = 8;
-Q.MIN_N_FREQS        = 50;
+
+%Q.MIN_N_FREQS        = 50;
+Q.MIN_N_FREQS        = 300;
 
 
 
@@ -132,7 +135,11 @@ switch freqmode
   Q.ABS_SPECIES(1).GRID     = q2_pgrid( 40e3, 100e3, 4 );
   Q.ABS_SPECIES(1).UNC_REL  = 0.5;
   Q.ABS_SPECIES(1).UNC_ABS  = 1e-6;
-  Q.ABS_SPECIES(1).CORRLEN  = 10e3;
+  Q.ABS_SPECIES(1).CORRLEN  = 5e3;
+  
+  %Q.ABS_SPECIES(1).CORRLEN  = 10e3;
+  
+  
   Q.ABS_SPECIES(1).LOG_ON   = false;
   %
   [Q.ABS_SPECIES.ISOFAC]     = deal( 1 );  
@@ -143,6 +150,7 @@ switch freqmode
  case 21
   %
   Q.GA_START                 = 10;
+  %Q.GA_START=1;
   %
   Q.P_GRID                   = q2_pgrid( [], 150e3 ); 
   %
@@ -168,7 +176,7 @@ switch freqmode
   Q.ABS_SPECIES(1).GRID      = q2_pgrid( 40e3, 150e3, 4 );
   Q.ABS_SPECIES(1).UNC_REL   = 1;
   Q.ABS_SPECIES(1).UNC_ABS   = 1e-8;
-  Q.ABS_SPECIES(1).CORRLEN   = 10e3;
+  Q.ABS_SPECIES(1).CORRLEN   = 6e3;
   Q.ABS_SPECIES(1).LOG_ON    = true;
   %
   Q.ABS_SPECIES(2).TAG{1}    = 'O3-*-541e9-562e9';
@@ -179,7 +187,10 @@ switch freqmode
   Q.ABS_SPECIES(2).L2NAME    = 'O3 / 551 GHz / 45 to 90 km';
   Q.ABS_SPECIES(2).UNC_REL   = 0.5;
   Q.ABS_SPECIES(2).UNC_ABS   = 1e-6;
+  %Q.ABS_SPECIES(2).CORRLEN   = 10e3;
+  
   Q.ABS_SPECIES(2).CORRLEN   = 10e3;
+
   Q.ABS_SPECIES(2).LOG_ON    = false;
   %
   [Q.ABS_SPECIES.SOURCE]     = deal( 'WebApi' );
