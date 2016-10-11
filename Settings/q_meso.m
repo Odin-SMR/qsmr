@@ -1,4 +1,4 @@
-function Q = q_meso(freqmode)
+function Q = q_meso(freqmode, invemode)
 
 
 %---------------------------------------------------------------------------
@@ -16,13 +16,13 @@ Q.INVEMODE           = 'meso';
 Q.FOLDER_WORK        = '/tmp';
 
 if exist('/myhome')
-  datadir              = '/QsmrData';    
+  datadir              = '/QsmrData';
 else
   datadir              = '~/Data/QsmrData';
 end
-Q.FOLDER_ABSLOOKUP   = fullfile( datadir, 'AbsLookup' );  
+Q.FOLDER_ABSLOOKUP   = fullfile( datadir, 'AbsLookup', Q.INVEMODE );
 Q.FOLDER_BDX         = fullfile( datadir, 'SpeciesApriori', 'Bdx' );  
-Q.FOLDER_FGRID       = fullfile( datadir, 'Fgrid' );  
+Q.FOLDER_FGRID       = fullfile( datadir, 'Fgrid', Q.INVEMODE );
 Q.FOLDER_MSIS90      = fullfile( datadir, 'TemperatureApriori', 'MSIS90' );  
 
 topfolder            = q2_topfolder;
