@@ -7,7 +7,10 @@ function []=runscript(source_url, target_url, target_username, target_password)
    LOG = get_scan_log(source_url)
    L1B = get_scan_l1b_data(LOG.Info.URLS.URL_spectra)
 
-   [L2,L2I] = q2_inv( LOG.Info, L1B, q_docker(LOG.Info.FreqMode))
+   Q = q_docker(LOG.Info.FreqMode)
+   save('Q.mat', 'Q')
+   S = load('Q.mat')
+   [L2,L2I] = q2_inv( LOG.Info, L1B, S)
 
    if nargin < 2
       save('L2.mat', 'L2')
