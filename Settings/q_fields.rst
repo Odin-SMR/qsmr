@@ -230,6 +230,50 @@ P_GRID
    variable with the same name. Note that this setting is also used when
    pre-calculating absorption lookup tables.
 
+QFILT_LAG0MAX
+   A logical. Sets the maximum allowed value of ZeroLagVar. This quality
+   filtering operates on AC sub-bands.
+
+QFILT_MOON
+   A logical. Determines if data shall be filtered based on the MOON quality
+   flag. This quality filtering operates on tangent altitudes.
+
+QFILT_NOISE
+   A logical. Determines if data shall be filtered based on the NOISE quality
+   flag. This quality filtering operates on tangent altitudes.
+
+QFILT_REF1
+   A logical. Determines if data shall be filtered based on the REF1 quality
+   flag. This quality filtering operates on tangent altitudes.
+
+QFILT_REF2
+   A logical. Determines if data shall be filtered based on the REF2 quality
+   flag. This quality filtering operates on tangent altitudes.
+
+QFILT_SCANNING
+   A logical. Determines if data shall be filtered based on the SCANNING quality
+   flag. This quality filtering operates on tangent altitudes.
+
+QFILT_SPECTRA
+   A logical. Determines if data shall be filtered based on the SPECTRA quality
+   flag. This quality filtering operates on tangent altitudes.
+
+QFILT_TBRANGE
+   A logical. Determines if data shall be filtered based on the TB range quality
+   flag. This quality filtering operates on tangent altitudes.
+
+QFILT_TINT
+   A logical. Determines if data shall be filtered based on the TINT quality
+   flag. This quality filtering operates on tangent altitudes.
+
+QFILT_TREC
+   A logical. Determines if data shall be filtered based on the TREC quality
+   flag. This quality filtering operates on tangent altitudes.
+
+QFILT_TSPILL
+   A logical. Determines if data shall be filtered based on the TSPILL quality
+   flag. This quality filtering operates on tangent altitudes.
+   
 SIDEBAND_LEAKAGE
    A scalar. Relative contribution of the sideband. So far the sideband leakage
    is assumed to be flat over each frequency band.

@@ -6,40 +6,49 @@
 %      Q.TB_SCALING_FAC
 %      Q.ZTAN_RANGE
 %
-% FORMAT   L1B = l1b_adjust_to_q( L1B, Q, do_qualfilter )
+% FORMAT   [L1B,L2C] = l1b_adjust_to_q( L1B, Q, L2C )
 %
 % OUT   L1B            Modiefied L1B
+%       L2C            Possibly extended L2C
 % IN    L1B            Original L1B.
 %       Q              Q structire for frequency mode.
-%       do_qualfilter  If set to true, default quality filtering of
-%                      function l1b_filter is applied. If set to false, thos
-%                      filtering is deactivated.
+%       L2C            Original L2C 
 
 % 2016-02-16   Patrick Eriksson
 
-function L1B = l1b_adjust_to_q( L1B, Q, do_qualfilter )
+function [L1B,L2C] = l1b_adjust_to_q( L1B, Q, L2C )
 
 
 %
-% Crop in tangent altitudes, with or without (default) quality criteria
+% Tangent altitude cropping
 %
-assert( length(Q.ZTAN_LIMIT_BOT) == 4 );
+[~,imin]       = min( L1B.Altitude );
+ztan_limit_bot = interp1( [0 30 60 90], Q.ZTAN_LIMIT_BOT, abs(L1B.Latitude(imin)) ); 
 %
-[~,imin] = min( L1B.Altitude );
-z_low    = interp1( [0 30 60 90], Q.ZTAN_LIMIT_BOT, abs(L1B.Latitude(imin)) ); 
+itan = find( L1B.Altitude >= ztan_limit_bot  &  ...
+             L1B.Altitude <= Q.ZTAN_LIMIT_TOP );
+L1B  = l1b_crop( L1B, itan );
 %
-if do_qualfilter
-  [itan,isub] = l1b_filter( L1B, z_low, Q.ZTAN_LIMIT_TOP );
-else
-  [itan,isub] = l1b_filter( L1B, z_Low, Q.ZTAN_LIMIT_TOP, Inf, Inf, ...
-                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );    
+L2C{end+1} = sprintf( 'Status: %d spectra left after altitude cropping', ...
+                      length(itan) );
+
+
+%
+% Return if no spectra left
+%
+if any( size(L1B.Spectrum) == 0 )
+  return
 end
-%
-L1B = l1b_crop( L1B, itan, isub );
 
 
 %
-% Bail out of no spectrum data left
+% Filter based on L1B.Quality
+%
+[L1B,L2C] = l1b_filter( L1B, Q, L2C );
+
+
+%
+% Return if no spectra left
 %
 if any( size(L1B.Spectrum) == 0 )
   return
@@ -50,6 +59,9 @@ end
 % Crop in frequency
 %
 L1B = l1b_fcrop( L1B, Q.F_RANGES, Q.LO_ZREF );
+%
+L2C{end+1} = sprintf( 'Status: %d channels left after frequency cropping', ...
+                      length(L1B.Frequency.IFreqGrid) );
 
 
 %

@@ -2,7 +2,7 @@ function Q = q_dev(varargin)
 
 % For the moment, this is Patrick's playground
 
-Q = q_meso( varargin{:} );
+Q = q_std( varargin{:} );
 
 datadir              = '/home/patrick/Data/QsmrData';
 Q.FOLDER_ABSLOOKUP   = fullfile( datadir, 'AbsLookup', Q.INVEMODE );  

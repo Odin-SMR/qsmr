@@ -1,3 +1,19 @@
+2016-10-23  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Settings/q_meso.m:
+	* Settings/q_std.m: New QFILT fields added.
+
+	* Settings/q_fields.rst: Introduced a number of QFILT fields.
+
+	* Mscripts_arts/q2_inv.m (q2_inv): Introduced L2C that required
+	some reorganisation.
+
+	* Mscripts_database/l1b_adjust_to_q.m: Some reorganisation and
+	writes messages to L2C.
+
+	* Mscripts_database/l1b_filter.m: Now considers QFILT settings and
+	writes messages to L2C.
+
 2016-10-12  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_atmlab/dimens.m: Copied from Atmlab.

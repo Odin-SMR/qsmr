@@ -94,8 +94,20 @@ Q.T.CORRLEN          = 8e3;
 
 
 %---------------------------------------------------------------------------
-%--- Quality demands
+%--- Quality criteria
 %---------------------------------------------------------------------------
+
+Q.QFILT_TSPILL       = true;
+Q.QFILT_TREC         = true;
+Q.QFILT_NOISE        = true;
+Q.QFILT_SCANNING     = true;
+Q.QFILT_SPECTRA      = false;
+Q.QFILT_TBRANGE      = true;
+Q.QFILT_TINT         = true;
+Q.QFILT_REF1         = false;
+Q.QFILT_REF2         = false;
+Q.QFILT_MOON         = true;
+Q.QFILT_LAG0MAX      = 1;
 
 Q.MIN_N_SPECTRA      = 8;
 

@@ -1,14 +1,24 @@
-function [L2,L2I] = q2_inv(LOG,L1B,Q)  
+function [L2,L2I,L2C] = q2_inv(LOG,L1B,Q)  
 
+    
+%
+% Init 
+%
+no_err  = true;
+L2      = [];
+L2I     = [];
+L2C     = [];
 
+    
 %
 % Put the complete main function inside try/catch in order to not stop batch
-% processing and to include an error message in L2 
+% processing and to include an error message in L2C 
 %
 try
     
 %  
-% Basic checks of data
+% Basic checks of data (these checks trigger an error as the checks are of
+% fundamental nature)
 %
 q2_check_l1b( L1B, Q );
 
@@ -16,137 +26,151 @@ q2_check_l1b( L1B, Q );
 %
 % Crop and scale spectra, as well as applying default quality filters
 %
-L1B = l1b_adjust_to_q( L1B, Q, true );
+[L1B,L2C] = l1b_adjust_to_q( L1B, Q, L2C );
 %
 if size(L1B.Spectrum,1) < Q.MIN_N_FREQS
-  error( 'Too few frequencies left in spectra (%d)', size(L1B.Spectrum,1) );
+  L2C{end+1} = sprintf( 'Error: Too few frequencies left in spectra (%d vs. %d)', ...
+                        size(L1B.Spectrum,1), Q.MIN_N_FREQS );
+  no_err = false;
 end
 %
 if size(L1B.Spectrum,2) < Q.MIN_N_SPECTRA
-  error( 'Too few spectra left in scan (%d)', size(L1B.Spectrum,2) );
+  L2C{end+1} = sprintf( 'Error: Too few spectra left in scan (%d vs. %d)', ...
+                        size(L1B.Spectrum,2), Q.MIN_N_SPECTRA );
+  no_err = false;
 end
 %
 if min(L1B.Altitude) > min(Q.ZTAN_MIN_RANGE)
-  error( ...
-      'Scan does not cover lower end the required range (%0.1f vs. %0.1f km)', ...
-                                  min(L1B.Altitude)/1e3, min(Q.ZTAN_MIN_RANGE)/1e3 );
+  L2C{end+1} = sprintf( ...
+    'Error: Scan does not cover lower end the required range (%0.1f vs. %0.1f km)', ...
+      min(L1B.Altitude)/1e3, min(Q.ZTAN_MIN_RANGE)/1e3 );
+  no_err = false;
 end
 %
 if max(L1B.Altitude) < max(Q.ZTAN_MIN_RANGE)
-  error( ...
-      'Scan does not reach upper end of the required range (%0.1f vs. %0.1f km)', ...
-                                  max(L1B.Altitude)/1e3, max(Q.ZTAN_MIN_RANGE)/1e3 );
+  L2C{end+1} = sprintf( ...
+    'Error: Scan does not reach upper end of the required range (%0.1f vs. %0.1f km)', ...
+      max(L1B.Altitude)/1e3, max(Q.ZTAN_MIN_RANGE)/1e3 );
+  no_err = false;
 end
 
 
-%
-% Set/create work folder
-%
-[R.workfolder,rm_wfolder] = q2_create_workfolder( Q );
-%
-if rm_wfolder
-  % Make sure temporary folders are removed
-  cu = onCleanup( @()q2_delete_workfolder( R.workfolder ) );
-  clear rm_workfolder
-end
-  
-  
-%
-% Get a priori atmosphere
-%
-R.ATM = q2_get_atm( LOG, Q );
-%
-% (Atmospheric data stored to ARTS files in q2_oemiter)
+if no_err
 
-
-%
-% Store a rough geo-position (used for HSE)
-%
-xmlStore( fullfile( R.workfolder, 'lat_true.xml' ), ...
-                 L1B.Latitude(round(length(L1B.Latitude)/2)), ...
-                                                        'Vector', 'binary' );
-xmlStore( fullfile( R.workfolder, 'lon_true.xml' ), ...
-                 L1B.Longitude(round(length(L1B.Longitude)/2)), ...
-                                                        'Vector', 'binary' );
+  %
+  % Set/create work folder
+  %
+  [R.workfolder,rm_wfolder] = q2_create_workfolder( Q );
+  %
+  if rm_wfolder
+    % Make sure temporary folders are removed
+    cu = onCleanup( @()q2_delete_workfolder( R.workfolder ) );
+    clear rm_workfolder
+  end
     
-  
-%
-% Initial sensor variables 
-%
-R  = q2_arts_sensor_parts( L1B, Q, R );
-R  = q2_arts_sensor( R );
-za = R.ZA_PENCIL;
-%
-xmlStore( fullfile( R.workfolder, 'sensor_pos.xml' ), ...
-                             repmat( R.Z_ODIN, size(za) ), 'Matrix', 'binary' );
-xmlStore( fullfile( R.workfolder, 'sensor_los.xml' ), za, 'Matrix', 'binary' );
-%
-% Copy those parts of L1B that are needed to recalculate sensor responses to
-% adopt to retrieved frequency off-set
-R.L1B.Altitude    = L1B.Altitude;
-R.L1B.Apodization = L1B.Apodization;
-R.L1B.FreqMode    = L1B.FreqMode; 
-R.L1B.FreqRes     = L1B.FreqRes; 
-R.L1B.Frequency   = L1B.Frequency;
+    
+  %
+  % Get a priori atmosphere
+  %
+  R.ATM = q2_get_atm( LOG, Q );
+  %
+  % (Atmospheric data stored to ARTS files in q2_oemiter)
 
 
-%
-% Set up things around each retrieval quantity
-%
-[xa,Q,R] = subfun4retqs( Q, R, L1B );
-  
-
-%
-% Create full Sx and its inverse (using a function from Atmlab)
-%
-[Sx,Sxinv] = arts_sx( Q, R );
-
-
-%
-% Create Se and its inverse
-%
-[Se,Seinv] = subfun4se( Q, L1B );
-
-
-%
-% Define O
-%
-O = oem;
-%
-[O.cost,O.ga,O.yf,O.J,O.G] = deal( true );
-%
-O.stop_dx             = Q.STOP_DX;
-O.ga_start            = Q.GA_START;
-O.ga_factor_not_ok    = Q.GA_FACTOR_NOT_OK;
-O.ga_factor_ok        = Q.GA_FACTOR_OK;
-O.ga_max              = Q.GA_MAX;
-
-
-%
-% Run OEM
-%
-[X,R] = oem( O, Q, R, @q2_oemiter, Sx, Se, Sxinv, Seinv, xa, L1B.Spectrum(:) );
+  %
+  % Store a rough geo-position (used for HSE)
+  %
+  xmlStore( fullfile( R.workfolder, 'lat_true.xml' ), ...
+                   L1B.Latitude(round(length(L1B.Latitude)/2)), ...
+                                                          'Vector', 'binary' );
+  xmlStore( fullfile( R.workfolder, 'lon_true.xml' ), ...
+                   L1B.Longitude(round(length(L1B.Longitude)/2)), ...
+                                                          'Vector', 'binary' );
+      
+    
+  %
+  % Initial sensor variables 
+  %
+  R  = q2_arts_sensor_parts( L1B, Q, R );
+  R  = q2_arts_sensor( R );
+  za = R.ZA_PENCIL;
+  %
+  xmlStore( fullfile( R.workfolder, 'sensor_pos.xml' ), ...
+                               repmat( R.Z_ODIN, size(za) ), 'Matrix', 'binary' );
+  xmlStore( fullfile( R.workfolder, 'sensor_los.xml' ), za, 'Matrix', 'binary' );
+  %
+  % Copy those parts of L1B that are needed to recalculate sensor responses to
+  % adopt to retrieved frequency off-set
+  R.L1B.Altitude    = L1B.Altitude;
+  R.L1B.Apodization = L1B.Apodization;
+  R.L1B.FreqMode    = L1B.FreqMode; 
+  R.L1B.FreqRes     = L1B.FreqRes; 
+  R.L1B.Frequency   = L1B.Frequency;
 
 
-%
-% Pick up last z_field and t_field as help to fill L2
-%
-R.z_field = xmlLoad( fullfile( R.workfolder, 'z_field.xml' ) );
-R.t_field = xmlLoad( fullfile( R.workfolder, 't_field.xml' ) );
+  %
+  % Set up things around each retrieval quantity
+  %
+  [xa,Q,R] = subfun4retqs( Q, R, L1B );
+    
+
+  %
+  % Create full Sx and its inverse (using a function from Atmlab)
+  %
+  [Sx,Sxinv] = arts_sx( Q, R );
 
 
-%
-% Create L2
-%
-[L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG, L1B, X );
+  %
+  % Create Se and its inverse
+  %
+  [Se,Seinv] = subfun4se( Q, L1B );
 
+
+  %
+  % Define O
+  %
+  O = oem;
+  %
+  [O.cost,O.ga,O.yf,O.J,O.G] = deal( true );
+  %
+  O.stop_dx             = Q.STOP_DX;
+  O.ga_start            = Q.GA_START;
+  O.ga_factor_not_ok    = Q.GA_FACTOR_NOT_OK;
+  O.ga_factor_ok        = Q.GA_FACTOR_OK;
+  O.ga_max              = Q.GA_MAX;
+
+
+  %
+  % Run OEM
+  %
+  [X,R] = oem( O, Q, R, @q2_oemiter, Sx, Se, Sxinv, Seinv, xa, L1B.Spectrum(:) );
+
+
+  %
+  % Pick up last z_field and t_field as help to fill L2
+  %
+  R.z_field = xmlLoad( fullfile( R.workfolder, 'z_field.xml' ) );
+  R.t_field = xmlLoad( fullfile( R.workfolder, 't_field.xml' ) );
+
+
+  %
+  % Create L2
+  %
+  [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG, L1B, X );
+
+end % no_err
 
 %
 % Catch errors
 %
 catch ME
-  L2  = ME.message;
-  L2I = [];
+  L2         = [];
+  L2I        = [];
+  if strncmp( ME.message, 'Error', 5 );
+    L2C{end+1} = ME.message;
+  else  
+    L2C{end+1} = [ 'Error: ', ME.message];
+  end
 end
 
 return
