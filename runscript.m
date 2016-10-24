@@ -21,7 +21,7 @@ function []=runscript(source_url, target_url, target_username, target_password)
                                 target_username, 'Password', ...
                                 target_password)
        end
-       data = struct('L2', L2, 'L2I', L2I, 'L2C', char(L2C))
+       data = struct('L2', L2, 'L2I', L2I, 'L2C', strjoin(L2C, '\n'))
        response = webwrite(target_url, data, options)
    end
    fclose('all')
