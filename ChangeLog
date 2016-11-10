@@ -1,3 +1,13 @@
+2016-11-10  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* qsmr-beta-1
+
+	* From now on this file must contain a version number on line 3.
+	Follow the example above.
+
+	* This is the first version with data and settings moved to
+	qsmr_data. Skipping all details for this commit.
+
 2016-10-24 Jimmy Petersson  <jimmy@molflow.com>
 
 	* runscript.m: Adapt to L2C.

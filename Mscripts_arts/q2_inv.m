@@ -20,6 +20,7 @@ try
 % Basic checks of data (these checks trigger an error as the checks are of
 % fundamental nature)
 %
+q2_check_versions( Q );
 q2_check_l1b( L1B, Q );
 
 
@@ -190,7 +191,7 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
   R.jac_cfile = fullfile( R.workfolder, 'jacobian.arts' );
   %
   C.ABSORPTION         = 'LoadTable';
-  C.ABS_LOOKUP_TABLE   = fullfile( Q.FOLDER_ABSLOOKUP, Q.ABSLOOKUP_OPTION, ...
+  C.ABS_LOOKUP_TABLE   = fullfile( Q.FOLDER_ABSLOOKUP, ...
                               sprintf( 'abslookup_fmode%02d.xml', Q.FREQMODE ) );
   C.ABS_P_INTERP_ORDER = Q.ABS_P_INTERP_ORDER;
   C.ABS_T_INTERP_ORDER = Q.ABS_T_INTERP_ORDER;

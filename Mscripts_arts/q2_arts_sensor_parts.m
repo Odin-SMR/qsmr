@@ -22,7 +22,6 @@
 %    Z_ODIN
 %
 %   These fields of O are used
-%     Q.ABSLOOKUP_OPTION
 %     Q.DZA_GRID_EDGES
 %     Q.DZA_MAX_IN_CORE
 %     Q.F_GRID_NFILL
@@ -155,7 +154,6 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
 
   % Get f_grid from absorption lookup table
   abs_lookup = xmlLoad( fullfile( Q.FOLDER_ABSLOOKUP, ...
-                                  Q.ABSLOOKUP_OPTION, ...
                                   sprintf( 'abslookup_fmode%02d.xml', fmode ) ) );
   R.F_GRID = abs_lookup.f_grid;
   xmlStore( fullfile( R.workfolder, 'f_grid.xml' ), R.F_GRID, 'Vector', 'binary' );

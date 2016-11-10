@@ -1,8 +1,8 @@
-% Q2_TOPFOLDER  Returns path top Qsmr's top folder
+% Q2_TOPFOLDER  Returns path to Qsmr's top folder
 %
 % FORMAT   topfolder = q2_topfolder
 %        
-% OUT   topfolder   Full path to the Qsmr top folder
+% OUT   topfolder   Full path to top folder of qsmr
 
 % 2015-05-21   Patrick Eriksson.
 

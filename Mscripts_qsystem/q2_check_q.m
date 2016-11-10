@@ -14,7 +14,7 @@ function q2_check_q(Q)
   
 %- Read RST documentation 
 %
-[s,res] = system( ['rst2latex ', fullfile( q2_topfolder, ...
+[s,res] = system( ['rst2latex ', fullfile( q2data_topfolder, ...
                                            'Settings', 'q_fields.rst' ) ] );
 %
 if s > 0

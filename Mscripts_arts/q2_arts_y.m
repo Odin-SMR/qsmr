@@ -102,7 +102,7 @@ C.JACOBIAN_DO        = false;
 if use_abstable
     %
   C.ABSORPTION         = 'LoadTable';
-  C.ABS_LOOKUP_TABLE   = fullfile( Q.FOLDER_ABSLOOKUP, Q.ABSLOOKUP_OPTION, ...
+  C.ABS_LOOKUP_TABLE   = fullfile( Q.FOLDER_ABSLOOKUP, ...
                                     sprintf( 'abslookup_fmode%02d.xml', fmode ) );
   C.ABS_P_INTERP_ORDER = Q.ABS_P_INTERP_ORDER;
   C.ABS_T_INTERP_ORDER = Q.ABS_T_INTERP_ORDER;

@@ -26,11 +26,6 @@ end
 G           = gf_empty( dim );
 G.TYPE      = 'atmdata';
 
-% If dim iswhole etc. is checked by gf_empty, but we need to check:
-if atmlab('STRICT_ASSERT') & ( dim<0 | dim>5 )
-  error( 'Input argument must be between 0 and 5.' );
-end
-
 
 
 
