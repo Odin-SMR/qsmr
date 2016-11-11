@@ -112,6 +112,7 @@ else
   C.ABSORPTION      = 'OnTheFly';
   P                 = p_std;
   f                 = l1b_frequency( L1B, 1 );
+  C.PARTITION_FILE  = P.PARTITION_FILE;
   C.CONTINUA_FILE   = P.CONTINUA_FILE;
   C.SPECTRO_FILE    = P.SPECTRO_FILE;
   C.SPECTRO_FMIN    = min(f) - 10e9;

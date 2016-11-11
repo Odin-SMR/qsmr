@@ -96,7 +96,6 @@ function cfile_start( fid, C )
   fprintf( fid, 'scat_speciesSet( scat_species, [] )\n' );
   fprintf( fid, 'NumericSet( lm_p_lim, 0 )\n' );
   fprintf( fid, 'nlteOff\n' );
-  fprintf( fid, 'partition_functionsInitFromBuiltin\n' );
   fprintf( fid, '#\n' );
   fprintf( fid, 'AgendaSet( geo_pos_agenda ){\n' );
   fprintf( fid, '  Ignore( ppath )\n' );
@@ -185,6 +184,11 @@ function cfile_abs( fid, C, workfolder )
   
   elseif strcmp( C.ABSORPTION, 'LoadTable' )
     %
+    % *atmfields_checkedCalc* demands partition functions and we load the
+    % built in ones to save time. The ones used for actual calculations are
+    % set elsewhere.
+    fprintf( fid, 'partition_functionsInitFromBuiltin\n' );
+    %
     fprintf( fid, 'ReadXML( abs_lookup, "%s" )\n', C.ABS_LOOKUP_TABLE );
     fprintf( fid, 'f_gridFromGasAbsLookup\n' );
     fprintf( fid, 'ReadXML( p_grid, "%s" )\n', ...
@@ -246,6 +250,7 @@ function cfile_abscalc_basics( fid, C, workfolder )
   fprintf( fid, [ 'abs_lineshapeDefine( shape="Voigt_Kuntz6", ' ...
                   'forefactor="VVW", cutoff=-1 )\n' ] );    
   %
+  fprintf( fid, 'ReadXML( partition_functions, "%s" )', C.PARTITION_FILE );  
   fprintf( fid, 'isotopologue_ratiosInitFromBuiltin\n' );
   fprintf( fid, 'INCLUDE "%s"\n', C.CONTINUA_FILE );  
 return

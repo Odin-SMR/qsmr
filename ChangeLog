@@ -1,3 +1,11 @@
+2016-11-11  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* qsmr-beta-2
+
+	* Mscripts_arts/q2_arts_y.m:
+	* Mscripts_arts/q2_artscfile_full.m: Partition functions are now
+	read from file, instead of using the internal ones.
+
 2016-11-10  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* qsmr-beta-1
