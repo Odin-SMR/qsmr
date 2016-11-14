@@ -552,7 +552,7 @@ return
 %--- L2
 %---------------------------------------------------------------------------
 
-function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
+function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG, L1B, X )
 
   %- Init L2
   %
@@ -583,6 +583,8 @@ function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
   %
   % Instrumental variables.
   % Off-set parameters are set to zero if not retrieved
+  L2I.SBpath       = mean( L1B.SBpath );
+  L2I.Tsat         = mean( L1B.Tcal );
   L2I.BlineOffset  = zeros( 4, ntan );
   L2I.FreqOffset   = 0;
   L2I.PointOffset  = 0;
@@ -630,7 +632,7 @@ function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG,L1B, X )
          %
          is_l2               = true;
          is_gas              = false;
-         L2(end+1).Product   = 'Temperature';
+         L2(end+1).Product   = Q.T.L2NAME;
          %
          % Index of points after removing end points.
          iout                = 2 : length(ind)-1;

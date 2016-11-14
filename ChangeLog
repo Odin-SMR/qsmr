@@ -1,3 +1,14 @@
+2016-11-13  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* qsmr-beta-3
+
+	* Mscripts_arts/q2_inv.m (subfun4l2): Q.T.L2NAME now used. Added
+	two fields to L2I, SBpath and Tsat.
+
+	* Mscripts_arts/q2_oemiter.m (q2_oemiter): Q.T.LIMITS introduced.
+
+	* Mscripts_arts/q2_arts_y.m: Changed p_std to p_stnd.
+
 2016-11-11  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* qsmr-beta-2

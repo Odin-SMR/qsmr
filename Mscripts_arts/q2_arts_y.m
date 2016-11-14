@@ -110,7 +110,7 @@ if use_abstable
 else
   %
   C.ABSORPTION      = 'OnTheFly';
-  P                 = p_std;
+  P                 = p_stnd;
   f                 = l1b_frequency( L1B, 1 );
   C.PARTITION_FILE  = P.PARTITION_FILE;
   C.CONTINUA_FILE   = P.CONTINUA_FILE;

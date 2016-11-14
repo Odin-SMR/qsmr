@@ -73,6 +73,9 @@ for i = 1 : length( R.jq )
    case 'Atmospheric temperatures'   %---------------------------------------
     %
     t_field = interpp( Q.T.GRID, R.t_apriori + x(ind), R.ATM.P );
+    %
+    t_field(find(t_field<Q.T.LIMITS(1))) = Q.T.LIMITS(1);
+    t_field(find(t_field>Q.T.LIMITS(2))) = Q.T.LIMITS(2);
    
    case 'Sensor pointing'   %-------------------------------------------------
     %
