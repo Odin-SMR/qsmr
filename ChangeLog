@@ -1,3 +1,10 @@
+2016-11-14  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* qsmr-beta-4
+
+	* Mscripts_arts/q2_artscfile_full.m (cfile_abs): Changed
+	extpolfac in propmat_clearskyAddFromLookup to 1.
+
 2016-11-13  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* qsmr-beta-3
