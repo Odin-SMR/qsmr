@@ -1,3 +1,14 @@
+2016-11-15  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_database/l1b_homemade.m: Made clear in header that LOG
+	produced does not inlcude URLs.
+
+	* Mscripts_qsystem/q2_check_versions.m: Now takling the Qsmr
+	version from the function below.
+
+	* Mscripts_qsystem/q2_version.m: New. From now on the Qsmr version
+	string is set in this function. The present string is 'qsmr-beta-5'.
+
 2016-11-14  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* qsmr-beta-4

@@ -26,20 +26,7 @@ end
 
 %- Qsmr
 %
-changelog = fullfile( q2_topfolder, 'ChangeLog' );
-%
-fid = fileopen( changelog );
-for i = 1 : 3
-  m = fgets( fid );
-end
-fileclose( fid );
-%
-i = find( m == '*' );
-if isempty(i)
-  error( 'Something failed when parsing qsmr''s ChangeLog.' );
-end
-    
-v = strtrim( m([1:i-1 i+1:end]) );
+v = q2_version;
 %
 if ~strcmp( v, Q.VERSION_QSMR )
   error( 'Incorrect Qsmr version (expected %s, but %s found)', ...

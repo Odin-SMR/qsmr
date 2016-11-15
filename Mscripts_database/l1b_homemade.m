@@ -6,10 +6,9 @@
 %
 %   Most input arguments after *ztan* can either be a scalar or a vector. If
 %   a vector, the length must be the same as for *ztan*. Several fields of
-%   L1B are set following *O*.
+%   L1B are set following *Q*.
 %
-%   A basic LOG file can also be obtained. URL fields are filled if ScanID is
-%   not NaN.
+%   A basic LOG file can also be obtained. URL fields are not yet filled.
 %
 % FORMAT   [LOG,L1B] = l1b_homemade(Q,ztans,lat,lon,mjd[,freqs,inttime])
 %
@@ -57,10 +56,10 @@ LOG.NumSpec      = length(ztans);
 LOG.ScanID       = scanid;
 LOG.SunZD        = sun_angles( mjd, lat, lon );
 %
-if ~isnan( scanid )
-  error( 'URLs not yet set.' );
-    % Set URLs
-end
+%if ~isnan( scanid )
+%  error( 'URLs not yet set.' );
+%    % Set URLs
+%end
 
 
 
