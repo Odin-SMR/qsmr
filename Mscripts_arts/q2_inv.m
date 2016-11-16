@@ -14,7 +14,7 @@ L2C     = [];
 % Put the complete main function inside try/catch in order to not stop batch
 % processing and to include an error message in L2C 
 %
-try
+%try
     
 %  
 % Basic checks of data (these checks trigger an error as the checks are of
@@ -107,6 +107,8 @@ if no_err
   R.L1B.FreqMode    = L1B.FreqMode; 
   R.L1B.FreqRes     = L1B.FreqRes; 
   R.L1B.Frequency   = L1B.Frequency;
+  R.L1B.SBpath      = L1B.SBpath;
+  R.L1B.Tcal        = L1B.Tcal;
 
 
   %
@@ -164,15 +166,15 @@ end % no_err
 %
 % Catch errors
 %
-catch ME
-  L2         = [];
-  L2I        = [];
-  if strncmp( ME.message, 'Error', 5 );
-    L2C{end+1} = ME.message;
-  else  
-    L2C{end+1} = [ 'Error: ', ME.message];
-  end
-end
+%catch ME
+%  L2         = [];
+%  L2I        = [];
+%  if strncmp( ME.message, 'Error', 5 );
+%    L2C{end+1} = ME.message;
+%  else  
+%    L2C{end+1} = [ 'Error: ', ME.message];
+%  end
+%end
 
 return
 

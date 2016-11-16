@@ -1,3 +1,13 @@
+2016-11-16  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_qsystem/q2_version.m: Now set to qsmr-beta-7. 
+
+	* Mscripts_arts/q2_inv.m: SBpath and Tcal added to R.L1B, needed
+	for addition below.
+
+	* Mscripts_arts/q2_arts_sensor_parts.m: Added a second option for
+	describing sideband leakage, based on gformat.
+
 2016-11-16  Jimmy Petersson  <jimmy@molflow.com>
 
 	* Mscripts_arts/earth_radius.m: Moved from Mscripts_atmlab
