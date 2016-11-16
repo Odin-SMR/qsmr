@@ -6,3 +6,4 @@ history.m
 snapshot/qsmr_snapshot*
 qsmr.tar.gz
 qsmr_data.tar.gz
+Build_scripts/docker/complete/data
