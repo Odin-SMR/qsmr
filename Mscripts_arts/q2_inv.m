@@ -706,8 +706,8 @@ function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG, L1B, X )
           L2(end).ErrorTotal = L2(end).ErrorTotal .* L2(end).VMR;
         else
           % Uncomment the lines below to scale AVKs to vmr/vmr 
-          %L2(end).AVK = L2(end).AVK .* ...
-          %                          ( L2(end).Apriori * (1./L2(end).Apriori') );
+          L2(end).AVK = L2(end).AVK .* ...
+                                    ( L2(end).Apriori * (1./L2(end).Apriori') );
           L2(end).ErrorNoise = L2(end).ErrorNoise .* L2(end).Apriori;
           L2(end).ErrorTotal = L2(end).ErrorTotal .* L2(end).Apriori;
         end

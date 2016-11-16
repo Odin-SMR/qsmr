@@ -6,4 +6,4 @@
 
 function v = q2_version
 
-v = 'qsmr-beta-5';
+v = 'qsmr-beta-6';
