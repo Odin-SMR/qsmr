@@ -1,5 +1,9 @@
 2016-11-16  Jimmy Petersson  <jimmy@molflow.com>
 
+	* Mscripts_arts/earth_radius.m: Moved from Mscripts_atmlab
+
+2016-11-16  Jimmy Petersson  <jimmy@molflow.com>
+
 	* Build_scripts/: Moved from Run_scripts and adapted to data and
 	settings moved to qsmr_data.
 	* Mscripts_atmlab/earth_radius.m: Moved to this repo from
