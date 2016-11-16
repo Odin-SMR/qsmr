@@ -1,3 +1,16 @@
+2016-11-16  Jimmy Petersson  <jimmy@molflow.com>
+
+	* Build_scripts/: Moved from Run_scripts and adapted to data and
+	settings moved to qsmr_data.
+	* Mscripts_atmlab/earth_radius.m: Moved to this repo from
+	qsmr_data/Settings.
+
+2016-11-16  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_qsystem/q2_version.m: Verion now set to qsmr-beta-6.
+
+	* Mscripts_arts/q2_inv.m (subfun4l2): Changed back to VMR/VMR AVKs.
+
 2016-11-15  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_database/l1b_homemade.m: Made clear in header that LOG
