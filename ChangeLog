@@ -1,3 +1,10 @@
+2016-11-16  Jimmy Petersson  <jimmy@molflow.com>
+
+	* Build_scripts/: Moved from Run_scripts and adapted to data and
+	settings moved to qsmr_data.
+	* Mscripts_atmlab/earth_radius.m: Moved to this repo from
+	qsmr_data/Settings.
+
 2016-11-15  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_database/l1b_homemade.m: Made clear in header that LOG
