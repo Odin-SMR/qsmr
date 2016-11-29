@@ -1,6 +1,13 @@
+2016-11-29  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_arts/q2_inv.m (q2_inv): try-catch was left commented
+	out. My mistake.
+
+	Version left unchanged.
+
 2016-11-16  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
-	* Mscripts_qsystem/q2_version.m: Now set to qsmr-beta-7. 
+	* Mscripts_qsystem/q2_version.m: Now set to qsmr-beta-7.
 
 	* Mscripts_arts/q2_inv.m: SBpath and Tcal added to R.L1B, needed
 	for addition below.
