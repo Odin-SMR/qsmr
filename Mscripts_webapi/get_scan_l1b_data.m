@@ -12,7 +12,6 @@
 % Example Usage:
 %      url = 'http://malachite.rss.chalmers.se/rest_api/v4/scan/AC1/2/7002908396'
 %      y = get_scan_l1b_data(url)
-%      see also odin_webapi_demo.m for usage
 %
 % Created by Bengt Rydberg 2015-12-17
  

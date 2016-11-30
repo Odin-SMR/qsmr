@@ -1,3 +1,9 @@
+2016-11-30  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_webapi: Revised content of this folder. Removed two
+	"demo scripts" and all comments in functions to these scripts.
+	Also removed run_qsmr.m. I assume the function is not used. 
+
 2016-11-29  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_arts/q2_inv.m (q2_inv): try-catch was left commented

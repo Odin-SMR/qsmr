@@ -28,8 +28,6 @@
 %
 function y = get_date_info(url)
 
-%url = 'http://webapi:5000/viewscan/2009-10-04';
-
 y = webread(url, weboptions('ContentType','json','Timeout',120));
 
 

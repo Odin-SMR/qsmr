@@ -33,8 +33,7 @@
 %       URL: 'http://webapi:5000/viewodinscan/2015-01-03/AC1/2/7003000326'
 %
 % use x = get_scan_data(y.Info(2).URL) to get scan data 
-%
+
 function y = get_scan_log(url)
 
-%url = 'http://webapi:5000/viewscanday/2015-01-03/AC1/2'
 y = webread(url, weboptions('ContentType','json','Timeout',60));

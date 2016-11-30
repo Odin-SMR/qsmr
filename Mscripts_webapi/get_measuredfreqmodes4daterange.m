@@ -24,8 +24,6 @@
 %      webapi_url = get_webapi_url(); %connect to test database
 %      freqmodes = get_measuredfreqmodes4daterange(mjd1:mjd2,webapi_url)
 % 
-%      see also odin_webapi_demo.m for usage
-%
 % Created by Bengt Rydberg 2015-12-17
 
 

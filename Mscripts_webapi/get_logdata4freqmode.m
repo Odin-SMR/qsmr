@@ -39,8 +39,6 @@
 %      webapi_url = get_webapi_url(); %connect to test database
 %      info = get_logdata4freqmode(freqmode,mjd1:mjd2,webapi_url)
 % 
-%      see also odin_webapi_demo.m for usage
-%
 % Created by Bengt Rydberg 2015-12-17
 
 function info = get_logdata4freqmode(freqmode,mjdvec,webapi_url)
