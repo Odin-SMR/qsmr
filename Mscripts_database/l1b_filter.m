@@ -23,7 +23,7 @@
 function [L1B,L2C] = l1b_filter( L1B, Q, L2C )
 
 
-ntan = size( L1B.Spectrum, 2 );
+ntan = size( L1B.Spectrum, 1 );
 
 
 % Tspill
@@ -35,7 +35,7 @@ if Q.QFILT_TSPILL
     L2C{end+1} = sprintf( 'Filter: %d spectra removed due to Tspill flag', dtan );
   end
 else
-  itan001 = logical( ones(1,ntan) );
+  itan001 = logical( ones(ntan,1) );
 end
 
 
@@ -48,7 +48,7 @@ if Q.QFILT_TREC
     L2C{end+1} = sprintf( 'Filter: %d spectra removed due to Trec flag', dtan );
   end
 else
-  itan002 = logical( ones(1,ntan) );
+  itan002 = logical( ones(ntan,1) );
 end
 
 
@@ -61,7 +61,7 @@ if Q.QFILT_NOISE
     L2C{end+1} = sprintf( 'Filter: %d spectra removed due to Noise flag', dtan );
   end
 else
-  itan004 = logical( ones(1,ntan) );
+  itan004 = logical( ones(ntan,1) );
 end
 
 
@@ -74,7 +74,7 @@ if Q.QFILT_SCANNING
     L2C{end+1} = sprintf( 'Filter: %d spectra removed due to Scanning flag', dtan );
   end
 else
-  itan008 = logical( ones(1,ntan) );
+  itan008 = logical( ones(ntan,1) );
 end
 
 
@@ -87,7 +87,7 @@ if Q.QFILT_SPECTRA
     L2C{end+1} = sprintf( 'Filter: %d spectra removed due to No. of Spectra flag', dtan );
   end
 else
-  itan010 = logical( ones(1,ntan) );
+  itan010 = logical( ones(ntan,1) );
 end
 
 
@@ -100,7 +100,7 @@ if Q.QFILT_TBRANGE
     L2C{end+1} = sprintf( 'Filter: %d spectra removed due to Valid Tb flag', dtan );
   end
 else
-  itan020 = logical( ones(1,ntan) );
+  itan020 = logical( ones(ntan,1) );
 end
 
 
@@ -113,7 +113,7 @@ if Q.QFILT_TINT
     L2C{end+1} = sprintf( 'Filter: %d spectra removed due to Tint flag', dtan );
   end
 else
-  itan040 = logical( ones(1,ntan) );
+  itan040 = logical( ones(ntan,1) );
 end
 
 
@@ -126,7 +126,7 @@ if Q.QFILT_REF1
     L2C{end+1} = sprintf( 'Filter: %d spectra removed due to Ref1 flag', dtan );
   end
 else
-  itan080 = logical( ones(1,ntan) );
+  itan080 = logical( ones(ntan,1) );
 end
 
 
@@ -139,7 +139,7 @@ if Q.QFILT_REF2
     L2C{end+1} = sprintf( 'Filter: %d spectra removed due to Ref2 flag', dtan );
   end
 else
-  itan100 = logical( ones(1,ntan) );
+  itan100 = logical( ones(ntan,1) );
 end
 
 
@@ -152,7 +152,7 @@ if Q.QFILT_MOON
     L2C{end+1} = sprintf( 'Filter: %d spectra removed due to Moon flag', dtan );
   end
 else
-  itan200 = logical( ones(1,ntan) );
+  itan200 = logical( ones(ntan,1) );
 end
 
 
@@ -172,8 +172,8 @@ if isempty(itan)
   isub = [];
 else
   isub = find( ...
-      L1B.Frequency.SubBandIndex(1,:)   >=    1    &  ...
-      max(L1B.ZeroLagVar(:,itan),[],2)' <= Q.QFILT_LAG0MAX );
+      L1B.Frequency.SubBandIndex(1,:)  >=    1    &  ...
+      max(L1B.ZeroLagVar(itan,:))      <= Q.QFILT_LAG0MAX );
 end
 
 

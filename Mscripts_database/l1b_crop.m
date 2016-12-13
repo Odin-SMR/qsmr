@@ -67,13 +67,13 @@ for i = 1 : length(names)
     L1B.Frequency.LOFreq             = L1B.Frequency.LOFreq(itan); 
    
    case 'Spectrum'
-    L1B.Spectrum = L1B.Spectrum(ich,itan);
+    L1B.Spectrum = L1B.Spectrum(itan,ich);
 
    case 'TrecSpectrum'
-    L1B.TrecSpectrum = L1B.TrecSpectrum(1,ich);
+    L1B.TrecSpectrum = L1B.TrecSpectrum(ich,1);
     
    otherwise   
-    L1B.(names{i}) = L1B.(names{i})(:,itan);
+    L1B.(names{i}) = L1B.(names{i})(itan,:);
   
   end
 end

@@ -42,7 +42,7 @@ n = 1;
 for i = 1 : length(datevec)
   datei = datestr(datevec(i),'yyyy-mm-dd');
   url = [ webapi_url,'/rest_api/v4/freqmode_info/',datei];
-  y = get_date_info(url);
+  y = webread(url, weboptions('ContentType','json','Timeout',60));
   if ~isempty(y.Info)
     Y.mjd = mjd(i);
     Y.freqmodes = [y.Info(:).FreqMode];

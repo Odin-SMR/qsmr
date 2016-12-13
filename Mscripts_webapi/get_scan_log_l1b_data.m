@@ -29,12 +29,6 @@ url = ['http://malachite.rss.chalmers.se/rest_api/v4/scan/',...
         backend,'/',num2str(freqmode),'/',num2str(scanid)];
 
 y = webread(url, weboptions('ContentType','json','Timeout',60));
-% change output format
-yfields = fields(y);
-for j=1:length(yfields)
-  y.(yfields{j}) = y.(yfields{j})';
-end
-
 mjd = y.MJD(1);
 
 info = get_logdata4freqmode(freqmode,mjd);

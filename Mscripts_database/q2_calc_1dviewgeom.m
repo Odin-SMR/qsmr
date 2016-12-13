@@ -18,7 +18,7 @@ function [r_earth,z_odin,za] = q2_calc_1dviewgeom( L1B )
   
 r_earth = earth_radius;
 
-r_odin = mean( sqrt( sum( L1B.GPSpos.^2, 1 ) ) );
+r_odin = mean( sqrt( sum( L1B.GPSpos.^2, 2 ) ) );
 
 z_odin = r_odin - r_earth;
 

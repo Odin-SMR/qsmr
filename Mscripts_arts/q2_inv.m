@@ -29,15 +29,15 @@ q2_check_l1b( L1B, Q );
 %
 [L1B,L2C] = l1b_adjust_to_q( L1B, Q, L2C );
 %
-if size(L1B.Spectrum,1) < Q.MIN_N_FREQS
+if size(L1B.Spectrum,2) < Q.MIN_N_FREQS
   L2C{end+1} = sprintf( 'Error: Too few frequencies left in spectra (%d vs. %d)', ...
-                        size(L1B.Spectrum,1), Q.MIN_N_FREQS );
+                        size(L1B.Spectrum,2), Q.MIN_N_FREQS );
   no_err = false;
 end
 %
-if size(L1B.Spectrum,2) < Q.MIN_N_SPECTRA
+if size(L1B.Spectrum,1) < Q.MIN_N_SPECTRA
   L2C{end+1} = sprintf( 'Error: Too few spectra left in scan (%d vs. %d)', ...
-                        size(L1B.Spectrum,2), Q.MIN_N_SPECTRA );
+                        size(L1B.Spectrum,1), Q.MIN_N_SPECTRA );
   no_err = false;
 end
 %
@@ -128,7 +128,6 @@ if no_err
   %
   [Se,Seinv] = subfun4se( Q, L1B );
 
-
   %
   % Define O
   %
@@ -146,7 +145,7 @@ if no_err
   %
   % Run OEM
   %
-  [X,R] = oem( O, Q, R, @q2_oemiter, Sx, Se, Sxinv, Seinv, xa, L1B.Spectrum(:) );
+  [X,R] = oem( O, Q, R, @q2_oemiter, Sx, Se, Sxinv, Seinv, xa, mat2col(L1B.Spectrum') );
 
 
   %
@@ -467,14 +466,14 @@ function [Se,Seinv] = subfun4se( Q, L1B )
 
   % Calculate covariance matrix for one spectrum and unit variance.
   %
-  nf = size( L1B.Spectrum, 1 );
+  nf = size( L1B.Spectrum, 2 );
   %
   switch Q.NOISE_CORRMODEL
     case 'none'
       S = speye( nf, nf );
       %
     case 'expo'
-      f    = L1B.Frequency.IFreqGrid(:,1);
+      f    = L1B.Frequency.IFreqGrid;
       df   = L1B.FreqRes(1);
       % A correlation length of 2*df + exponential function gives a rough fit to
       % correlation values given below.
@@ -525,7 +524,7 @@ function [Se,Seinv] = subfun4se( Q, L1B )
   for t = 1 : ntan
 
     % Standard deviation of thermal noise for t:th spectrum 
-    thn = L1B.TrecSpectrum'  .* ( 1 / ...
+    thn = L1B.TrecSpectrum  .* ( 1 / ...
                                   sqrt(L1B.FreqRes(1)*L1B.EffTime(t)) );
 
     % Se
@@ -581,7 +580,7 @@ function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG, L1B, X )
   L2I.LOFreq       = R.LO;    % Note that these are final LO-s
   L2I.Residual     = X.cost_y(end);
   L2I.MinLmFactor  = min( X.ga );
-  L2I.FitSpectrum  = reshape( X.yf, size(L1B.Spectrum) );  
+  L2I.FitSpectrum  = reshape( X.yf, size(L1B.Spectrum') )';  
   %
   % Instrumental variables.
   % Off-set parameters are set to zero if not retrieved

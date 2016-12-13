@@ -1,8 +1,34 @@
+2016-12-13  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_qsystem/q2_version.m: Now set to qsmr-beta-8.
+
+	* Mscripts_database/q2_calc_1dviewgeom.m:
+	* Mscripts_arts/q2_inv.m:
+	* Mscripts_database/l1b_filter.m:
+	* Mscripts_database/l1b_fcrop.m:
+	* Mscripts_database/l1b_frequency.m:
+	* Mscripts_database/l1b_crop.m: Adopted to non-transposed data.
+
+	* Mscripts_webapi/get_scan_l1b_data.m: Removed transposing of
+	data.
+
+	* Mscripts_webapi/get_logdata4freqmode.m: Replaced call of
+	get_date_info.m with call of webread.
+
+	* Mscripts_webapi/get_scan_log.m:
+	* Mscripts_webapi/get_date_info.m: Removed, as functions just
+	called webread.
+
+	* Mscripts_database/l1b_fcrop.m: Removed incorrect text in header.
+
+	* Mscripts_database/l2_frequency.m: Moved to atmlab as this
+	function is not used in the processing.
+
 2016-11-30  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_webapi: Revised content of this folder. Removed two
 	"demo scripts" and all comments in functions to these scripts.
-	Also removed run_qsmr.m. I assume the function is not used. 
+	Also removed run_qsmr.m. I assume the function is not used.
 
 2016-11-29  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
