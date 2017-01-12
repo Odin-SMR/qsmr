@@ -127,7 +127,7 @@ class AddQsmrJobs(object):
             'id': '%s:%s' % (freqmode, scanid),
             'type': self.JOB_TYPE,
             'source_url': (self.odin_api_root +
-                           '/v5/level1/{freqmode}/{scanid}/Log'.format(
+                           '/v4/l1_log/{freqmode}/{scanid}/'.format(
                                scanid=scanid, freqmode=freqmode)),
             'target_url': self.odin_api_root + '/v5/level2?d={}'.format(
                 encode_level2_target_parameter(
