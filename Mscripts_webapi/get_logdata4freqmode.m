@@ -39,8 +39,6 @@
 %      webapi_url = get_webapi_url(); %connect to test database
 %      info = get_logdata4freqmode(freqmode,mjd1:mjd2,webapi_url)
 % 
-%      see also odin_webapi_demo.m for usage
-%
 % Created by Bengt Rydberg 2015-12-17
 
 function info = get_logdata4freqmode(freqmode,mjdvec,webapi_url)
@@ -59,7 +57,7 @@ n = 1;
 for i = 1 : length(datevec)
   datei = datestr(datevec(i),'yyyy-mm-dd');
   url = [ webapi_url,'/rest_api/v4/freqmode_info/',datei];
-  y = get_date_info(url);
+  y = webread(url, weboptions('ContentType','json','Timeout',120));
   if isempty(y.Info)
     continue
   end

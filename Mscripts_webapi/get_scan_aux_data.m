@@ -15,7 +15,6 @@
 %      url = 'http://malachite.rss.chalmers.se/rest_api/v4/ptz/2015-01-03/AC1/2/7002908396'
 %      url = 'http://malachite.rss.chalmers.se/rest_api/v4/apriori/O3/2015-01-03/AC1/2/7002908396'
 %      y = get_scan_aux_data(url)
-%      see also odin_webapi_demo.m for usage
 %
 % Created by Bengt Rydberg 2015-12-17
 

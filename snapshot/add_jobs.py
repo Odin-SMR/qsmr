@@ -2,7 +2,7 @@
 """
 usage: add_jobs.py [-h] [--freq-mode FREQ_MODE] [--jobs-file JOBS_FILE]
                    [--skip SKIP]
-                   PROJECT_NAME CONFIG_FILE
+                   PROJECT_NAME ODIN_PROJECT CONFIG_FILE
 
 Add qsmr jobs to job service.
 If no jobs file is provided, the configuration and project name is validated.
@@ -10,6 +10,7 @@ If no jobs file is provided, the configuration and project name is validated.
 positional arguments:
   PROJECT_NAME          must only contain ascii letters and digits and start
                         with an ascii letter
+  ODIN_PROJECT          the name used in the odin api
   CONFIG_FILE           path to configuration file
 
 optional arguments:
@@ -37,7 +38,7 @@ import requests
 try:
     from Crypto.Cipher import AES
 except ImportError:
-    print 'Missing depency pycrypto, install with pip install pycrypto'
+    print('Missing dependency pycrypto, install with pip install pycrypto')
     exit(1)
 
 CONFIG_FILE_DOCS = """The configuration file should contain these settings:
@@ -60,6 +61,7 @@ def make_argparser():
         'PROJECT_NAME', help=(
             'must only contain ascii letters and digits and start with an '
             'ascii letter'))
+    parser.add_argument('ODIN_PROJECT', help=('the name used in the odin api'))
     parser.add_argument('CONFIG_FILE', help='path to configuration file')
     parser.add_argument('--freq-mode', help='freq mode of the jobs')
     parser.add_argument('--jobs-file', help=(
@@ -76,6 +78,11 @@ def main(args=None):
             'Project name must only contain ascii letters and digits and '
             'start with an ascii letter\n'))
         return 1
+    if not validate_project_name(args.ODIN_PROJECT):
+        stderr.write((
+            'Odin project name must only contain ascii letters and digits and '
+            'start with an ascii letter\n'))
+        return 1
     config = load_config(args.CONFIG_FILE)
     if not validate_config(config):
         return 1
@@ -83,9 +90,9 @@ def main(args=None):
         return 0
     freq_mode = int(args.freq_mode)
     adder = AddQsmrJobs(
-        args.PROJECT_NAME, config['ODIN_API_ROOT'], config['ODIN_SECRET'],
-        config['JOB_API_ROOT'], config['JOB_API_USERNAME'],
-        config['JOB_API_PASSWORD'])
+        args.PROJECT_NAME, args.ODIN_PROJECT, config['ODIN_API_ROOT'],
+        config['ODIN_SECRET'], config['JOB_API_ROOT'],
+        config['JOB_API_USERNAME'], config['JOB_API_PASSWORD'])
     skip = 0
     if args.skip:
         skip = int(args.skip)
@@ -103,9 +110,10 @@ class AddQsmrJobs(object):
     # TODO: Should use uclient
     JOB_TYPE = 'qsmr'
 
-    def __init__(self, project, odin_api_root, odin_secret, job_api_root,
-                 job_api_user, job_api_password):
+    def __init__(self, project, odin_project, odin_api_root, odin_secret,
+                 job_api_root, job_api_user, job_api_password):
         self.project = project
+        self.odin_project = odin_project
         self.odin_api_root = odin_api_root
         self.job_api_root = job_api_root
         self.job_api_user = job_api_user
@@ -119,11 +127,16 @@ class AddQsmrJobs(object):
             'id': '%s:%s' % (freqmode, scanid),
             'type': self.JOB_TYPE,
             'source_url': (self.odin_api_root +
-                           '/v4/l1_log/{freqmode}/{scanid}/'.format(
+                           '/v5/level1/{freqmode}/{scanid}/Log'.format(
                                scanid=scanid, freqmode=freqmode)),
-            'target_url': self.odin_api_root + '/v4/level2?d={}'.format(
+            'target_url': self.odin_api_root + '/v5/level2?d={}'.format(
                 encode_level2_target_parameter(
-                    scanid, freqmode, self.project, self.odin_secret))
+                    scanid, freqmode, self.odin_project, self.odin_secret)),
+            'view_result_url': (
+                self.odin_api_root +
+                '/v5/level2/development/{project}/{freqmode}/{scanid}'.format(
+                    project=self.odin_project, freqmode=freqmode, scanid=scanid
+                ))
         }
 
     def add_job(self, scanid, freqmode):
@@ -241,6 +254,7 @@ def encode_level2_target_parameter(scanid, freqmode, project, secret):
     """
     data = {'ScanID': scanid, 'FreqMode': freqmode, 'Project': project}
     return encrypt(json.dumps(data), secret)
+
 
 if __name__ == '__main__':
     exit(main())

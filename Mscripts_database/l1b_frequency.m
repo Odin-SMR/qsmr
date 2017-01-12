@@ -20,8 +20,8 @@ end
 nf = length( L1B.Frequency.IFreqGrid );
 nt = length( itan);
 
-F = zeros( nf, nt );
+F = zeros( nt, nf );
 
 for i = 1 : nt
-  F(:,i) = L1B.Frequency.LOFreq(itan(i)) + L1B.Frequency.IFreqGrid;
+  F(i,:) = L1B.Frequency.LOFreq(itan(i)) + L1B.Frequency.IFreqGrid;
 end
