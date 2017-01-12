@@ -3,6 +3,7 @@ import unittest
 from snapshot import add_jobs
 
 PROJECT_NAME = 'testproject'
+ODIN_PROJECT = 'odinproject'
 CONFIG_FILE = '/tmp/test_qsmr_snapshot_config.conf'
 JOBS_FILE = '/tmp/test_qsmr_snapshot_jobs.txt'
 
@@ -20,10 +21,12 @@ class ResponseMock(object):
 
 class TestConfigValidation(BaseTest):
 
+    ARGS = [PROJECT_NAME, ODIN_PROJECT, CONFIG_FILE]
+
     def test_missing_value(self):
         """Test missing config values"""
         self._write_config('ODIN_SECRET=adsfasree\n')
-        self.assertEqual(add_jobs.main([PROJECT_NAME, CONFIG_FILE]), 1)
+        self.assertEqual(add_jobs.main(self.ARGS), 1)
 
         self._write_config((
             'ODIN_SECRET=adsfasree\n'
@@ -31,7 +34,7 @@ class TestConfigValidation(BaseTest):
             'JOB_API_ROOT=http://example.com\n'
             'JOB_API_USERNAME=testuser\n'
             'JOB_API_PASSWORD=\n'))
-        self.assertEqual(add_jobs.main([PROJECT_NAME, CONFIG_FILE]), 1)
+        self.assertEqual(add_jobs.main(self.ARGS), 1)
 
     def test_ok_config(self):
         """Test that ok config validates"""
@@ -41,7 +44,7 @@ class TestConfigValidation(BaseTest):
             'JOB_API_ROOT=http://example.com\n'
             'JOB_API_USERNAME=testuser\n'
             'JOB_API_PASSWORD=testpw\n'))
-        self.assertEqual(add_jobs.main([PROJECT_NAME, CONFIG_FILE]), 0)
+        self.assertEqual(add_jobs.main(self.ARGS), 0)
 
     def test_bad_api_root(self):
         """Test bad api root url"""
@@ -51,7 +54,7 @@ class TestConfigValidation(BaseTest):
             'JOB_API_ROOT=http://example.com\n'
             'JOB_API_USERNAME=testuser\n'
             'JOB_API_PASSWORD=testpw\n'))
-        self.assertEqual(add_jobs.main([PROJECT_NAME, CONFIG_FILE]), 1)
+        self.assertEqual(add_jobs.main(self.ARGS), 1)
 
         self._write_config((
             'ODIN_SECRET=adsfasree\n'
@@ -59,7 +62,7 @@ class TestConfigValidation(BaseTest):
             'JOB_API_ROOT=http://example.com/\n'
             'JOB_API_USERNAME=testuser\n'
             'JOB_API_PASSWORD=testpw\n'))
-        self.assertEqual(add_jobs.main([PROJECT_NAME, CONFIG_FILE]), 1)
+        self.assertEqual(add_jobs.main(self.ARGS), 1)
 
 
 class TestProjectNameValidation(BaseTest):
@@ -72,13 +75,21 @@ class TestProjectNameValidation(BaseTest):
             'JOB_API_ROOT=http://example.com\n'
             'JOB_API_USERNAME=testuser\n'
             'JOB_API_PASSWORD=testpw\n'))
-        self.assertEqual(add_jobs.main(['test_project', CONFIG_FILE]), 1)
-        self.assertEqual(add_jobs.main(['1project', CONFIG_FILE]), 1)
-        self.assertEqual(add_jobs.main(['123', CONFIG_FILE]), 1)
-        self.assertEqual(add_jobs.main(['', CONFIG_FILE]), 1)
+        self.assertEqual(add_jobs.main(
+            ['test_project', ODIN_PROJECT, CONFIG_FILE]), 1)
+        self.assertEqual(add_jobs.main(
+            ['1project', ODIN_PROJECT, CONFIG_FILE]), 1)
+        self.assertEqual(add_jobs.main(
+            ['123', ODIN_PROJECT, CONFIG_FILE]), 1)
+        self.assertEqual(add_jobs.main(
+            ['', ODIN_PROJECT, CONFIG_FILE]), 1)
+        self.assertEqual(add_jobs.main(
+            [PROJECT_NAME, '1project', CONFIG_FILE]), 1)
 
-        self.assertEqual(add_jobs.main(['project', CONFIG_FILE]), 0)
-        self.assertEqual(add_jobs.main(['p123', CONFIG_FILE]), 0)
+        self.assertEqual(add_jobs.main(
+            ['project', ODIN_PROJECT, CONFIG_FILE]), 0)
+        self.assertEqual(add_jobs.main(
+            ['p123', ODIN_PROJECT, CONFIG_FILE]), 0)
 
 
 class BaseTestAddJobs(BaseTest):
@@ -122,7 +133,7 @@ class TestAddJobs(BaseTestAddJobs):
         """Test to add jobs from a scan id file"""
         self._write_scanids(map(str, range(15)))
         exit_code = add_jobs.main([
-            PROJECT_NAME, CONFIG_FILE, '--freq-mode', '1',
+            PROJECT_NAME, ODIN_PROJECT, CONFIG_FILE, '--freq-mode', '1',
             '--jobs-file', JOBS_FILE])
         self.assertEqual(exit_code, 0)
         self.assertEqual(len(self._mock_post_method.jobs), 15)
@@ -131,7 +142,7 @@ class TestAddJobs(BaseTestAddJobs):
         """Test skipping of scan ids in the file"""
         self._write_scanids(map(str, range(15)))
         exit_code = add_jobs.main([
-            PROJECT_NAME, CONFIG_FILE, '--freq-mode', '1',
+            PROJECT_NAME, ODIN_PROJECT, CONFIG_FILE, '--freq-mode', '1',
             '--jobs-file', JOBS_FILE, '--skip', '6'])
         self.assertEqual(exit_code, 0)
         self.assertEqual(len(self._mock_post_method.jobs), 15-6)
@@ -155,7 +166,7 @@ class TestRenewToken(BaseTestAddJobs):
         """Test retry because of renewal of auth token"""
         self._write_scanids(map(str, range(15)))
         exit_code = add_jobs.main([
-            PROJECT_NAME, CONFIG_FILE, '--freq-mode', '1',
+            PROJECT_NAME, ODIN_PROJECT, CONFIG_FILE, '--freq-mode', '1',
             '--jobs-file', JOBS_FILE])
         self.assertEqual(exit_code, 0)
         self.assertEqual(len(self._mock_post_method.jobs), 15)
@@ -178,7 +189,7 @@ class TestFailure(BaseTestAddJobs):
         """Test exception of post of job"""
         self._write_scanids(map(str, range(15)))
         exit_code = add_jobs.main([
-            PROJECT_NAME, CONFIG_FILE, '--freq-mode', '1',
+            PROJECT_NAME, ODIN_PROJECT, CONFIG_FILE, '--freq-mode', '1',
             '--jobs-file', JOBS_FILE])
         self.assertEqual(exit_code, 1)
         self.assertEqual(len(self._mock_post_method.jobs), 1)

@@ -1,3 +1,8 @@
+2017-01-12  Jimmy Petersson   <jimmy@molflow.com>
+
+	* Build_scripts/runscript.m: Add timeout to post request.
+	* snapshot/add_jobs.py: Adapt to odin api v5.
+
 2016-12-13  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_qsystem/q2_version.m: Now set to qsmr-beta-8.
