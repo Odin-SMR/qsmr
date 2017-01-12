@@ -30,7 +30,8 @@ function []=runscript(source_url, target_url, target_username, target_password)
 
    Q.FOLDER_MSIS90      = fullfile( datadir, 'DataInput', 'Temperature' );
 
-   LOG = get_scan_log(source_url);
+   LOG = webread(source_url, weboptions('ContentType', 'json', ...
+                                        'Timeout', 60))
    if Q.FREQMODE ~= LOG.Info.FreqMode
        disp(sprintf('Freqmode missmatch, Q: %s, LOG: %s', Q.FREQMODE, ...
                     LOG.Info.FreqMode))
