@@ -1,3 +1,7 @@
+2017-01-16  Jimmy Petersson   <jimmy@molflow.com>
+
+	* Mscripts_atmlab/mat2col.m: Add missing function
+
 2017-01-12  Jimmy Petersson   <jimmy@molflow.com>
 
 	* Build_scripts/runscript.m: Add timeout to post request.
