@@ -1,3 +1,8 @@
+2017-01-30  Jimmy Petersson   <jimmy@molflow.com>
+
+	* snapshot/*: Remove outdated snapshot build script and move
+	add_jobs application to its own repo.
+
 2017-01-16  Jimmy Petersson   <jimmy@molflow.com>
 
 	* Mscripts_atmlab/mat2col.m: Add missing function

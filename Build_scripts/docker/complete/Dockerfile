@@ -1,3 +1,3 @@
-FROM docker2.molflow.com/devops/qsmr_base:161130
+FROM docker2.molflow.com/devops/qsmr_base:170116
 
 COPY data /QsmrData
