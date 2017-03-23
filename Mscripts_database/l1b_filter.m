@@ -156,12 +156,24 @@ else
 end
 
 
+% Frequency correction
+%
+if Q.QFILT_FCORR
+  itan400 = ~bitget( L1B.Quality, find(bitget(hex2dec('0400'),1:11)) );
+  dtan    = ntan - sum(itan400);
+  if dtan > 0
+    L2C{end+1} = sprintf( ...
+            'Filter: %d spectra removed due to frequency correction flag', dtan );
+  end
+else
+  itan400 = logical( ones(ntan,1) );
+end
+
+
 % Combined tangent altitude filtering
 %
 itan = find( itan001 & itan002 & itan004 & itan008 & itan010 & ...
-             itan020 & itan040 & itan080 & itan100 & itan200 ); 
-%
-
+             itan020 & itan040 & itan080 & itan100 & itan200 & itan400 ); 
 
 
 % Index of AC sub-bands to keep

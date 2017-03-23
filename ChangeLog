@@ -1,3 +1,7 @@
+2017-03-23  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_database/l1b_filter.m: Added handling of Q.QFILT_FCORR.
+
 2017-03-02  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_arts/q2_arts_y.m: Output F had wrong size for ~do_sensor.
