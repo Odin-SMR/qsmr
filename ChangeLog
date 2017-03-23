@@ -1,3 +1,10 @@
+2017-03-02  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_arts/q2_arts_y.m: Output F had wrong size for ~do_sensor.
+
+	* Mscripts_database/l1b_homemade.m: Orientation of GPSpos field
+	was wrong.
+
 2017-02-22  Andreas Skyman   <andreas.skyman@molflow.com>
 
 	* Build_scripts/runscript.m: Will retry maximum 5 times if webread

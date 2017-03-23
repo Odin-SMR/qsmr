@@ -104,7 +104,13 @@ if nargout > 1
   L1B.FreqRes     = vectorfield( df,                   nt, 'df'            );
   L1B.Frontend    = vectorfield( Q.FRONTEND_NR,        nt, 'Q.FRONTEND_NR' );
   % Assume that just radius is extracted from GPSpos!
-  L1B.GPSpos      = matrixfield( [0;0;r_earth+z_odin], nt, 'GPSpos'        );
+  if length(z_odin) == 1
+    L1B.GPSpos    = repmat( [0,0,r_earth+z_odin], nt, 1 );
+  elseif length(z_odin) == nt
+    L1B.GPSpos    = [ repmat( [0,0], nt, 1 ), r_earth+vec2col(z_odin) ];
+  else
+    error( 'Unvalid size of z_odin' );  
+  end
   L1B.Hanning     = vectorfield( 1,                    nt, 'Hanning'       );
   L1B.IntTime     = vectorfield( inttime,              nt, 'inttime'       );
   L1B.Latitude    = vectorfield( lat,                  nt, 'lat'           );
@@ -128,16 +134,3 @@ function b = vectorfield( a, nt, inname )
   end
 return
 
-function b = matrixfield( a, nt, inname )
-  if ~istensor1(a)
-    error( ['*%s* must be a tensor1.'], inname );    
-  end
-  if size(a,2) == 1
-    b = repmat( a, 1, nt );
-  elseif length(a) == nt
-    b = a;
-  else
-    error( ['Incorrect size of *%s*. It must be a tensor1, or have number ' ...
-            'of columns matching length of *ztan*.'], inname );
-  end
-return

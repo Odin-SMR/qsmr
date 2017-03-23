@@ -145,10 +145,10 @@ else
   if nargout > 1
     if use_abstable
       A = xmlLoad( C.ABS_LOOKUP_TABLE );
-      f = vec2col( A.f_grid );
+      f = A.f_grid;
     end
     %
-    F = repmat( f, 1, length(za) );
+    F = repmat( vec2col(f), 1, length(za), 1 );
     %
   end
 end
