@@ -88,11 +88,12 @@ function []=runscript(source_url, target_url, target_username, target_password)
             end
             retries = retries - 1;
             if retries == 0
-                disp(sprintf('Failed to post data for freqmode %s',
+                disp(sprintf('Failed to post data for freqmode %s', ...
                              Q.FREQMODE))
                 exit(1);
             end
         end
     end
     fclose('all');
-exit(0);
+    exit(0);
+end
