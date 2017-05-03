@@ -1,3 +1,9 @@
+2017-05-03  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_arts/q2_arts_y.m: reshape of y with do_sensor failed.
+	It seems that L1B.Spectrum has been transposed since the code was
+	written. Anyhow, code has been changed to be more stable.
+
 2017-03-23  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_database/l1b_filter.m: Added handling of Q.QFILT_FCORR.

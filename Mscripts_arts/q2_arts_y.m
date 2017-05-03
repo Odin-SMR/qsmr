@@ -136,7 +136,7 @@ y      = xmlLoad( fullfile( R.workfolder, 'y.xml' ) );
 %
 if do_sensor
   y = R.H_TOTAL * y;
-  Y = reshape( y, size(L1B.Spectrum) );
+  Y = reshape( y, length(L1B.TrecSpectrum), length(L1B.MJD) )';
   if nargout > 1
     F = l1b_frequency( L1B );
   end
