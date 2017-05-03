@@ -1,3 +1,9 @@
+2017-05-03  Andreas Skyman  <andreas.skyman@molflow.com>
+
+	* Build_scripts/batch_build.sh: Created batch building script
+
+	* Build_scripts/docker/complete/Dockerfile: Updated FROM version
+
 2017-05-03  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_arts/q2_arts_y.m: reshape of y with do_sensor failed.
@@ -213,7 +219,7 @@
 	these functions used nargchk and Matlab 2016a gives a warning
 	about this function, that it will be removed. For this reason,
 	the checks inside these functions have been commented out in
-	Atmlab and copied to move these changes Qsmr. 
+	Atmlab and copied to move these changes Qsmr.
 
 2016-09-06  Jimmy Petersson  <jimmy@molflow.com>
 
@@ -340,7 +346,7 @@
 
 2016-03-11  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
-	* Some reorganisation of how data files are organised. 
+	* Some reorganisation of how data files are organised.
 
 2016-03-08  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
@@ -398,7 +404,7 @@
 	* Mscripts_arts/q2_inv.m: L2d changed.
 
 	* Mscripts_arts/q2_arts_sensor_parts.m: Old mixer and backend, now
-	treated as one part. Clearer handling of LO. 
+	treated as one part. Clearer handling of LO.
 
 2016-02-04  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
