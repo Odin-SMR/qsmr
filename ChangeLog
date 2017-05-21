@@ -1,3 +1,11 @@
+2017-05-21  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_arts/q2_inv.m: lat_true and lon_true are now set to
+	R.ATM.LAT and R.ATM.LON, to be consistent with extraction of a
+	priori atmosphere. L2.Latitude/Longitude now set using nearest
+	interpolation, instead pchip. Slightly poorer inside range covered
+	by spectra, but works much better in extrapolation zone.
+
 2017-05-03  Andreas Skyman  <andreas.skyman@molflow.com>
 
 	* Build_scripts/batch_build.sh: Created batch building script
