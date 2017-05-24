@@ -1,3 +1,7 @@
+2017-05-24  Andreas Skyman  <andreas.skyman@molflow.com>
+
+	* Build_scripts/docker/complete/Dockerfile: Updated FROM version
+
 2017-05-21  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_arts/q2_inv.m: lat_true and lon_true are now set to
