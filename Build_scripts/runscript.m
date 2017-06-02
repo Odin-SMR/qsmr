@@ -79,10 +79,7 @@ function []=runscript(source_url, target_url, target_username, target_password)
         while (retries)
             try
                 response = webwrite(target_url, data, options);
-                %% Not sure what the response we get from the API:
-                % if ~isempty(LOG)
-                %     break;
-                % end
+                break;
             catch
                 pause(5);
             end
