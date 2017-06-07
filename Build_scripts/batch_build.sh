@@ -1,6 +1,6 @@
 #! /bin/bash -eu
 # Batch build and push new images for all frequency and inversion modes.
-# Assumes that a base image has been built and that QSMR/docker/Docker file
+# Assumes that a base image has been built and that QSMR/docker/Dockerfile
 # has been updated to use it, see:
 #   https://phabricator.molflow.com/w/odin-redo-processing/
 #   https://phabricator.molflow.com/diffusion/QQ/browse/master/Build_scripts/
