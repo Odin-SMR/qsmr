@@ -1,9 +1,13 @@
+2017-06-07  Andreas Skyman  <andreas.skyman@molflow.com>
+
+	* Build_scripts/docker/complete/Dockerfile: Updated FROM version
+
 2017-06-02  Joakim Möller <joakim.moller@molflow.com>
 
-  * Build_scripts/docker/runscript.m: Corrected exit status after L2
-	  delivery to odin-api. This might also speed up the processing a bit
-		and reduce the load on the API.
-		
+	* Build_scripts/docker/runscript.m: Corrected exit status after L2
+	delivery to odin-api. This might also speed up the processing a bit
+	and reduce the load on the API.
+
 2017-05-24  Andreas Skyman  <andreas.skyman@molflow.com>
 
 	* Build_scripts/docker/complete/Dockerfile: Updated FROM version
