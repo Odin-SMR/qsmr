@@ -41,7 +41,7 @@ function []=runscript(source_url, target_url, target_username, target_password)
 
     L1B = get_scan_l1b_data(LOG.Info.URLS.URL_spectra);
 
-    [L2,L2I,L2C] = q2_inv( LOG.Info, L1B, Q);
+    [L2, L2I, L2C] = q2_inv(LOG.Info, L1B, Q);
 
     if nargin < 2
         save('L2.mat', 'L2');

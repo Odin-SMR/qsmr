@@ -3,7 +3,7 @@
 	for webread to increase the chances of successful processing.
 	* Build_scripts/runscript.m: using proxy function
 	* Mscripts_webapi/get_logdata4freqmode.m: using proxy function
-	* Mscripts_webapi/get_measuredfreqmodes4daterange.m: using proxy 
+	* Mscripts_webapi/get_measuredfreqmodes4daterange.m: using proxy
 	function
 	* Mscripts_webapi/get_scan_aux_data.m: using proxy function
 	* Mscripts_webapi/get_scan_l1b_data.m: using proxy function
@@ -11,7 +11,8 @@
 
 2017-06-19  Andreas Skyman  <andreas.skyman@molflow.com>
 
-	* Build_scripts/docker/batch_buil.sh: Updated comment, added fms 22 and 24
+	* Build_scripts/docker/batch_build.sh: Updated comment, added fms 22 and 24
+	* Build_scripts/docker/complete/Dockerfile: Updated FROM version
 
 2017-06-07  Andreas Skyman  <andreas.skyman@molflow.com>
 
