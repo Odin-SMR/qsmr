@@ -23,14 +23,14 @@ YYMMDD=`date +%y%m%d`
 PRECALC_IMAGE="docker2.molflow.com/devops/qsmr_precalc:"$YYMMDD
 PRECALC="docker run --name qsmr_precalc "$PRECALC_IMAGE" /artifact"
 # Clean up precalc build:
-docker rmi -f $PRECALC_IMAGE || true
+docker rmi -f $PRECALC_IMAGE || echo "precalc image clean"
 # Build:
 cd $QSMRDATA_PATH"/Build_scripts"
 ./build.sh
 
 
 # Build the worker images:
-declare -a FREQMODES=(1 2 8 13 14 17 19 21)
+declare -a FREQMODES=(1 2 8 13 14 17 19 21 22 24)
 declare -a INVMODES=("stnd" "meso")
 
 for fmode in "${FREQMODES[@]}"
