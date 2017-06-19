@@ -31,24 +31,8 @@ function []=runscript(source_url, target_url, target_username, target_password)
     Q.FOLDER_MSIS90      = fullfile( datadir, 'DataInput', 'Temperature' );
 
     max_retries = 5;
-    retries = max_retries;
-    while (retries)
-        try
-            LOG = webread(source_url, weboptions('ContentType', 'json', ...
-                                                 'Timeout', 60))
-            if ~isempty(LOG)
-                break;
-            end
-        catch
-            pause(5);
-        end
-        retries = retries - 1;
-        if retries == 0
-            disp(sprintf('Failed to get data for freqmode %s', Q.FREQMODE))
-            exit(1);
-        end
-    end
-
+    LOG = webread_retry(source_url, weboptions('ContentType', 'json', ...
+      'Timeout', 300), max_retries)
     if Q.FREQMODE ~= LOG.Info.FreqMode
         disp(sprintf('Freqmode missmatch, Q: %s, LOG: %s', Q.FREQMODE, ...
                         LOG.Info.FreqMode))

@@ -5,30 +5,30 @@
 %
 % info = get_logdata4freqmode(freqmode,mjd1,mjd2,webapi_url)
 %
-% Out:  
+% Out:
 %     info  structure with logdata
 %     a link to field descriptions to come..
-%      AltEnd:  
-%      AltStart 
-%      DateTime 
-%      FreqMode 
-%      LatEnd 
+%      AltEnd:
+%      AltStart
+%      DateTime
+%      FreqMode
+%      LatEnd
 %      LatStart
-%      LonEnd 
-%      LonStart 
-%      MJDEnd 
-%      MJDStart 
-%      NumSpec 
-%      ScanID 
-%      SunZD 
+%      LonEnd
+%      LonStart
+%      MJDEnd
+%      MJDStart
+%      NumSpec
+%      ScanID
+%      SunZD
 %      URLS
 %         URLs to l1b and aux data
-% In:    
+% In:
 %     mjdvec vector with mjd
-%     freqmode  scalar 
+%     freqmode  scalar
 %     webapi_url optional default is to search data from the odin
 %     live database
-%   
+%
 % Example Usage:
 %
 %      mjd1 = datenum('2015-01-03') - datenum('1858-11-17');
@@ -38,7 +38,7 @@
 %
 %      webapi_url = get_webapi_url(); %connect to test database
 %      info = get_logdata4freqmode(freqmode,mjd1:mjd2,webapi_url)
-% 
+%
 % Created by Bengt Rydberg 2015-12-17
 
 function info = get_logdata4freqmode(freqmode,mjdvec,webapi_url)
@@ -57,7 +57,7 @@ n = 1;
 for i = 1 : length(datevec)
   datei = datestr(datevec(i),'yyyy-mm-dd');
   url = [ webapi_url,'/rest_api/v4/freqmode_info/',datei];
-  y = webread(url, weboptions('ContentType','json','Timeout',120));
+  y = webread_retry(url, weboptions('ContentType','json','Timeout', 300), 5);
   if isempty(y.Info)
     continue
   end
@@ -76,10 +76,10 @@ end
 
 n = 1;
 for i = 1:length(urls)
-  y = webread(urls{i}, weboptions('ContentType','json','Timeout',120));
+  y = webread_retry(urls{i}, weboptions('ContentType', 'json', 'Timeout', ...
+    300), 5);
   for j = 1 : length(y.Info)
      info(n) = y.Info(j);
      n = n + 1;
   end
 end
-

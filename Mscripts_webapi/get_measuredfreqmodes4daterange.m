@@ -1,20 +1,20 @@
 % returns a vector with freqmodes that were
 % observed for given dates
-% 
+%
 % Usage:
 %      y = get_measuredfreqmodes4daterange(mjd,webapi_url)
-% 
-% Out:  
+%
+% Out:
 %      y  cell array of structs
-%         the struct has fields 
+%         the struct has fields
 %         mjd (scalar)
 %         freqmodes (vector)
-%        
-% In:    
-%     mjd vector of mjd 
+%
+% In:
+%     mjd vector of mjd
 %     webapi_url optional default is to search data from the odin
 %     live database
-%   
+%
 % Example Usage:
 %
 %      mjd1 = datenum('2015-01-03') - datenum('1858-11-17');
@@ -23,7 +23,7 @@
 %
 %      webapi_url = get_webapi_url(); %connect to test database
 %      freqmodes = get_measuredfreqmodes4daterange(mjd1:mjd2,webapi_url)
-% 
+%
 % Created by Bengt Rydberg 2015-12-17
 
 
@@ -42,12 +42,12 @@ n = 1;
 for i = 1 : length(datevec)
   datei = datestr(datevec(i),'yyyy-mm-dd');
   url = [ webapi_url,'/rest_api/v4/freqmode_info/',datei];
-  y = webread(url, weboptions('ContentType','json','Timeout',60));
+  y = webread_retry(url, ...
+    weboptions('ContentType', 'json', 'Timeout', 300), 5);
   if ~isempty(y.Info)
     Y.mjd = mjd(i);
     Y.freqmodes = [y.Info(:).FreqMode];
     freqmodes{i} = Y;
     n = n + 1;
-  end 
+  end
 end
-
