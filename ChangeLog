@@ -1,3 +1,9 @@
+2017-06-26  Joakim Möller  <joakim.moller@molflow.com>
+	* Mscripts_webapi/webwrite_retry.m:  implemented a retry proxy function
+	for webwrite to increase the chances to deliver data to the odinapi.
+	* Build_scrips/runscript.m:  using webwrite_retry.
+	* Mscripts_webapi/webread_retry.m: increased verbosity.
+
 2017-06-19  Joakim Möller  <joakim.moller@molflow.com>
 	* Mscripts_webapi/webread_retry.m: implemented a retry proxy function
 	for webread to increase the chances of successful processing.

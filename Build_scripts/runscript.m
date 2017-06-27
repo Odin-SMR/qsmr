@@ -7,7 +7,7 @@ function []=runscript(source_url, target_url, target_username, target_password)
     Q = Q.Q;
 
     disp(sprintf('Using Q config with freqmode %d and invmode %s', ...
-                    Q.FREQMODE, Q.INVEMODE));
+                    Q.FREQMODE, Q.INVEMODE))
 
     % Fix paths
     Q.ARTS               = 'LD_LIBRARY_PATH="" arts';
@@ -32,7 +32,7 @@ function []=runscript(source_url, target_url, target_username, target_password)
 
     max_retries = 5;
     LOG = webread_retry(source_url, weboptions('ContentType', 'json', ...
-      'Timeout', 300), max_retries)
+        'Timeout', 300), max_retries)
     if Q.FREQMODE ~= LOG.Info.FreqMode
         disp(sprintf('Freqmode missmatch, Q: %s, LOG: %s', Q.FREQMODE, ...
                         LOG.Info.FreqMode))
@@ -49,31 +49,20 @@ function []=runscript(source_url, target_url, target_username, target_password)
         save('L2C.mat', 'L2C');
     else
         if nargin < 3
-            options = weboptions('MediaType','application/json', ...
-                                    'Timeout', 60);
+            options = weboptions( ...
+                'MediaType','application/json', ...
+                'Timeout', 300);
         else
-            options = weboptions('MediaType','application/json', ...
-                                    'Timeout', 60, 'Username', ...
-                                    target_username, 'Password', ...
-                                    target_password);
+            options = weboptions( ...
+                'MediaType','application/json', ...
+                'Timeout', 300, ...
+                'Username', target_username, ...
+                'Password', target_password);
         end
 
         data = struct('L2', L2, 'L2I', L2I, 'L2C', strjoin(L2C, '\n'));
-        retries = max_retries;
-        while (retries)
-            try
-                response = webwrite(target_url, data, options);
-                break;
-            catch
-                pause(5);
-            end
-            retries = retries - 1;
-            if retries == 0
-                disp(sprintf('Failed to post data for freqmode %s', ...
-                             Q.FREQMODE))
-                exit(1);
-            end
-        end
+        response = webwrite_retry(target_url, data, options, ...
+            max_retries);
     end
     fclose('all');
     exit(0);

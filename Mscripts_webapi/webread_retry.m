@@ -24,7 +24,7 @@ function web_request = webread_retry(source_url, webread_options, max_retries)
     wait_seconds = min_pause + rand(1, max_retries) * (max_pause - min_pause);
     for idx = numel(wait_seconds)
         try
-            web_request = webread(source_url, webread_options)
+            web_request = webread(source_url, webread_options);
             return
         catch
             pause(wait_seconds(idx));
