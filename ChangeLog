@@ -1,3 +1,12 @@
+2017-08-29  Bengt Rydberg  <bengt.rydberg@molflow.com>
+        * Build_scripts/create_qsmr_project.sh: added bash script for creating
+        a qsmr processing project including a qsmr worker image
+        * Build_scripts/batch_build_single.sh: added bash script for creating
+        a qsmr worker image
+        * Build_scripts/docker/build_base.sh: added argument handling
+        * Build_scripts/docker/build_complete.sh: added argument handling
+        * Build_scripts/docker/complete/Dockerfile: removed file
+
 2017-06-26  Joakim Möller  <joakim.moller@molflow.com>
 	* Mscripts_webapi/webwrite_retry.m:  implemented a retry proxy function
 	for webwrite to increase the chances to deliver data to the odinapi.
