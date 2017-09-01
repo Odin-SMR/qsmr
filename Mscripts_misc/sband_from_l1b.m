@@ -30,7 +30,7 @@ function sb_response = sband_from_l1b(l1b)
     % Parameters from analysis, possibly overridden in switch below:
     % (N.B.: these parameters are preliminary and will change!)
     l0_SB = 9.469150e-3;
-    temp_coeff = 0.980114e-6;
+    temp_coeff = 1.041477e-6;
     T0 = 291.0;
 
     % FreqMode specific parameters:
@@ -119,16 +119,21 @@ function r_tot = response_tot(freq, params, scan)
     % parameters and L1b data
 
     r_tot = response_sb(freq, params, scan) ...
-        .* response_lo(freq, params);
+        .* response_lo(freq, params, scan);
 
 end
 
 
-function r_lo = response_lo(freq, params)
-    % Calculate the response of the LO injection for given frequencies
-    % and parameters
+function r_lo = response_lo(freq, params, scan)
+    % Calculate the response of the LO injection for given frequencies,
+    % parameters and L1b data
 
-    r_lo = response(freq, params.r0, params.l0_LO);
+    r_lo = response(freq, params.r0, path_length( ...
+        params.l0_LO, ...
+        0, ...
+        repmat(scan.Tcal', params.rows, 1) - params.T0, ...
+        params.temp_coeff ...
+    ));
 
 end
 
