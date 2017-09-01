@@ -1,19 +1,30 @@
+2017-06-19  Andreas Skyman  <andreas.skyman@molflow.com>
+
+	* Mscripts_misc/: created directory (this name is probably temporary)
+	* Mscripts_misc/sband_from_l1b.m: added matlab function for calculating
+	sideband leakage for an L1b record, based on a model for the thermal
+	expansion of the sideband filter path length (should maybe be in a
+	different or at least differently named directory)
+
 2017-08-29  Bengt Rydberg  <bengt.rydberg@molflow.com>
-        * Build_scripts/create_qsmr_project.sh: added bash script for creating
-        a qsmr processing project including a qsmr worker image
-        * Build_scripts/batch_build_single.sh: added bash script for creating
-        a qsmr worker image
-        * Build_scripts/docker/build_base.sh: added argument handling
-        * Build_scripts/docker/build_complete.sh: added argument handling
-        * Build_scripts/docker/complete/Dockerfile: removed file
+
+	* Build_scripts/create_qsmr_project.sh: added bash script for creating
+	a qsmr processing project including a qsmr worker image
+	* Build_scripts/batch_build_single.sh: added bash script for creating
+	a qsmr worker image
+	* Build_scripts/docker/build_base.sh: added argument handling
+	* Build_scripts/docker/build_complete.sh: added argument handling
+	* Build_scripts/docker/complete/Dockerfile: removed file
 
 2017-06-26  Joakim Möller  <joakim.moller@molflow.com>
+
 	* Mscripts_webapi/webwrite_retry.m:  implemented a retry proxy function
 	for webwrite to increase the chances to deliver data to the odinapi.
 	* Build_scrips/runscript.m:  using webwrite_retry.
 	* Mscripts_webapi/webread_retry.m: increased verbosity.
 
 2017-06-19  Joakim Möller  <joakim.moller@molflow.com>
+
 	* Mscripts_webapi/webread_retry.m: implemented a retry proxy function
 	for webread to increase the chances of successful processing.
 	* Build_scripts/runscript.m: using proxy function
