@@ -1,9 +1,19 @@
-2017-06-19  Andreas Skyman  <andreas.skyman@molflow.com>
+2017-09-04  Joakim Möller  <joakim.moller@molflow.com>
+
+	* Build_scripts/batch_build_single.sh: Updated script to push to the
+	backend registry instead of the cached frontend registry.
+
+	* Build_scripts/docker/complete/build_complete.sh: Updated script to push
+	to the backend registry instead of the cached frontend registry.
+
+	* ChangeLog: Adjusting Andreas last ChangLog dates after consulting him.
+
+2017-09-01  Andreas Skyman  <andreas.skyman@molflow.com>
 
 	* Mscripts_misc/sband_from_l1b.m: implemented thermal expansion of l0_LO
 	in addition to l0_SB
 
-2017-06-19  Andreas Skyman  <andreas.skyman@molflow.com>
+2017-08-31  Andreas Skyman  <andreas.skyman@molflow.com>
 
 	* Mscripts_misc/: created directory (this name is probably temporary)
 	* Mscripts_misc/sband_from_l1b.m: added matlab function for calculating

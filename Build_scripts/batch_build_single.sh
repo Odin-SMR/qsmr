@@ -2,6 +2,7 @@
 # Batch build and push new image for a given frequency and inversion modes.
 # This script is supposed to be called by create_qsmr_worker_image.sh
 
+set -x
 
 # To run, paths to the QSMR and QSMRDATA repositories are needed, e.g.:
 QSMR_PATH=$1
@@ -44,5 +45,6 @@ cd $QSMR_PATH"/Build_scripts/docker"
 ./build_complete.sh $YYMMDD
 
 # Push to repository:
-docker push "odinregistry.molflow.com/devops/qsmr_"$imode"_"$fmode":"$YYMMDD
-echo "succesfully built and pushed image odinregistry.molflow.com/devops/qsmr_${imode}_${fmode}:${YYMMDD}"
+push_registry="odinregbackend.molflow.com/devops"
+docker push $push_registry"/qsmr_"$imode"_"$fmode":"$YYMMDD
+echo "succesfully built and pushed image ${push_registry}/qsmr_${imode}_${fmode}:${YYMMDD}"
