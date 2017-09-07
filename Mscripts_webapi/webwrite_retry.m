@@ -10,7 +10,7 @@
 %     url  the url to read
 %     data  data-payload same format as webwrite
 %     webwrite_options  same options set to webwrite
-%     max_retries  the number of retries before failure
+%     max_retries  the number of tries before failure
 %
 % Example Usage:
 %
@@ -18,20 +18,24 @@
 %          weboptions('ContentType', 'json', 'Timeout', 60), 5)
 %
 % Created by Joakim Möller 2017-06-27
+% Bugfix and better error reporting by Joakim Möller 2017-09-07
+
 
 function web_request = webwrite_retry(source_url, data, webwrite_options, ...
         max_retries)
     min_pause = 3;
     max_pause = 60;
     wait_seconds = min_pause + rand(1, max_retries) * (max_pause - min_pause);
-    for idx = numel(wait_seconds)
+    for secs = wait_seconds
         try
             web_request = webwrite(source_url, data, webwrite_options);
             return
-        catch
-            pause(wait_seconds(idx));
+        catch errmsg
+            disp(errmsg.message);
+            disp(sprintf('Retrying %s in %0.0fs', source_url, secs));
+            pause(secs);
         end
     end
-    disp(sprintf('Failed to send data to %s', source_url))
+    disp(sprintf('Failed to send data to %s', source_url));
     exit(1);
 end

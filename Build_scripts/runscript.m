@@ -32,7 +32,11 @@ function []=runscript(source_url, target_url, target_username, target_password)
 
     max_retries = 5;
     LOG = webread_retry(source_url, weboptions('ContentType', 'json', ...
-        'Timeout', 300), max_retries)
+        'Timeout', 300), max_retries);
+    if isempty(LOG)
+        disp(sprintf('Empty results from URL-input: %s', source_url));
+        exit(2)
+    end
     if Q.FREQMODE ~= LOG.Info.FreqMode
         disp(sprintf('Freqmode missmatch, Q: %s, LOG: %s', Q.FREQMODE, ...
                         LOG.Info.FreqMode))

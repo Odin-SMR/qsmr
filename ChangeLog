@@ -1,3 +1,14 @@
+2017-09-07  Joakim Möller  <joakim.moller@molflow.com>
+
+	* Mscripts_webapi/webread_retry: Update to actually retry the GET request
+	as many times the input parameter says. Better error reporting.
+
+	* Mscripts_webapi/webwrite_retry: Update to actually retry the POST request
+	as many times the input parameter says. Better error reporting.
+
+	* Build_scripts/runscript.m: Quit and report if input-URL gives empty
+	result.
+
 2017-09-04  Joakim Möller  <joakim.moller@molflow.com>
 
 	* Build_scripts/batch_build_single.sh: Updated script to push to the
