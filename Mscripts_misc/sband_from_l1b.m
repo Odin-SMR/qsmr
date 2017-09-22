@@ -1,31 +1,47 @@
-% Function for returning sideband response for the provided L1b struct
+% Function for returning sideband leakage for the provided L1b struct
 %
 %
-% Function implements response function (10) from [1] with temperature
+% Function implements leakage function (10) from [1] with temperature
 % dependent path length as in (20), but with updated parameters.
 %
-% OUT   sb_response Sideband filter response for input frequencies for
+% OUT   sb_leakage  Sideband filter leakage for input frequencies for
 %                   all spectra in scan
+%
 % IN    L1b         L1b struct (assumes v5 of API though v4 might work)
 %
+%       freq_grid   OPTIONAL. If freq_grid is supplied, leakage will be
+%                   calculated only for the given frequencies.
+%                   Additionally, this will result in only one leakage
+%                   profile for the entire scan, using the median Tcal
+%                   LOFreq and SBPath values for scan.
 %
-% 2017-08-29 andreas.skyman@molflow.com
+% Created:  2017-08-29  andreas.skyman@molflow.com
+% Updated:  2017-09-22  andreas.skyman@molflow.com
 %
 % --------
 % [1]:  Post launch characterisation of Odin-SMR sideband filter properties,
 %   P. Eriksson and J. Urban, Chalmers University of Technology (2006-08-30)
 
 
-function sb_response = sband_from_l1b(l1b)
+function sb_leakage = sband_from_l1b(l1b, freq_grid)
 
     scan = l1b.Data;
-
     rows = length(scan.Frequency.IFreqGrid);
     cols = length(scan.Frequency.LOFreq);
 
-    freq_grid = ...
-        repmat(scan.Frequency.IFreqGrid, 1, cols) ...
-        + repmat(scan.Frequency.LOFreq', rows, 1);
+    % If no freq_grid is supplied, calculate leakage for all spectra:
+    if nargin < 2
+
+        freq_grid = ...
+            repmat(scan.Frequency.IFreqGrid, 1, cols) ...
+            + repmat(scan.Frequency.LOFreq', rows, 1);
+
+    % If freq_grid is supplied, calculate only one leakage profile:
+    else
+
+        rows = 1;
+
+    end
 
     % Parameters from analysis, possibly overridden in switch below:
     % (N.B.: these parameters are preliminary and will change!)
@@ -93,8 +109,8 @@ function sb_response = sband_from_l1b(l1b)
         'cols', cols ...
     );
 
-    % Calculate response:
-    sb_response = leakage(freq_grid, params, scan);
+    % Calculate leakage:
+    sb_leakage = leakage(freq_grid, params, scan);
 
 end
 
@@ -103,11 +119,23 @@ function leak = leakage(f_main, params, scan)
     % Calculate the sideband leakage for the given main band
     % frequencies, parameters and L1b data.
 
-    f_image = 2 * repmat(scan.Frequency.LOFreq', params.rows, 1) - f_main;
-    leak = (response_tot(f_image, params, scan) ./ ( ...
-        response_tot(f_main, params, scan) ...
-        + response_tot(f_image, params, scan) ...
-    ));
+    if params.rows == 1
+
+        f_image = 2 * median(scan.Frequency.LOFreq) - f_main;
+        leak = (response_tot(f_image, params, scan) ./ ( ...
+            response_tot(f_main, params, scan) ...
+            + response_tot(f_image, params, scan) ...
+        ));
+
+    else
+
+        f_image = 2 * repmat(scan.Frequency.LOFreq', params.rows, 1) - f_main;
+        leak = (response_tot(f_image, params, scan) ./ ( ...
+            response_tot(f_main, params, scan) ...
+            + response_tot(f_image, params, scan) ...
+        ));
+
+    end
 
     leak = leak .* (leak > 0);
 
@@ -128,12 +156,26 @@ function r_lo = response_lo(freq, params, scan)
     % Calculate the response of the LO injection for given frequencies,
     % parameters and L1b data
 
-    r_lo = response(freq, params.r0, path_length( ...
-        params.l0_LO, ...
-        0, ...
-        repmat(scan.Tcal', params.rows, 1) - params.T0, ...
-        params.temp_coeff ...
-    ));
+
+    if params.rows == 1
+
+        r_lo = response(freq, params.r0, path_length( ...
+            params.l0_LO, ...
+            0, ...
+            median(scan.Tcal) - params.T0, ...
+            params.temp_coeff ...
+        ));
+
+    else
+
+        r_lo = response(freq, params.r0, path_length( ...
+            params.l0_LO, ...
+            0, ...
+            repmat(scan.Tcal', params.rows, 1) - params.T0, ...
+            params.temp_coeff ...
+        ));
+
+    end
 
 end
 
@@ -142,12 +184,25 @@ function r_sb = response_sb(freq, params, scan)
     % Calculate the sideband filter response for given frequencies,
     % parameters and L1b data
 
-    r_sb = response(freq, params.r0, path_length( ...
-        params.l0_SB, ...
-        repmat(scan.SBpath', params.rows, 1), ...
-        repmat(scan.Tcal', params.rows, 1) - params.T0, ...
-        params.temp_coeff ...
-    ));
+    if params.rows == 1
+
+        r_sb = response(freq, params.r0, path_length( ...
+            params.l0_SB, ...
+            median(scan.SBpath), ...
+            median(scan.Tcal) - params.T0, ...
+            params.temp_coeff ...
+        ));
+
+    else
+
+        r_sb = response(freq, params.r0, path_length( ...
+            params.l0_SB, ...
+            repmat(scan.SBpath', params.rows, 1), ...
+            repmat(scan.Tcal', params.rows, 1) - params.T0, ...
+            params.temp_coeff ...
+        ));
+
+    end
 
 end
 
