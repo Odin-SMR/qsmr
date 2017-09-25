@@ -20,14 +20,21 @@
 
 function scandata = get_scan_aux_data(urls)
 
+% From version v5, the actual data come out as y.Data. The data are repacked
+% to remove this level, effectively going back to v4.
+
 if ischar(urls)
   y = webread_retry(urls, weboptions('ContentType','json','Timeout', 300), 5);
-  scandata(1) = y;
+  if isfield(y,'Count') & isfield(y,'Data')
+    scandata(1) = y.Data;
+  else
+    scandata(1) = y;
+  end
   return
 end
 
 for i = 1 : length(urls)
-  y = webread_retry(urls{i}, ...
-    weboptions('ContentType','json','Timeout', 300), 5);
+  y = webread_retry( urls{i}, ...
+                     weboptions('ContentType','json','Timeout', 300), 5);
   scandata(i) = y;
 end

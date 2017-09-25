@@ -24,8 +24,12 @@
 
 
 function sb_leakage = sband_from_l1b(l1b, freq_grid)
-
-    scan = l1b.Data;
+   
+    if isfield(l1b,'Data')
+      scan = l1b.Data;
+    else
+      scan = l1b;
+    end
     rows = length(scan.Frequency.IFreqGrid);
     cols = length(scan.Frequency.LOFreq);
 

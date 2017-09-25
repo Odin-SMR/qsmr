@@ -21,6 +21,7 @@ addpath( fullfile( topfolder, 'Mscripts_atmlab' ) );
 addpath( fullfile( topfolder, 'Mscripts_atmlab', 'xml' ) );
 addpath( fullfile( topfolder, 'Mscripts_atmlab', 'time' ) );
 addpath( fullfile( topfolder, 'Mscripts_database' ) );
+addpath( fullfile( topfolder, 'Mscripts_misc' ) );
 addpath( fullfile( topfolder, 'Mscripts_qsystem' ) );
 addpath( fullfile( topfolder, 'Mscripts_webapi' ) );
 

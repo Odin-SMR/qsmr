@@ -1,3 +1,16 @@
+2017-09-25  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_arts/q2_arts_sensor_parts.m: Now handles
+	Q.SIDEBAND_LEAKAGE = 'model'. Removed gfromat option for
+	Q.SIDEBAND_LEAKAGE.
+
+	* Mscripts_misc/sband_from_l1b.m: The function assumed l1b to be
+	v5. Added small fix to also allow v4 format.
+
+	* Mscripts_webapi/get_scan_aux_data.m: Added fix to handle v5
+	data. The Data level is simply removed, and v5 comes out of the
+	function in same format as v4.
+
 2017-09-22  Andreas Skyman  <andreas.skyman@molflow.com>
 
 	* Mscripts_misc/sband_from_l1b.m: Added optional argument freq_grid to

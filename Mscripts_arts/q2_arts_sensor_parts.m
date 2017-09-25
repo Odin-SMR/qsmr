@@ -221,25 +221,16 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
       else
         G.data      = [ (1-Q.SIDEBAND_LEAKAGE)*[1 1] Q.SIDEBAND_LEAKAGE*[1 1] ];
       end
-    % Sideband filter defined using gformat
-    elseif isstruct( Q.SIDEBAND_LEAKAGE )  
-      % Create a coarse grid. Add 10 kHz margin to avoid error due to rounding
-      G.grids     = { symgrid( linspace( 3e9, ...
-                                         min(abs(R.F_GRID([1 end])-R.LO(i)))-10e3,...
-                                         21 ) ) };      
-      % Interpolate in Tcal and SPpath:
-      SB = gf_regrid( Q.SIDEBAND_LEAKAGE, { Q.SIDEBAND_LEAKAGE.GRID1, ...
-                                            L1B.Tcal(i), L1B.SBpath(i) } );  
-      f_vec = SB.GRID1 - R.LO(i);
-      r_vec = vec2row( SB.DATA );
-      if f_backend(1) > R.LO(i)
-        f_vec = [ -f_vec(end:-1:1) f_vec ];
-        r_vec = [ r_vec(end:-1:1) 1-r_vec ];
-      else      
-        f_vec = [ f_vec -f_vec(end:-1:1) ];
-        r_vec = [ 1-r_vec r_vec(end:-1:1) ];
-      end
-      G.data = interp1( f_vec, r_vec, G.grids{1} );
+
+    % Sideband filter follows "standard model"
+    elseif ischar( Q.SIDEBAND_LEAKAGE )  &  strcmp( Q.SIDEBAND_LEAKAGE, 'model' )
+      % Create a coarse frequency grid. Add 10 kHz margin to avoid error due to rounding
+      G.grids = { symgrid( linspace( 3e9, ...
+                                     min(abs(R.F_GRID([1 end])-R.LO(i)))-10e3,...
+                                     31 ) ) }; 
+      % Get response by dedicated function (that wants RF and returns leakage)
+      G.data = 1 - sband_from_l1b( L1B, R.LO(i) + G.grids{1} );
+
     else
       error( 'Unknown format found for Q.SIDEBAND_LEAKAGE.' );
     end
