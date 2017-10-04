@@ -1,3 +1,8 @@
+2017-10-04  Fredrik Gustafsson  <fredrik.gustafsson@molflow.com>
+
+	* Build_scripts/create_qsmr_project.sh: Changed from using Jenkins
+	to odin.rss.chalmers.se for fetching compiled qsmr.
+
 2017-09-25  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_arts/q2_arts_sensor_parts.m: Now handles

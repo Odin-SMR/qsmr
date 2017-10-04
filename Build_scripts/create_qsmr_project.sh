@@ -44,11 +44,6 @@ usage ()
                                JOB_API_PASSWORD=sqrrl
                                ODIN_API_ROOT=http://localhost:5000/rest_api
                                ODIN_SECRET=XXXXXXXXXXXXXXXX
-                           WORKER_IMAGE_CONFIG_FILE="/home/bengt/work/test/workerimageconfig.ini"
-                             this file should contain the following variables:
-                               JENKINS_ROOT="https://jenkins.molflow.com"
-                               JENKINS_USER="bengt.rydberg@molflow.com"
-                               JENKINS_TOKEN="XXXXXXXXXXXXXXXXXXXXXX"
 
   Application options:
   -d, --deadline         deadline of project (used to set priority)
@@ -70,18 +65,16 @@ create_qsmr_worker_image()
   INVMODE=$4
   YYMMDD=$5
   source $6
-  : "${JENKINS_ROOT:?Need to set JENKINS_ROOT}"
-  : "${JENKINS_USER:?Need to set JENKINS_USER}"
-  : "${JENKINS_TOKEN:?Need to set JENKINS_TOKEN}"
   #copy most recent compiled qsmr package
-  compiled_qsmr_package_url="${JENKINS_ROOT}/job/qsmr_compile_matlab/lastSuccessfulBuild/artifact/Build_scripts/mcr/qsmr.tar.gz"
-  curl -L -u $JENKINS_USER:$JENKINS_TOKEN $compiled_qsmr_package_url -o "${QSMR_PATH}/Build_scripts/docker/base/qsmr.tar.gz"
+  #compiled_qsmr_package_url="${JENKINS_ROOT}/job/qsmr_compile_matlab/lastSuccessfulBuild/artifact/Build_scripts/mcr/qsmr.tar.gz"
+  compiled_qsmr_package_url="http://odin.rss.chalmers.se/qsmr/qsmr.tar.gz"
+  curl -L $compiled_qsmr_package_url -o "${QSMR_PATH}/Build_scripts/docker/base/qsmr.tar.gz"
   #create base image
   cd "${QSMR_PATH}/Build_scripts/docker/"
   ./build_base.sh $YYMMDD
   #copy most recent copiled qsmr-data package
-  compiled_qsmr_data_package_url="${JENKINS_ROOT}/job/qsmrdata_compile_matlab/lastSuccessfulBuild/artifact/qsmr-data/Build_scripts/mcr/qsmr_precalc.tar.gz"
-  curl -L -u $JENKINS_USER:$JENKINS_TOKEN $compiled_qsmr_data_package_url -o "${QSMRDATA_PATH}/Build_scripts/docker/qsmr_precalc.tar.gz"
+  compiled_qsmr_data_package_url="http://odin.rss.chalmers.se/qsmr/qsmr_precalc.tar.gz"
+  curl -L $compiled_qsmr_data_package_url -o "${QSMRDATA_PATH}/Build_scripts/docker/qsmr_precalc.tar.gz"
 
   #create worker images (also builds qsmr_precalc image)
   cd "${QSMR_PATH}/Build_scripts/"
