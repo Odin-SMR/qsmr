@@ -15,6 +15,7 @@ cd mcr && ${MATLAB_ROOT}/bin/mcc \
 	-a ../../Mscripts_database \
 	-a ../../Mscripts_qsystem \
 	-a ../../Mscripts_webapi \
+	-a ../../Mscripts_misc \
 	-v \
 	-N \
 	-m \

@@ -1,3 +1,8 @@
+2017-10-06  Joakim Möller  <joakim.moller@molflow.com>
+
+	* Build_scripts/compile.sh: Added Mscripts_misc to compilers search
+	path
+
 2017-10-04  Fredrik Gustafsson  <fredrik.gustafsson@molflow.com>
 
 	* Build_scripts/create_qsmr_project.sh: Changed from using Jenkins
