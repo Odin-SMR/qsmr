@@ -1,3 +1,20 @@
+2017-10-16  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_arts/q2_arts.m: Removed incorrect information in header
+	text.
+
+	* Mscripts_arts/q2_arts_sensor_parts.m:
+	* Mscripts_arts/q2_arts_y.m:
+	* Mscripts_arts/q2_oemiter.m: Expanded string given to q2_arts to
+	make sure that cfile.rep ends up in workfolder.
+
+	* Mscripts_arts/q2_artscfile_full.m: Removed writing of abs_lines
+	to file. Should not be needed and file was anyhow put in local
+	folder, not the work one.
+
+	* Mscripts_arts/q2_arts_y.m: Added an optional argument,
+	hitran_df. Default maintains old functionality.
+
 2017-10-06  Joakim Möller  <joakim.moller@molflow.com>
 
 	* Build_scripts/compile.sh: Added Mscripts_misc to compilers search

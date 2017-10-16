@@ -8,8 +8,7 @@
 %   "On-the-fly" absorption can be triggered by setting *use_abstable* to
 %   false, but this is only allowed with *do_sensor* set to false. The
 %   frequency grid is then set to channel centre positions of the first
-%   tangent altitude. The pressure grid is taken from Q.P_GRID. The reading 
-%   of HITRAN is restricted to +-10 GHz around the frequency band.   
+%   tangent altitude. The pressure grid is taken from Q.P_GRID.    
 %
 % FORMAT [Y,F] = q2_arts_y(L1B,ATM,Q[,do_sensor,use_abstable])
 %
@@ -21,12 +20,15 @@
 % OPT   do_sensor      Flag to include sensor or not. Default is true.
 %       use_abstable   Flag to use precalculated absorption table or not. 
 %                      Default is true.
+%       hitran_df      Used use_abstable is false, and then specifies how
+%                      far out from band edges to search HITRAN for lines.
+%                      Default is 10 GHz.
 
 % 2015-05-29   Created by Patrick Eriksson.
 
 function [Y,F] = q2_arts_y(L1B,ATM,Q,varargin)
 %
-[do_sensor,use_abstable] = optargs( varargin, { true, true } );
+[do_sensor,use_abstable,hitran_df] = optargs( varargin, { true, true, 10e9 } );
 %
 if ~use_abstable & do_sensor
   error( 'On-the-fly absorptiuon can only be used with do_sensor=false.' );
@@ -115,8 +117,8 @@ else
   C.PARTITION_FILE  = P.PARTITION_FILE;
   C.CONTINUA_FILE   = P.CONTINUA_FILE;
   C.SPECTRO_FILE    = P.SPECTRO_FILE;
-  C.SPECTRO_FMIN    = min(f) - 10e9;
-  C.SPECTRO_FMAX    = max(f) + 10e9;
+  C.SPECTRO_FMIN    = min(f) - hitran_df;
+  C.SPECTRO_FMAX    = max(f) + hitran_df;
   %
   xmlStore( fullfile( R.workfolder, 'f_grid.xml' ), f, ...
                                                         'Vector', 'binary' );
@@ -130,7 +132,7 @@ end
 % Create cfile, calculate and load spectra
 %
 cfile  = q2_artscfile_full( C, R.workfolder );
-result = q2_arts( Q, ['-r000 ',cfile] );
+result = q2_arts( Q, ['-r000 -b ',R.workfolder,' ',cfile] );
 %
 y      = xmlLoad( fullfile( R.workfolder, 'y.xml' ) );
 %

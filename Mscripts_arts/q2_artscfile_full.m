@@ -245,7 +245,6 @@ function cfile_abscalc_basics( fid, C, workfolder )
   %
   fprintf( fid, 'abs_linesReadFromArts( abs_lines, "%s", %.5e, %.5e )\n', ...
                              C.SPECTRO_FILE, C.SPECTRO_FMIN, C.SPECTRO_FMAX );
-  fprintf( fid, 'WriteXML( "ascii", abs_lines, "abs_lines.xml" )\n' );
   fprintf( fid, 'abs_lines_per_speciesCreateFromLines\n' );
   fprintf( fid, [ 'abs_lineshapeDefine( shape="Voigt_Kuntz6", ' ...
                   'forefactor="VVW", cutoff=-1 )\n' ] );    
