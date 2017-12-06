@@ -123,8 +123,8 @@ function sb_leakage = sband_from_l1b(l1b, freq_grid)
             r0 = 10 ^ (-14.8 / 10.0);
 
             % Calculated from "The Spread Sheet":
-            l0_LO = 0.5 * 38.2132275512;
-            l0_SB = 9.65740372371;
+            l0_LO = 0.5 * 38.2132275512e-3;
+            l0_SB = 9.65740372371e-3;
 
         otherwise
 
