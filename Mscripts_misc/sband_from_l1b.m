@@ -16,7 +16,7 @@
 %                   LOFreq and SBPath values for scan.
 %
 % Created:  2017-08-29  andreas.skyman@molflow.com
-% Updated:  2017-11-17  andreas.skyman@molflow.com
+% Updated:  2017-12-13  andreas.skyman@molflow.com
 %
 % --------
 % [1]:  Post launch characterisation of Odin-SMR sideband filter properties,
@@ -50,6 +50,8 @@ function sb_leakage = sband_from_l1b(l1b, freq_grid)
     % Parameters from analysis, possibly overridden in switch below:
     % (N.B.: these parameters are preliminary and will change!)
     temp_coeff = 1.041477e-6;
+    % When assuming l0_SB for FM8 from "The Spread Sheet":
+    % temp_coeff = 0.863415e-6;
     T0 = 291.0;
 
     % FreqMode specific parameters:
@@ -61,35 +63,33 @@ function sb_leakage = sband_from_l1b(l1b, freq_grid)
 
             % From report [1]:
             r0 = 10.0 ^ (-26.7 / 10.0);
-            l0_LO = 0.5 * 38.635e-3;
+            % l0_LO = 0.5 * 38.635e-3;
 
             % From parameter estimation:
             l0_SB = 9.469150e-3;
 
             % Calculated from "The Spread Sheet":
-            % l0_LO = 0.5 * 38.6344711882e-3;
+            l0_LO = 0.5 * 38.6344711882e-3;
             % l0_SB = 9.46777457791e-3;
 
         case 17
 
             % From report [1]:
             r0 = 10.0 ^ (-26.7 / 10.0);
-            l0_LO = 0.5 * 38.517e-3;
-
-            % From parameter estimation:
-            l0_SB = 9.469150e-3;
+            % l0_LO = 0.5 * 38.517e-3;
 
             % Calculated from "The Spread Sheet":
-            % l0_SB = 9.46777457791e-3;
+            l0_LO = 0.5 * 38.5162897e-3;
+            l0_SB = 9.46857612633e-3;
 
         case 1
 
             % From report [1]:
             r0 = 10.0 ^ (-26.7 / 10.0);
-            l0_LO = 0.5 * 38.237e-3;
+            % l0_LO = 0.5 * 38.237e-3;
 
             % Calculated from "The Spread Sheet":
-            % l0_LO = 0.5 * 38.2363953829;
+            l0_LO = 0.5 * 38.2363953829e-3;
             l0_SB = 9.77324838062e-3;
 
         % 549 GHz frontend (experimental):
@@ -97,8 +97,12 @@ function sb_leakage = sband_from_l1b(l1b, freq_grid)
 
             % From report [1]:
             r0 = 10.0 ^ (-14.4 / 10.0);
-            l0_LO = 0.5 * 38.237e-3;
-            l0_SB = 0.5 * 19.378e-3;
+            % l0_LO = 0.5 * 38.237e-3;
+            % l0_SB = 0.5 * 19.378e-3;
+
+            % Calculated from "The Spread Sheet":
+            l0_LO = 0.5 * 38.21672666e-3;
+            l0_SB = 9.8280425e-3;
 
         case 21
 

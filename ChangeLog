@@ -1,3 +1,7 @@
+2017-12-13  Andreas Skyman  <andreas.skyman@molflow.com>
+
+	* Mscripts_misc/sband_from_l1b.m: Added settings for 19, tweaked for 17.
+
 2017-12-06  Andreas Skyman  <andreas.skyman@molflow.com>
 
 	* Mscripts_misc/sband_from_l1b.m: Fixed settings for FM 13
