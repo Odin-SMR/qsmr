@@ -39,9 +39,19 @@ if any( L1B.Backend ~= Q.BACKEND_NR )
 end
 
 
-% Frequencies
+% L1B.Frequency
 %
-if any( abs( L1B.Frequency.LOFreq - Q.F_LO_NOMINAL) > 100e6  )
-  error( ['At least one LO frequency deviates from nominal value with  more ' ...
-          'than 100 MHz.'] );
+I = L1B.Frequency.SubBandIndex;
+c = 0;
+while any( I(1,:) > 0 )  
+  ihit = find( I(1,:) == c+1 );
+  if isempty(ihit)
+    error( 'Problem in L1B.Frequency.SubBandIndex detected.' );
+  end
+  I(1,ihit) = -1;
+  c         = I(2,ihit);
+end
+if c ~= length(L1B.Frequency.IFreqGrid)
+  error( ['Inconsistency between length of L1B.Frequency.IFreqGrid and data ' ...
+          'in L1B.Frequency.SubBandIndex.'] );
 end

@@ -1,3 +1,15 @@
+2018-04-04  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_database/q2_check_l1b.m: Removed check that LO is
+	inside of 100 MHz of nominal value. This simply does not work for
+	CO data with non-fixed frequencies.
+	Added instead check of L1B.Frequncy, after tracking down a problem
+	to bad index in L1B.Frequency.SubBandIndex.
+
+	* Mscripts_arts/q2_arts.m: The full error string from ARTS is now
+	given to Matlab's error. For inversions this means that the ARTS
+	error ends up in L2C.
+
 2017-12-13  Andreas Skyman  <andreas.skyman@molflow.com>
 
 	* Mscripts_misc/sband_from_l1b.m: Added settings for 19, tweaked for 17.
