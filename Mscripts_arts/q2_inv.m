@@ -121,7 +121,6 @@ if no_err
   %
   [Sx,Sxinv] = arts_sx( Q, R );
 
-
   %
   % Create Se and its inverse
   %
@@ -338,17 +337,25 @@ function[xa,Q,R] = subfun4retqs( Q, R, L1B )
   %
   if Q.FREQUENCY.RETRIEVE
     iq                = length(R.jq) + 1;
+    if Q.FREQUENCY.NPOLY >= 0
+      np              = Q.FREQUENCY.NPOLY + 1;
+    else
+      np              = length( L1B.Altitude );
+    end
     R.jq{iq}.maintag  = 'Frequency';
     R.jq{iq}.subtag   = 'Shift';
-    lx                = lx + 1;
-    R.ji{iq}{1}       = lx;
-    R.ji{iq}{2}       = lx;
+    R.ji{iq}{1}       = lx + 1;
+    R.ji{iq}{2}       = lx + np;
+    lx                = lx + np;
     %
+    if np > 1  &  Q.LO_COMMON
+      error( 'Q.FREQUENCY.NPOLY~=0 requires that Q.LO_COMMIN is set to false.' );
+    end
     % Jacobian derived in *q2_oeimiter*.
     %
     var               = Q.FREQUENCY.UNC * Q.FREQUENCY.UNC;
-    Q.FSHIFTFIT.SX    = var;
-    Q.FSHIFTFIT.SXINV = 1/var;
+    Q.FSHIFTFIT.SX    = var * speye(np,np);
+    Q.FSHIFTFIT.SXINV = (1/var) * speye(np,np);
   end
   
   
@@ -652,7 +659,11 @@ function [L2,L2I] = subfun4l2( Q, R, Sx, Se, LOG, L1B, X )
 
      case 'Frequency'   %---------------------------------------------------------
        %
-       L2I.FreqOffset = X.x(ind);
+       if length(ind) == 1
+         L2I.FreqOffset = X.x(ind);
+       else
+         L2I.FreqOffset = R.LO - L1B.Frequency.LOFreq;
+       end
       
      case 'Polynomial baseline fit'   %-------------------------------------------
        %

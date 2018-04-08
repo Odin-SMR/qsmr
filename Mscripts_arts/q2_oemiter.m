@@ -88,7 +88,18 @@ for i = 1 : length( R.jq )
     %
     if iter > 1
       L1B                  = R.L1B;
-      L1B.Frequency.LOFreq = L1B.Frequency.LOFreq   + x(ind);
+      % IF you change something here, change also in q2_inv where L2I is filled
+      % Polynomial fit
+      if Q.FREQUENCY.NPOLY >= 0
+        dlo                  = repmat( x(ind(1)), length(L1B.Frequency.LOFreq), 1 );
+        for i = 1 : Q.FREQUENCY.NPOLY
+          dlo = dlo + x(ind(i+1)) * (R.ffit_grid.^i);
+        end
+      % Jitter
+      else
+        dlo = x(ind);
+      end
+      L1B.Frequency.LOFreq = L1B.Frequency.LOFreq + dlo;
       %
       R = q2_arts_sensor_parts( L1B, Q, R, 'backend' );
       R = q2_arts_sensor( R );
@@ -152,8 +163,7 @@ if do_j
     end
   end  
   
-  
-  
+    
   % Derive pointing and frequency off-set weighting functions
   %
   if Q.POINTING.RETRIEVE  |  Q.FREQUENCY.RETRIEVE
@@ -172,7 +182,27 @@ if do_j
   if Q.FREQUENCY.RETRIEVE    
     df   = 5e3;
     ytmp = interp1( R.F_GRID, ymat, R.F_GRID+df, 'pchip', 'extrap' ); 
-    Jfre = R.H_TOTAL * ( ytmp(:) - y ) / df;
+    nch  = size( R.H_BACKE{1}, 1 ); 
+    % Polynomial fit
+    if Q.FREQUENCY.NPOLY >= 0
+      Jfre = zeros( size(R.H_TOTAL,1), Q.FREQUENCY.NPOLY + 1 );
+      Jfre(:,1) = R.H_TOTAL * ( ytmp(:) - y ) / df;
+      if( Q.FREQUENCY.NPOLY )
+        R.ffit_grid = - 1 + 2 * ( R.ZA_BORESI - R.ZA_BORESI(1) ) / ...
+                                ( R.ZA_BORESI(end) - R.ZA_BORESI(1) );
+        for i = 1 : Q.FREQUENCY.NPOLY
+          Jfre(:,i+1) = Jfre(:,1) .* mat2col( repmat( vec2row(R.ffit_grid).^i, nch, 1 ) );
+        end
+      end
+    else  % Jitter
+      nza  = length( R.ZA_BORESI );
+      Jfre = zeros( size(R.H_TOTAL,1), nza );
+      dy   = R.H_TOTAL * ( ytmp(:) - y ) / df;
+      for i = 1 : nza
+        ind = (i-1)*nch+1 : i*nch;
+        Jfre(ind,i) = dy(ind);
+      end
+    end
   else
     Jfre = [];  
   end

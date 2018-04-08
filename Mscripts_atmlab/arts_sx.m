@@ -141,7 +141,7 @@ for i = 1 : nq
    case 'Frequency'   %--------------------------------------------------------
     %
     if strcmp( R.jq{i}.subtag, 'Shift' )
-        %
+      %
       Sx(ind,ind) = Q.FSHIFTFIT.SX;
       %
       if do_sxinv
