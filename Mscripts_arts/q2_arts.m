@@ -17,5 +17,5 @@ function result = q2_arts( Q, argstring )
 
 
 if status
-  error( ['Error when running ARTS:', newline, result] );
+  error( ['Error when running ARTS:',sprintf('\n'),result] );
 end
