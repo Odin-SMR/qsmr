@@ -1,5 +1,9 @@
 2018-04-12  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
+	* Mscripts_database/l1b_filter.m: Removed outdated info in header.
+
+2018-04-12  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
 	* Mscripts_arts/q2_arts.m (q2_arts): Used newline, which turned
 	out to be a new matlab feature, not present in the version used by
 	others. Replaced by sprintf('\n').

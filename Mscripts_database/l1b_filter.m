@@ -7,9 +7,6 @@
 %
 %   This function requires that L1B.Frequency is of original type.
 %
-%   To apply the filtering, call *l1b_crop* with the output arguments of
-%   this function.
-%
 % FORMAT   [L1B,L2C] = l1b_filter( L1B, Q, L2C )
 %
 % OUT   L1B            Modiefied L1B
