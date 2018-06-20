@@ -111,6 +111,13 @@ for i = 1 : length( Q.ABS_SPECIES )
     G = atmdata_regrid( Bdx, { ATM.P, lat, lon, mjd } );
     ATM.VMR(i,:,1,1) = G.DATA;
 
+   case 'MIPAS'
+
+    load( fullfile( Q.FOLDER_MIPAS ,sprintf('apriori_%s.mat',species)) );
+    co_vmr_mipas = load_co_vmr_mipas(MIPAS, mjd, lat) / 1e6; %ppm -> 1 units
+    %[z_mipas,co_vmr_mipas] = MIPAS_make4apriori(mjd,lat);
+    ATM.VMR(i,:,1,1) = interp1( MIPAS.GRID1, co_vmr_mipas, ATM.Z, 'linear', 'extrap' );
+
    otherwise
     error( '%s is an unknown option for Q.ABS_SPECIES.SOURCE.', ...
                                                     Q.ABS_SPECIES(i).SOURCE );

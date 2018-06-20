@@ -1,3 +1,10 @@
+2018-06-20  Francesco Grieco  <francesco.grieco@chalmers.se>
+
+	* Mscripts_database/q2_get_atm.m: Added case 'MIPAS' to use MIPAS 
+	climatology as a priori for CO retrievals.
+
+	* Mscripts_atmlab/*: Created *load_co_vmr_mipas* function.
+
 2018-04-12  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_database/l1b_filter.m: Removed outdated info in header.
