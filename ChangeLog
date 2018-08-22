@@ -1,3 +1,7 @@
+2018-08-22  Francesco Grieco  <francesco.grieco@chalmers.se>
+	
+	* Build_scripts/runscript.m: Added Q.FOLDER_MIPAS.
+
 2018-06-20  Francesco Grieco  <francesco.grieco@chalmers.se>
 
 	* Mscripts_database/q2_get_atm.m: Added case 'MIPAS' to use MIPAS 

@@ -27,6 +27,8 @@ function []=runscript(source_url, target_url, target_username, target_password)
     Q.FOLDER_BACKEND     = fullfile( datadir, 'DataPrecalced', 'Backend' );
     Q.FOLDER_BDX         = fullfile( datadir, 'DataPrecalced', ...
                                         'SpeciesApriori', 'Bdx' );
+    Q.FOLDER_MIPAS       = fullfile( datadir, 'DataPrecalced', ...
+ 					'SpeciesApriori', 'MIPAS' );
 
     Q.FOLDER_MSIS90      = fullfile( datadir, 'DataInput', 'Temperature' );
 
