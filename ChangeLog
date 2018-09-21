@@ -1,3 +1,9 @@
+2018-09-21  Francesco Grieco <francesco.grieco@chalmers.se>
+
+	* Mscripts_database/q2_calc_scan_pos.m: Solved bug for calculating 
+	mjd. It should be the mean between LOG.MJDStart and LOG.MJDEnd, but it 
+	was erroneously being calculated as the sum of the two.
+
 2018-08-22  Francesco Grieco  <francesco.grieco@chalmers.se>
 	
 	* Build_scripts/runscript.m: Added Q.FOLDER_MIPAS.

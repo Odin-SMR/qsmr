@@ -14,7 +14,7 @@
 %
 % 2018-06-20   Created by Francesco Grieco.
 
-function co_vmr_mipas = load_co_vmr_mipas(MIPAS, mjd,lat)
+function co_vmr_mipas = load_co_vmr_mipas(MIPAS, mjd, lat)
 
     [yyyy,mm,dd] = mjd2date( mjd );
 

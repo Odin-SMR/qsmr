@@ -16,7 +16,7 @@
 
 function [mjd,lat,lon,z] = q2_calc_scan_pos( LOG )
 
-mjd = mean( LOG.MJDStart + LOG.MJDEnd );
+mjd = mean([ LOG.MJDStart  LOG.MJDEnd ]);
 
 r   = earth_radius;
 

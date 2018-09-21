@@ -115,7 +115,6 @@ for i = 1 : length( Q.ABS_SPECIES )
 
     load( fullfile( Q.FOLDER_MIPAS ,sprintf('apriori_%s.mat',species)) );
     co_vmr_mipas = load_co_vmr_mipas(MIPAS, mjd, lat) / 1e6; %ppm -> 1 units
-    %[z_mipas,co_vmr_mipas] = MIPAS_make4apriori(mjd,lat);
     ATM.VMR(i,:,1,1) = interp1( MIPAS.GRID1, co_vmr_mipas, ATM.Z, 'linear', 'extrap' );
 
    otherwise
