@@ -12,8 +12,8 @@
 
 2018-09-21  Francesco Grieco <francesco.grieco@chalmers.se>
 
-	* Mscripts_database/q2_calc_scan_pos.m: Solved bug for calculating 
-	mjd. It should be the mean between LOG.MJDStart and LOG.MJDEnd, but it 
+	* Mscripts_database/q2_calc_scan_pos.m: Solved bug for calculating
+	mjd. It should be the mean between LOG.MJDStart and LOG.MJDEnd, but it
 	was erroneously being calculated as the sum of the two.
 
 2018-08-22  Francesco Grieco  <francesco.grieco@chalmers.se>
@@ -22,7 +22,7 @@
 
 2018-06-20  Francesco Grieco  <francesco.grieco@chalmers.se>
 
-	* Mscripts_database/q2_get_atm.m: Added case 'MIPAS' to use MIPAS 
+	* Mscripts_database/q2_get_atm.m: Added case 'MIPAS' to use MIPAS
 	climatology as a priori for CO retrievals.
 
 	* Mscripts_atmlab/*: Created *load_co_vmr_mipas* function.
