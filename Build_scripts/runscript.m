@@ -2,35 +2,13 @@
 % is provided. If not, write results to .mat files.
 % example source url:
 % http://malachite.rss.chalmers.se/rest_api/v4/freqmode_info/2015-04-01/AC2/1/7123991206/
-function []=runscript(source_url, target_url, target_username, target_password)
+function []=runscript( source_url, target_url, target_username, target_password )
+
     Q = load('/QsmrData/Q.mat');
     Q = Q.Q;
 
-    disp(sprintf('Using Q config with freqmode %d and invmode %s', ...
-                    Q.FREQMODE, Q.INVEMODE))
-
-    % Fix paths
-    Q.ARTS               = 'LD_LIBRARY_PATH="" arts';
-    Q.FOLDER_WORK        = '/tmp';
-
-    datadir              = '/QsmrData';
-
-    investr              = Q.INVEMODE;
-    investr(1)           = upper( investr(1) );
-    investr(2:end)       = lower( investr(2: end) );
-
-    Q.FOLDER_ABSLOOKUP   = fullfile( datadir, 'AbsLookup', investr );
-
-    Q.FOLDER_FGRID       = fullfile( datadir, 'DataPrecalced', ...
-                                        'Fgrid', investr );
-    Q.FOLDER_ANTENNA     = fullfile( datadir, 'DataPrecalced', 'Antenna' );
-    Q.FOLDER_BACKEND     = fullfile( datadir, 'DataPrecalced', 'Backend' );
-    Q.FOLDER_BDX         = fullfile( datadir, 'DataPrecalced', ...
-                                        'SpeciesApriori', 'Bdx' );
-    Q.FOLDER_MIPAS       = fullfile( datadir, 'DataPrecalced', ...
- 					'SpeciesApriori', 'MIPAS' );
-
-    Q.FOLDER_MSIS90      = fullfile( datadir, 'DataInput', 'Temperature' );
+    disp(sprintf( 'Using Q config with freqmode %d and invmode %s', ...
+                  Q.FREQMODE, Q.INVEMODE))
 
     max_retries = 5;
     LOG = webread_retry(source_url, weboptions('ContentType', 'json', ...
@@ -40,7 +18,7 @@ function []=runscript(source_url, target_url, target_username, target_password)
         exit(2)
     end
     if Q.FREQMODE ~= LOG.Info.FreqMode
-        disp(sprintf('Freqmode missmatch, Q: %s, LOG: %s', Q.FREQMODE, ...
+        disp(sprintf('Freqmode missmatch, Q: %d, LOG: %d', Q.FREQMODE, ...
                         LOG.Info.FreqMode))
         exit(1)
     end
@@ -70,6 +48,7 @@ function []=runscript(source_url, target_url, target_username, target_password)
         response = webwrite_retry(target_url, data, options, ...
             max_retries);
     end
+    
     fclose('all');
     exit(0);
 end

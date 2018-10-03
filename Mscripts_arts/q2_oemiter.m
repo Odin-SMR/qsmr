@@ -144,7 +144,7 @@ else
   cfile = R.cfile_y;
 end
 %a
-result = q2_arts( Q, ['-r000 -b ',R.workfolder,' ',cfile] );
+result = q2_arts( Q, ['-r000 -b ',fullfile(R.workfolder,'out'),' ',cfile] );
 %
 y = xmlLoad( fullfile( R.workfolder, 'y.xml' ) );
 %

@@ -132,7 +132,7 @@ end
 % Create cfile, calculate and load spectra
 %
 cfile  = q2_artscfile_full( C, R.workfolder );
-result = q2_arts( Q, ['-r000 -b ',R.workfolder,' ',cfile] );
+result = q2_arts( Q, ['-r000 -b ',fullfile(R.workfolder,'out'),' ',cfile] );
 %
 y      = xmlLoad( fullfile( R.workfolder, 'y.xml' ) );
 %
