@@ -22,7 +22,7 @@ function co_vmr_mipas = load_co_vmr_mipas(MIPAS, mjd, lat)
 
     for l = 1 : length(MIPAS.GRID2)
         if lat >= LatBins(l) && lat < LatBins(l+1)
-            co_vmr_mipas = MIPAS.DATA(:,l,1,mm)
+            co_vmr_mipas = MIPAS.DATA(:,l,1,mm);
         end
     end
                            
