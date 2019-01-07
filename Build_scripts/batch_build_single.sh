@@ -21,7 +21,7 @@ YYMMDD=$5
 # Build the QSMR-data image:
 YYMMDD=`date +%y%m%d`
 PRECALC_IMAGE="odinregistry.molflow.com/devops/qsmr_precalc:"$YYMMDD
-PRECALC="docker run --name qsmr_precalc "$PRECALC_IMAGE" /artifact"
+PRECALC="docker run --name qsmr_precalc "$PRECALC_IMAGE" /QsmrData"
 # Clean up precalc build:
 docker rmi -f $PRECALC_IMAGE || echo "precalc image clean"
 # Build:
@@ -38,7 +38,7 @@ docker rm qsmr_precalc -f || true
 $PRECALC $imode $fmode || continue
 
 # Copy results to build environment:
-docker cp qsmr_precalc:/artifact/. $QSMR_PATH"/Build_scripts/docker/complete/data/"
+docker cp qsmr_precalc:/QsmrData/. $QSMR_PATH"/Build_scripts/docker/complete/data/"
 
 # Build QSMR image for worker:
 cd $QSMR_PATH"/Build_scripts/docker"
