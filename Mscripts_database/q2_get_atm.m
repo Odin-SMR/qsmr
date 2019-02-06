@@ -91,7 +91,7 @@ ATM.VMR = zeros( length(Q.ABS_SPECIES), length(ATM.P), 1, 1 );
 for i = 1 : length( Q.ABS_SPECIES )
 
   species = arts_tgs2species( Q.ABS_SPECIES(i).TAG{1} );
-  
+
   switch Q.ABS_SPECIES(i).SOURCE
     
    case 'WebApi'
@@ -112,10 +112,16 @@ for i = 1 : length( Q.ABS_SPECIES )
     ATM.VMR(i,:,1,1) = G.DATA;
 
    case 'MIPAS'
-     %
-     load( fullfile( Q.FOLDER_MIPAS ,sprintf('apriori_%s.mat',species)) );
-     co_vmr_mipas = load_co_vmr_mipas(MIPAS, mjd, lat) / 1e6; %ppm -> 1 units
-     ATM.VMR(i,:,1,1) = interp1( MIPAS.GRID1, co_vmr_mipas, ATM.Z, 'linear', 'extrap' );
+      %
+    VMR = get_scan_aux_data( [LOG.URLS.(sprintf('URL_apriori_%s',species)),'?aprsource=MIPAS'] );
+    VMR.VMR = VMR.VMR/1e6; %ppm -> 1 units
+    if isempty(VMR.VMR)
+      error( 'WebApi returned empty VMR field.' );
+    end
+    ATM.VMR(i,:,1,1) = interp1( VMR.Altitude, VMR.VMR, ATM.Z, 'linear', 'extrap' );   
+    if any(isnan(ATM.VMR(i,:,1,1)))
+      error( 'WebApi returned VMR data that resulted in NaN(s).' );
+    end
 
    otherwise
     error( '%s is an unknown option for Q.ABS_SPECIES.SOURCE.', ...

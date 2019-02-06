@@ -44,7 +44,7 @@ end
 %
 % Filter based on L1B.Quality
 %
-[L1B,L2C] = l1b_filter( L1B, Q, L2C );
+%[L1B,L2C] = l1b_filter( L1B, Q, L2C );
 
 
 %

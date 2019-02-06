@@ -1,3 +1,10 @@
+2019-02-06  Francesco Grieco  <francesco.grieco@chalmers.se>
+
+        * Mscripts_atmlab/*: Removed load_co_vmr_mipas.m
+
+        * Mscripts_database/q2_get_atm.m: Modified case 'MIPAS' to take into 
+        account the moving of MIPAS a priori to the database.
+
 2018-12-10  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_atmlab/load_co_vmr_mipas.m (co_vmr_mipas): Added
