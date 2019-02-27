@@ -1,3 +1,8 @@
+2019-02-27  Francesco Grieco  <francesco.grieco@chalmers.se>
+
+        * Mscripts_misc/sband_from_l1b: Temporarily changing to r0 = 10.0 ^ (-11 / 10.0) for FM19. 
+	This is for testing a bigger sideband leakage.
+
 2019-02-06  Francesco Grieco  <francesco.grieco@chalmers.se>
 
         * Mscripts_atmlab/*: Removed load_co_vmr_mipas.m
