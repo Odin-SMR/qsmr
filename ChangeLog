@@ -1,3 +1,9 @@
+2019-03-27  Francesco Grieco  <francesco.grieco@chalmers.se>
+	
+	* Mscripts_arts/q2_arts_sensor_parts.m: Changing from dt>0.05 to dt>0.1 to discard only 
+	spectra with a greater integration time.
+
+
 2019-03-20  Francesco Grieco  <francesco.grieco@chalmers.se>
 
 	* Mscripts_database/l1b_adjust_to_q.m: Reactivating filtering based on L1B.Quality
