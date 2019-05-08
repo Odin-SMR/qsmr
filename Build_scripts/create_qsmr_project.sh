@@ -8,6 +8,19 @@ usage ()
   Bash script that uploads a new QSMR processing project
   and possibly also a new qsmr worker image, if not specified.
 
+  Running this scripts requires a filed called odin.cfg in the user home.
+  This file should contain the following variables:
+
+       JOB_API_ROOT=http://localhost:8080/rest_api
+       JOB_API_USERNAME=admin
+       JOB_API_PASSWORD=sqrrl
+       ODIN_API_ROOT=http://localhost:5000/rest_api
+       ODIN_SECRET=XXXXXXXXXXXXXXXX
+
+  For more info on that run:
+
+  	./microq_admin.sh --help
+
   Usage:
   ./create_qsmr_project.sh inputfile [OPTION]
 
@@ -25,25 +38,12 @@ usage ()
                              VDS means that all scans in verification
                              dataset will be added to project and ALL means all scans
                              (a further selection can be made by the optional start_day and end_day options)
-                           QQJOBS_PATH="/home/bengt/work/qqjobs"
-                             path to qqjobs git repo
-                             (git clone https://phabricator.molflow.com/source/qqjobs.git)
-                           MICROQ_FRAMEWORK_PATH="/home/bengt/work/molflow-microq-framework"
-                             path to molflow-microq-framework git repo
-                             (git clone http://phabricator.molflow.com/diffusion/MSERV/molflow-microq-framework.git)
                            QSMR_PATH="/home/bengt/work/qsmr"
                              path to qsmr repo
                              (git clone http://phabricator.molflow.com/diffusion/QQ/qsmr.git)
                            QSMRDATA_PATH="/home/bengt/work/qsmr-data"
                              path to qsmr-data repo
                              (git clone http://phabricator.molflow.com/diffusion/QQD/qsmr-data.git)
-                           PROJECT_ADDER_CONFIG_FILE="/home/bengt/work/test/projectadderconfig.ini"
-                             this file should contain the following variables:
-                               JOB_API_ROOT=http://localhost:8080/rest_api
-                               JOB_API_USERNAME=admin
-                               JOB_API_PASSWORD=sqrrl
-                               ODIN_API_ROOT=http://localhost:5000/rest_api
-                               ODIN_SECRET=XXXXXXXXXXXXXXXX
 
   Application options:
   -d, --deadline         deadline of project (used to set priority)
@@ -96,6 +96,8 @@ for i in "$@" ; do
     fi
 done
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 inputfile="$1"
 source $inputfile
 
@@ -135,14 +137,11 @@ then
   usage
 fi
 
-: "${PROJECT_ADDER_CONFIG_FILE:?Need to set PROJECT_ADDER_CONFIG_FILE}"
 : "${WORKER_IMAGE:?Need to set WORKER_IMAGE}"
 : "${PROJECT_NAME:?Need to set PROJECT_NAME}"
 : "${ODIN_PROJECT:?Need to set ODIN_PROJECT}"
 : "${FREQMODE:?Need to set FREQMODE}"
 : "${INVMODE:?Need to set INVMODE}"
-: "${QQJOBS_PATH:?Need to set QQJOBS_PATH}"
-: "${MICROQ_FRAMEWORK_PATH:?Need to set MICROQ_FRAMEWORK_PATH}"
 : "${DEADLINE:?Need to set DEADLINE}"
 : "${START_DAY:?Need to set START_DAY}"
 : "${END_DAY:?Need to set QSMR_PATH}"
@@ -161,26 +160,14 @@ else
 fi
 
 # Add the processing project
-cd $MICROQ_FRAMEWORK_PATH
-./install.sh
-set +o nounset
-source env/bin/activate
-set -o nounset
-
-qsmrprojects $PROJECT_NAME $ODIN_PROJECT $DEADLINE $WORKER_IMAGE $PROJECT_ADDER_CONFIG_FILE
+cd $DIR
+./microq_admin qsmrprojects $PROJECT_NAME $ODIN_PROJECT $DEADLINE $WORKER_IMAGE
 exitcode=$?
-deactivate
 if [ $exitcode -ne 0 ]
 then
     exit $exitcode
 fi
 
 # Add jobs to the processing project
-cd $QQJOBS_PATH
-./install.sh
-set +o nounset
-source env/bin/activate
-set -o nounset
-qsmrjobs --freq-mode $FREQMODE $START_DAY $END_DAY --$VDS_OR_ALL $PROJECT_NAME $ODIN_PROJECT $PROJECT_ADDER_CONFIG_FILE
-deactivate
-
+cd $DIR
+./microq_admin qsmrjobs --freq-mode $FREQMODE $START_DAY $END_DAY --$VDS_OR_ALL $PROJECT_NAME $ODIN_PROJECT
