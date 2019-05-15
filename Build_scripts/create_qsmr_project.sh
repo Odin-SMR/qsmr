@@ -161,7 +161,7 @@ fi
 
 # Add the processing project
 cd $DIR
-./microq_admin qsmrprojects $PROJECT_NAME $ODIN_PROJECT $DEADLINE $WORKER_IMAGE
+./microq_admin.sh qsmrprojects $PROJECT_NAME $ODIN_PROJECT $DEADLINE $WORKER_IMAGE
 exitcode=$?
 if [ $exitcode -ne 0 ]
 then
@@ -170,4 +170,4 @@ fi
 
 # Add jobs to the processing project
 cd $DIR
-./microq_admin qsmrjobs --freq-mode $FREQMODE $START_DAY $END_DAY --$VDS_OR_ALL $PROJECT_NAME $ODIN_PROJECT
+./microq_admin.sh qsmrjobs --freq-mode $FREQMODE $START_DAY $END_DAY --$VDS_OR_ALL $PROJECT_NAME $ODIN_PROJECT
