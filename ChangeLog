@@ -1,5 +1,10 @@
 2019-05-21  Francesco Grieco  <francesco.grieco@chalmers.se>
 
+        * Mscripts_misc/sband_from_l1b: Temporarily changing to r0 = 10.0 ^ (-11 / 10.0) for FM19 
+	for sideband leakage testing.
+
+2019-05-21  Francesco Grieco  <francesco.grieco@chalmers.se>
+
         * Mscripts_misc/sband_from_l1b: Temporarily changing to r0 = 10.0 ^ (-11.3 / 10.0) for FM19 
 	for sideband leakage testing.
 
