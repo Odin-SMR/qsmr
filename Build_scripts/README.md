@@ -15,7 +15,7 @@ Run `docker/build_base.sh` on a machine with docker. Note that the
 
 This will produce the docker image:
 
-    docker2.molflow.com/devops/qsmr_base:<yymmdd>
+    molflow/u-jobs:qsmr_base_<yymmdd>
 
 ## Build final qsmr processing image
 
@@ -24,4 +24,4 @@ the qsmr-data repo) to docker/complete/data/.
 
 Run `docker/build_complete.sh`. This will produce the docker image:
 
-    docker2.molflow.com/devops/qsmr_<invemode>_<freqmode>:<yymmdd>
+    molflow/u-jobs:qsmr_<invemode>_<freqmode>_<yymmdd>

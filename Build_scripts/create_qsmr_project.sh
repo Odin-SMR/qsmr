@@ -64,6 +64,7 @@ create_qsmr_worker_image()
   FREQMODE=$3
   INVMODE=$4
   YYMMDD=$5
+  WORKERIMGTAG=$6
   #copy most recent compiled qsmr package
   #compiled_qsmr_package_url="${JENKINS_ROOT}/job/qsmr_compile_matlab/lastSuccessfulBuild/artifact/Build_scripts/mcr/qsmr.tar.gz"
   compiled_qsmr_package_url="http://odin.rss.chalmers.se/qsmr/qsmr.tar.gz"
@@ -77,7 +78,7 @@ create_qsmr_worker_image()
 
   #create worker images (also builds qsmr_precalc image)
   cd "${QSMR_PATH}/Build_scripts/"
-  ./batch_build_single.sh $QSMR_PATH $QSMRDATA_PATH $INVMODE $FREQMODE $YYMMDD
+  ./batch_build_single.sh $QSMR_PATH $QSMRDATA_PATH $INVMODE $FREQMODE $YYMMDD $WORKERIMGTAG
 }
 
 if [ "$#" -ge 9 ]
@@ -153,8 +154,8 @@ if [ "$WORKER_IMAGE" == " " ]; then
     : "${QSMR_PATH:?Need to set QSMR_PATH}"
     : "${QSMRDATA_PATH:?Need to set QSMRDATA_PATH}"
     YYMMDD=`date +%y%m%d`
-    create_qsmr_worker_image $QSMR_PATH $QSMRDATA_PATH $FREQMODE $INVMODE $YYMMDD
-    WORKER_IMAGE="odinregistry.molflow.com/devops/qsmr_${INVMODE}_${FREQMODE}:${YYMMDD}"
+    WORKER_IMAGE_TAG="qsmr_${INVMODE}_${FREQMODE}_${YYMMDD}"
+    create_qsmr_worker_image $QSMR_PATH $QSMRDATA_PATH $FREQMODE $INVMODE $YYMMDD $WORKER_IMAGE_TAG
 else
     echo "Use image ${WORKER_IMAGE}"
 fi

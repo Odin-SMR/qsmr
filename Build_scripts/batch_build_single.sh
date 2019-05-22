@@ -10,6 +10,7 @@ QSMRDATA_PATH=$2
 imode=$3
 fmode=$4
 YYMMDD=$5
+WORKER_IMAGE_TAG=$6
 # This is checked below:
 
 : "${QSMR_PATH:?Need to set QSMR_PATH}"
@@ -42,9 +43,8 @@ docker cp qsmr_precalc:/QsmrData/. $QSMR_PATH"/Build_scripts/docker/complete/dat
 
 # Build QSMR image for worker:
 cd $QSMR_PATH"/Build_scripts/docker"
-./build_complete.sh $YYMMDD
+./build_complete.sh $YYMMDD $WORKER_IMAGE_TAG
 
 # Push to repository:
-push_registry="odinregbackend.molflow.com/devops"
-docker push $push_registry"/qsmr_"$imode"_"$fmode":"$YYMMDD
-echo "succesfully built and pushed image ${push_registry}/qsmr_${imode}_${fmode}:${YYMMDD}"
+docker push "molflow/u-jobs:$WORKER_IMAGE_TAG"
+echo "succesfully built and pushed image molflow/u-jobs:${WORKER_IMAGE_TAG}"

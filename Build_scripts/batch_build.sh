@@ -50,9 +50,10 @@ do
 
         # Build QSMR image for worker:
         cd $QSMR_PATH"/Build_scripts/docker"
-        ./build_complete.sh
+        IMG_TAG="qsmr_$imode_$fmode_$YYMMDD"
+        ./build_complete.sh $YYMMDD $IMG_TAG
 
         # Push to repository:
-        docker push "docker2.molflow.com/devops/qsmr_"$imode"_"$fmode":"$YYMMDD
+        docker push "molflow/u-jobs:$IMG_TAG"
     done
 done
