@@ -96,7 +96,7 @@ function sb_leakage = sband_from_l1b(l1b, freq_grid)
         case 19
 
             % From report [1]:
-            r0 = 10.0 ^ (-14.4 / 10.0);
+            r0 = 10.0 ^ (-11 / 10.0);
             % l0_LO = 0.5 * 38.237e-3;
             % l0_SB = 0.5 * 19.378e-3;
 
