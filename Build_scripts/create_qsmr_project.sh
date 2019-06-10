@@ -156,6 +156,7 @@ if [ "$WORKER_IMAGE" == " " ]; then
     YYMMDD=`date +%y%m%d`
     WORKER_IMAGE_TAG="qsmr_${INVMODE}_${FREQMODE}_${YYMMDD}"
     create_qsmr_worker_image $QSMR_PATH $QSMRDATA_PATH $FREQMODE $INVMODE $YYMMDD $WORKER_IMAGE_TAG
+    WORKER_IMAGE="molflow/u-jobs:${WORKER_IMAGE_TAG}"
 else
     echo "Use image ${WORKER_IMAGE}"
 fi

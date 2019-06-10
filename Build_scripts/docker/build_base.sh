@@ -9,5 +9,5 @@ if [ $# -eq 0 ]
     today=$1
 fi
 
-docker build -t "molflow/q-jobs:qsmr_base_${today}" base/
+docker build -t "molflow/u-jobs:qsmr_base_${today}" base/
 # docker push -t "molflow/q-jobs:qsmr_base_${today}"
