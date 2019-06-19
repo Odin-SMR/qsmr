@@ -166,15 +166,21 @@ if any( strcmp( part, { 'backend', 'all' } ) )  |  do_total
   end
 
   % Backend response file
-  C.BACKEND_FILE = fullfile( Q.FOLDER_BACKEND, ...
-                              sprintf( 'backend_df%04.0fkHz', ...
-                              floor(L1B.FreqRes(1)/1e3) ) );
-  if L1B.Apodization(1) == true
-    C.BACKEND_FILE = sprintf( '%s_withHan.xml', C.BACKEND_FILE );
+  if isempty(Q.BACKEND_FILE)
+    C.BACKEND_FILE = fullfile( Q.FOLDER_BACKEND, ...
+                               sprintf( 'backend_df%04.0fkHz', ...
+                               floor(L1B.FreqRes(1)/1e3) ) );
+    if L1B.Apodization(1) == true
+      C.BACKEND_FILE = sprintf( '%s_withHan.xml', C.BACKEND_FILE );
+    else
+      C.BACKEND_FILE = sprintf( '%s_noHan.xml', C.BACKEND_FILE );
+    end
+  
   else
-    C.BACKEND_FILE = sprintf( '%s_noHan.xml', C.BACKEND_FILE );
+    C.BACKEND_FILE = fullfile( Q.FOLDER_BACKEND, Q.BACKEND_FILE );
   end
 
+  
   % Set number of lo-s to consider
   %
   if Q.LO_COMMON

@@ -1,3 +1,7 @@
+2019-06-19  Patrick Eriksson  <patrick.eriksson@chalmers.se>
+
+	* Mscripts_arts/q2_arts_sensor_parts.m: Added handling of Q.BACKEND_FILE.
+
 2019-06-18  Francesco Grieco  <francesco.grieco@chalmers.se>
 
         * Mscripts_misc/sband_from_l1b: Temporarily changing to r0 = 10.0 ^ (-14.4 / 10.0) for FM19 
