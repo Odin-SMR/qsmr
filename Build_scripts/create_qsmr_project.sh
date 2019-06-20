@@ -81,6 +81,19 @@ create_qsmr_worker_image()
   ./batch_build_single.sh $QSMR_PATH $QSMRDATA_PATH $INVMODE $FREQMODE $YYMMDD $WORKERIMGTAG
 }
 
+
+validate_project_name()
+{
+  PROJECT_NAME=$1
+  if [[ $PROJECT_NAME =~ ^[[:alnum:]]+$ ]] && [[ $PROJECT_NAME =~ ^[a-Z].* ]];then
+     echo "Project name ${PROJECT_NAME} is valid."
+  else
+     echo "Project name ${PROJECT_NAME} is invalid: Must be ascii alnum and start with letter."
+     exit 1
+  fi
+}
+
+
 if [ "$#" -ge 9 ]
 then
   usage
@@ -154,7 +167,8 @@ if [ "$WORKER_IMAGE" == " " ]; then
     : "${QSMR_PATH:?Need to set QSMR_PATH}"
     : "${QSMRDATA_PATH:?Need to set QSMRDATA_PATH}"
     YYMMDD=`date +%y%m%d`
-    WORKER_IMAGE_TAG="qsmr_${INVMODE}_${FREQMODE}_${YYMMDD}"
+    validate_project_name $PROJECT_NAME
+    WORKER_IMAGE_TAG="qsmr_${INVMODE}_${FREQMODE}_${PROJECT_NAME}_${YYMMDD}"
     create_qsmr_worker_image $QSMR_PATH $QSMRDATA_PATH $FREQMODE $INVMODE $YYMMDD $WORKER_IMAGE_TAG
     WORKER_IMAGE="molflow/u-jobs:${WORKER_IMAGE_TAG}"
 else
