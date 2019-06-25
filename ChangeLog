@@ -1,3 +1,7 @@
+2019-06-25  Francesco Grieco  <francesco.grieco@chalmers.se>
+
+        * Build_scripts/runscript.m: Temporarily changing display function to show backend file.
+
 2019-06-19  Patrick Eriksson  <patrick.eriksson@chalmers.se>
 
 	* Mscripts_arts/q2_arts_sensor_parts.m: Added handling of Q.BACKEND_FILE.

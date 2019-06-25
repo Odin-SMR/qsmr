@@ -7,8 +7,8 @@ function []=runscript( source_url, target_url, target_username, target_password 
     Q = load('/QsmrData/Q.mat');
     Q = Q.Q;
 
-    disp(sprintf( 'Using Q config with freqmode %d and invmode %s', ...
-                  Q.FREQMODE, Q.INVEMODE))
+    disp(sprintf( 'Using Q config with freqmode %d and invmode %s and backendfile %s', ...
+                  Q.FREQMODE, Q.INVEMODE, Q.BACKEND_FILE))
 
     max_retries = 5;
     LOG = webread_retry(source_url, weboptions('ContentType', 'json', ...
