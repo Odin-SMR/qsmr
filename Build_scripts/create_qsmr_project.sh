@@ -63,22 +63,23 @@ create_qsmr_worker_image()
   QSMRDATA_PATH=$2
   FREQMODE=$3
   INVMODE=$4
-  YYMMDD=$5
-  WORKERIMGTAG=$6
+  WORKERIMGTAG=$5
   #copy most recent compiled qsmr package
   #compiled_qsmr_package_url="${JENKINS_ROOT}/job/qsmr_compile_matlab/lastSuccessfulBuild/artifact/Build_scripts/mcr/qsmr.tar.gz"
   compiled_qsmr_package_url="http://odin.rss.chalmers.se/qsmr/qsmr.tar.gz"
-  curl -L $compiled_qsmr_package_url -o "${QSMR_PATH}/Build_scripts/docker/base/qsmr.tar.gz"
-  #create base image
-  cd "${QSMR_PATH}/Build_scripts/docker/"
-  ./build_base.sh $YYMMDD
+  curl -L $compiled_qsmr_package_url -o "${QSMR_PATH}/Build_scripts/docker/qsmr.tar.gz"
   #copy most recent copiled qsmr-data package
   compiled_qsmr_data_package_url="http://odin.rss.chalmers.se/qsmr/qsmr_precalc.tar.gz"
-  curl -L $compiled_qsmr_data_package_url -o "${QSMRDATA_PATH}/Build_scripts/docker/qsmr_precalc.tar.gz"
-
+  curl -L $compiled_qsmr_data_package_url -o "${QSMR_PATH}/Build_scripts/docker/qsmr_precalc.tar.gz"
+  #copy data from QSMRDATA repo
+  rm -rf  docker/data
+  mkdir -p  docker/data
+  cp "${QSMRDATA_PATH}/Build_scripts/docker/build_data_artifact.sh" docker/build_data_artifact.sh
+  cp -r "${QSMRDATA_PATH}/DataPrecalced" docker/data/
+  cp -r "${QSMRDATA_PATH}/DataInput" docker/data/
   #create worker images (also builds qsmr_precalc image)
-  cd "${QSMR_PATH}/Build_scripts/"
-  ./batch_build_single.sh $QSMR_PATH $QSMRDATA_PATH $INVMODE $FREQMODE $YYMMDD $WORKERIMGTAG
+  cd "${QSMR_PATH}/Build_scripts/docker/"
+  ./build_worker_image.sh $INVMODE $FREQMODE $WORKERIMGTAG
 }
 
 
@@ -169,7 +170,7 @@ if [ "$WORKER_IMAGE" == " " ]; then
     YYMMDD=`date +%y%m%d`
     validate_project_name $PROJECT_NAME
     WORKER_IMAGE_TAG="qsmr_${INVMODE}_${FREQMODE}_${PROJECT_NAME}_${YYMMDD}"
-    create_qsmr_worker_image $QSMR_PATH $QSMRDATA_PATH $FREQMODE $INVMODE $YYMMDD $WORKER_IMAGE_TAG
+    create_qsmr_worker_image $QSMR_PATH $QSMRDATA_PATH $FREQMODE $INVMODE $WORKER_IMAGE_TAG
     WORKER_IMAGE="molflow/u-jobs:${WORKER_IMAGE_TAG}"
 else
     echo "Use image ${WORKER_IMAGE}"
