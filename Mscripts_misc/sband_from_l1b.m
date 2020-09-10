@@ -21,6 +21,9 @@
 % --------
 % [1]:  Post launch characterisation of Odin-SMR sideband filter properties,
 %   P. Eriksson and J. Urban, Chalmers University of Technology (2006-08-30)
+% [2]: Improvement of Odin/SMR water vapour measurements and validation of
+%   the obtained dataset, F. Grieco et al., Atmos. Meas. Tech. (2021, in 
+%   preparation)
 
 
 function sb_leakage = sband_from_l1b(l1b, freq_grid)
@@ -96,6 +99,9 @@ function sb_leakage = sband_from_l1b(l1b, freq_grid)
         case 19
 
             % From report [1]:
+            %r0 = 10.0 ^ (-14 / 10.0);
+
+	    % From paper [2]:
             r0 = 10.0 ^ (-11 / 10.0);
             % l0_LO = 0.5 * 38.237e-3;
             % l0_SB = 0.5 * 19.378e-3;
@@ -124,6 +130,9 @@ function sb_leakage = sband_from_l1b(l1b, freq_grid)
         case 13
 
             % From report [1]:
+            %r0 = 10.0 ^ (-14 / 10.0);
+
+	    % From paper [2]:
             r0 = 10 ^ (-13 / 10.0);
 
             % Calculated from "The Spread Sheet":

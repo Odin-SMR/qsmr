@@ -1,3 +1,7 @@
+2020-09-10  Francesco Grieco  <francesco.grieco@chalmers.se>
+
+	* Mscripts_misc/sband_from_l1b: Added reference for r0 values used for FM13 and FM19.
+
 2019-11-04  Francesco Grieco  <francesco.grieco@chalmers.se>
 
         * Mscripts_misc/sband_from_l1b: Temporarily changing to r0 = 10.0 ^ (-13 / 10.0) for FM13 
