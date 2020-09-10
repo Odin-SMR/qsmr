@@ -16,7 +16,7 @@
 %                   LOFreq and SBPath values for scan.
 %
 % Created:  2017-08-29  andreas.skyman@molflow.com
-% Updated:  2017-12-13  andreas.skyman@molflow.com
+% Updated:  2020-09-10  francesco.grieco@chalmers.se
 %
 % --------
 % [1]:  Post launch characterisation of Odin-SMR sideband filter properties,
