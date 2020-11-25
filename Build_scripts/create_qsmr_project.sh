@@ -40,10 +40,10 @@ usage ()
                              (a further selection can be made by the optional start_day and end_day options)
                            QSMR_PATH="/home/bengt/work/qsmr"
                              path to qsmr repo
-                             (git clone http://phabricator.molflow.com/diffusion/QQ/qsmr.git)
+                             (git clone git@github.com:Odin-SMR/qsmr.git)
                            QSMRDATA_PATH="/home/bengt/work/qsmr-data"
                              path to qsmr-data repo
-                             (git clone http://phabricator.molflow.com/diffusion/QQD/qsmr-data.git)
+                             (git clone git@github.com:Odin-SMR/qsmr-data.git)
 
   Application options:
   -d, --deadline         deadline of project (used to set priority)
@@ -65,7 +65,6 @@ create_qsmr_worker_image()
   INVMODE=$4
   WORKERIMGTAG=$5
   #copy most recent compiled qsmr package
-  #compiled_qsmr_package_url="${JENKINS_ROOT}/job/qsmr_compile_matlab/lastSuccessfulBuild/artifact/Build_scripts/mcr/qsmr.tar.gz"
   compiled_qsmr_package_url="http://odin.rss.chalmers.se/qsmr/qsmr.tar.gz"
   curl -L $compiled_qsmr_package_url -o "${QSMR_PATH}/Build_scripts/docker/qsmr.tar.gz"
   #copy most recent copiled qsmr-data package
@@ -171,7 +170,7 @@ if [ "$WORKER_IMAGE" == " " ]; then
     validate_project_name $PROJECT_NAME
     WORKER_IMAGE_TAG="qsmr_${INVMODE}_${FREQMODE}_${PROJECT_NAME}_${YYMMDD}"
     create_qsmr_worker_image $QSMR_PATH $QSMRDATA_PATH $FREQMODE $INVMODE $WORKER_IMAGE_TAG
-    WORKER_IMAGE="molflow/u-jobs:${WORKER_IMAGE_TAG}"
+    WORKER_IMAGE="odinsmr/u-jobs:${WORKER_IMAGE_TAG}"
 else
     echo "Use image ${WORKER_IMAGE}"
 fi
