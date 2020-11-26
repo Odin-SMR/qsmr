@@ -8,7 +8,7 @@ create_docker_file()
 
   file="$PWD/Dockerfile"
   cat <<EOF > ${file}
-FROM docker2.molflow.com/devops/arts:10134 AS builder
+FROM odinsmr/arts:2.3.564 AS builder
 COPY data /QsmrData
 # TODO: Fetch from binary repo service?
 COPY qsmr_precalc.tar.gz /qsmr_precalc/qsmr_precalc.tar.gz
@@ -23,7 +23,7 @@ RUN chmod u+x /build_data_artifact.sh
 RUN /build_data_artifact.sh /QsmrData ${INVEMODE} ${FREQMODE}
 RUN rm -r /QsmrData/DataInput
 
-FROM docker2.molflow.com/devops/arts:10134
+FROM odinsmr/arts:2.3.564
 COPY qsmr.tar.gz /qsmr/qsmr.tar.gz
 RUN set -x && \
     cd /qsmr && \
@@ -42,7 +42,7 @@ IMG_TAG=$3
 
 create_docker_file $INVEMODE $FREQMODE
 
-registry="molflow/u-jobs"
+registry="odinsmr/u-jobs"
 worker_image="${registry}:${IMG_TAG}"
 
 docker build --no-cache -t $worker_image .
