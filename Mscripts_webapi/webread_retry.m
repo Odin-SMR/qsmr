@@ -20,6 +20,7 @@
 % Bugfix and better error reporting by Joakim Möller 2017-09-07
 
 function web_request = webread_retry(source_url, webread_options, max_retries)
-    request = py.qsmr_system.get_url.get_json_with_retry(source_url);
+    pymod = py.importlib.import_module('qsmr_system.get_url');
+    request = pymod.get_json_with_retry(source_url)
     web_request = jsondecode(string(request));
 end

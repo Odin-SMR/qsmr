@@ -16,8 +16,9 @@
 function webwrite_retry(filename, data)
     try
         jsonText = jsonencode(data);
-        % Call the Python function dataset.save_parquet with jsonText and filename
-        py.qsmr_system.dataset.save_parquet(jsonText, filename);
+        % Import the Python module explicitly and call save_parquet
+        dataset_mod = py.importlib.import_module('qsmr_system.dataset');
+        dataset_mod.save_parquet(jsonText, filename);
     catch errmsg
         disp(['Failed to call dataset.save_parquet for file: ', filename]);
         disp(errmsg.message);
