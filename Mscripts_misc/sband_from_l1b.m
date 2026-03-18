@@ -96,7 +96,7 @@ function sb_leakage = sband_from_l1b(l1b, freq_grid)
             l0_SB = 9.77324838062e-3;
 
         % 549 GHz frontend (experimental):
-        case 19
+        case {19, 119}
 
             % From report [1]:
             %r0 = 10.0 ^ (-14 / 10.0);
@@ -110,14 +110,14 @@ function sb_leakage = sband_from_l1b(l1b, freq_grid)
             l0_LO = 0.5 * 38.21672666e-3;
             l0_SB = 9.8280425e-3;
 
-        case 21
+        case {21, 121}
 
             % From report [1]:
             r0 = 10.0 ^ (-14.4 / 10.0);
             l0_LO = 0.5 * 38.237e-3;
             l0_SB = 0.5 * 19.021e-3;
 
-        case 2
+        case {2, 102}
 
             % From report [1]:
             r0 = 10 ^ (-14.4 / 10.0);
@@ -127,7 +127,7 @@ function sb_leakage = sband_from_l1b(l1b, freq_grid)
             l0_SB = 9.56785493557e-3;
 
         % 555 GHz frontend (experimental):
-        case 13
+        case {13, 113}
 
             % From report [1]:
             %r0 = 10.0 ^ (-14 / 10.0);
